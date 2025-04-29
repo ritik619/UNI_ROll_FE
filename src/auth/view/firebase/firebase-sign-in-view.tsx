@@ -115,7 +115,7 @@ export function FirebaseSignInView() {
       <Field.Text name="email" label="Email address" slotProps={{ inputLabel: { shrink: true } }} />
 
       <Box sx={{ gap: 1.5, display: 'flex', flexDirection: 'column' }}>
-        <Link
+        {/* <Link
           component={RouterLink}
           href={paths.auth.firebase.resetPassword}
           variant="body2"
@@ -123,7 +123,7 @@ export function FirebaseSignInView() {
           sx={{ alignSelf: 'flex-end' }}
         >
           Forgot password?
-        </Link>
+        </Link> */}
 
         <Field.Text
           name="password"
@@ -186,13 +186,13 @@ export function FirebaseSignInView() {
         {renderForm()}
       </Form>
 
-      <FormDivider />
+      {/* <FormDivider /> */}
 
-      <FormSocials
+      {/* <FormSocials
         signInWithGoogle={handleSignInWithGoogle}
         singInWithGithub={handleSignInWithGithub}
         signInWithTwitter={handleSignInWithTwitter}
-      />
+      /> */}
     </>
   );
 }
