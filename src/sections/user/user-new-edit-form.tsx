@@ -30,7 +30,9 @@ export type NewUserSchemaType = zod.infer<typeof NewUserSchema>;
 
 export const NewUserSchema = zod.object({
   avatarUrl: schemaHelper.file({ message: 'Avatar is required!' }),
-  name: zod.string().min(1, { message: 'Name is required!' }),
+  fName: zod.string().min(1, { message: 'First Name is required!' }),
+  lName: zod.string().min(1, { message: 'Last Name is required!' }),
+
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
@@ -59,7 +61,8 @@ export function UserNewEditForm({ currentUser }: Props) {
     status: '',
     avatarUrl: null,
     isVerified: true,
-    name: '',
+    fName: '',
+    lName: '',
     email: '',
     phoneNumber: '',
     accountNummber: '',
