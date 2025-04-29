@@ -17,8 +17,8 @@ export function UserCreateView() {
         heading="Create a new user"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.agent.root },
-          { name: 'New user' },
+          { name: 'Agent', href: paths.dashboard.agent.root },
+          { name: 'New Agent' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

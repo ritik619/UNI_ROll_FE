@@ -49,13 +49,6 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
-    two: `${ROOTS.DASHBOARD}/two`,
-    three: `${ROOTS.DASHBOARD}/three`,
-    group: {
-      root: `${ROOTS.DASHBOARD}/agent`,
-      five: `${ROOTS.DASHBOARD}/group/five`,
-      six: `${ROOTS.DASHBOARD}/group/six`,
-    },
     agent: {
       root: `${ROOTS.DASHBOARD}/agent`,
       new: `${ROOTS.DASHBOARD}/agent/new`,
@@ -65,5 +58,10 @@ export const paths = {
       // account: `${ROOTS.DASHBOARD}/agent/account`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/agent/${id}/edit`,
     },
+
+    students: `${ROOTS.DASHBOARD}/students`,
+    universitiesAndCourses: `${ROOTS.DASHBOARD}/universities-&-courses`,
+    intakes: `${ROOTS.DASHBOARD}/intakes`,
+    earningsoverview: `${ROOTS.DASHBOARD}/earnings-overview`,
   },
 };

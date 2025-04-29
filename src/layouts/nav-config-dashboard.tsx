@@ -45,25 +45,6 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export const navData: NavSectionProps['data'] = [
-  /**
-   * Overview
-   */
-  {
-    subheader: 'Overview',
-    items: [
-      {
-        title: 'One',
-        path: paths.dashboard.root,
-        icon: ICONS.dashboard,
-        info: <Label>v{CONFIG.appVersion}</Label>,
-      },
-      { title: 'Two', path: paths.dashboard.two, icon: ICONS.ecommerce },
-      { title: 'Three', path: paths.dashboard.three, icon: ICONS.analytics },
-    ],
-  },
-  /**
-   * Management
-   */
   {
     subheader: 'Management',
     items: [
@@ -79,6 +60,22 @@ export const navData: NavSectionProps['data'] = [
           // { title: 'Edit', path: paths.dashboard.agent.demo.edit },
           // { title: 'Account', path: paths.dashboard.agent.account },
         ],
+      },
+      {
+        title: 'Students',
+        path: paths.dashboard.students,
+        icon: ICONS.booking,
+      },
+      {
+        title: 'Universities & Courses',
+        path: paths.dashboard.universitiesAndCourses,
+        icon: ICONS.course,
+      },
+      { title: 'Intakes', path: paths.dashboard.intakes, icon: ICONS.calendar },
+      {
+        title: 'Earnings OverView',
+        path: paths.dashboard.earningsoverview,
+        icon: ICONS.banking,
       },
     ],
   },

@@ -22,13 +22,13 @@ export function UserCardsView() {
         heading="User cards"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
+          { name: 'Agent', href: paths.dashboard.agent.root },
           { name: 'Cards' },
         ]}
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.user.new}
+            href={paths.dashboard.agent.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
