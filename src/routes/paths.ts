@@ -1,9 +1,15 @@
+import { _id, _postTitles } from 'src/_mock/assets';
+
 // ----------------------------------------------------------------------
 
 const ROOTS = {
   AUTH: '/auth',
   DASHBOARD: '/dashboard',
 };
+
+const MOCK_ID = _id[1];
+
+const MOCK_TITLE = _postTitles[2];
 
 // ----------------------------------------------------------------------
 
@@ -46,9 +52,18 @@ export const paths = {
     two: `${ROOTS.DASHBOARD}/two`,
     three: `${ROOTS.DASHBOARD}/three`,
     group: {
-      root: `${ROOTS.DASHBOARD}/group`,
+      root: `${ROOTS.DASHBOARD}/agent`,
       five: `${ROOTS.DASHBOARD}/group/five`,
       six: `${ROOTS.DASHBOARD}/group/six`,
+    },
+    agent: {
+      root: `${ROOTS.DASHBOARD}/agent`,
+      new: `${ROOTS.DASHBOARD}/agent/new`,
+      list: `${ROOTS.DASHBOARD}/agent/list`,
+      // cards: `${ROOTS.DASHBOARD}/agent/cards`,
+      profile: `${ROOTS.DASHBOARD}/agent/profile`,
+      // account: `${ROOTS.DASHBOARD}/agent/account`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/agent/${id}/edit`,
     },
   },
 };
