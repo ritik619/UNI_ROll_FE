@@ -41,10 +41,10 @@ export const signInWithPassword = async ({ email, password }: SignInParams): Pro
     await _signInWithEmailAndPassword(AUTH, email, password);
 
     const user = AUTH.currentUser;
-
-    if (!user?.emailVerified) {
-      throw new Error('Email not verified!');
-    }
+    // TODO
+    // if (!user?.emailVerified) {
+    //   throw new Error('Email not verified!');
+    // }
   } catch (error) {
     console.error('Error during sign in with password:', error);
     throw error;
