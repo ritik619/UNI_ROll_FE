@@ -67,7 +67,7 @@ export function SimpleLayout({
           </Link>
 
           {/** @slot Settings button */}
-          <SettingsButton />
+          {/* <SettingsButton /> */}
         </Box>
       ),
     };

@@ -7,6 +7,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 
 import { CONFIG } from 'src/global-config';
 import { primary } from 'src/theme/core/palette';
+import { LocalizationProvider } from 'src/locales';
 import { themeConfig, ThemeProvider } from 'src/theme';
 
 import { ProgressBar } from 'src/components/progress-bar';
@@ -15,7 +16,6 @@ import { detectSettings } from 'src/components/settings/server';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
 import { AuthProvider } from 'src/auth/context/firebase';
-import { LocalizationProvider } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
