@@ -1,4 +1,4 @@
-import type { IUserProfileGallery } from 'src/types/user';
+import type { IUserProfileGallery } from 'src/types/agent';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';

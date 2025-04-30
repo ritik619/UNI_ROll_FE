@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/agent';
 
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';

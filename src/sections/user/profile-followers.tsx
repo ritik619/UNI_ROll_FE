@@ -1,5 +1,5 @@
 import type { CardProps } from '@mui/material/Card';
-import type { IUserProfileFollower } from 'src/types/user';
+import type { IUserProfileFollower } from 'src/types/agent';
 
 import { useState, useCallback } from 'react';
 

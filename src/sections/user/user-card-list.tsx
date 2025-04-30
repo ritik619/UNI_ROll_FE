@@ -1,4 +1,4 @@
-import type { IUserCard } from 'src/types/user';
+import type { IUserCard } from 'src/types/agent';
 
 import { useState, useCallback } from 'react';
 

@@ -1,4 +1,4 @@
-import type { IUserProfilePost } from 'src/types/user';
+import type { IUserProfilePost } from 'src/types/agent';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useRef, useState, useCallback } from 'react';

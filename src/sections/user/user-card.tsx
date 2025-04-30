@@ -1,4 +1,4 @@
-import type { IUserCard } from 'src/types/user';
+import type { IUserCard } from 'src/types/agent';
 import type { CardProps } from '@mui/material/Card';
 
 import { varAlpha } from 'minimal-shared/utils';

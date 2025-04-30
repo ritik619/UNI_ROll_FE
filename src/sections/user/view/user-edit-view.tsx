@@ -1,6 +1,6 @@
 'use client';
 
-import type { IUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/agent';
 
 import { paths } from 'src/routes/paths';
 

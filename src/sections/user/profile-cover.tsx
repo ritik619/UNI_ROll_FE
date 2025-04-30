@@ -1,5 +1,5 @@
 import type { BoxProps } from '@mui/material/Box';
-import type { IUserProfileCover } from 'src/types/user';
+import type { IUserProfileCover } from 'src/types/agent';
 
 import { varAlpha } from 'minimal-shared/utils';
 

@@ -1,4 +1,4 @@
-import type { IUserProfileFriend } from 'src/types/user';
+import type { IUserProfileFriend } from 'src/types/agent';
 
 import { usePopover } from 'minimal-shared/hooks';
 

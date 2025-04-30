@@ -1,4 +1,4 @@
-import type { IUserTableFilters } from 'src/types/user';
+import type { IUserTableFilters } from 'src/types/agent';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
 import type { FiltersResultProps } from 'src/components/filters-result';
 
