@@ -38,7 +38,7 @@ export const UserQuickEditSchema = zod.object({
   state: zod.string().min(1, { message: 'State is required!' }),
   city: zod.string().min(1, { message: 'City is required!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
+  postCode: zod.string().min(1, { message: 'Post Code is required!' }),
   company: zod.string().min(1, { message: 'Company is required!' }),
   role: zod.string().min(1, { message: 'Role is required!' }),
   // Not required
@@ -62,7 +62,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
     country: '',
     state: '',
     city: '',
-    zipCode: '',
+    postCode: '',
     status: '',
     company: '',
     role: '',
@@ -150,7 +150,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
             <Field.Text name="state" label="State/region" />
             <Field.Text name="city" label="City" />
             <Field.Text name="address" label="Address" />
-            <Field.Text name="zipCode" label="Zip/code" />
+            <Field.Text name="postCode" label="Zip/code" />
             <Field.Text name="company" label="Company" />
             <Field.Text name="role" label="Role" />
           </Box>

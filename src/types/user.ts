@@ -76,19 +76,16 @@ export type IUserCard = {
 
 export type IUserItem = {
   id: string;
-  name: string;
-  city: string;
-  role: string;
+  fName: string;
+  lName: string;
+  dob: string;
   email: string;
-  state: string;
-  status: string;
   address: string;
-  country: string;
-  zipCode: string;
-  company: string;
-  avatarUrl: string;
-  phoneNumber: string;
-  isVerified: boolean;
+  postCode: string;
+  sortCode: string;
+  accountNumber: string;
+  utrNumber: string;
+  password: string;
 };
 
 export type IUserAccountBillingHistory = {

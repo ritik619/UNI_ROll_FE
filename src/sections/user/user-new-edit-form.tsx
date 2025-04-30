@@ -2,51 +2,43 @@ import type { IUserItem } from 'src/types/user';
 
 import { z as zod } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
+import { useForm } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-
-import { fData } from 'src/utils/format-number';
-
-import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
-import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { Form, Field } from 'src/components/hook-form';
+import axios from 'axios';
+import { useAuthContext } from 'src/auth/hooks';
+import { formatDateToDDMMYYYY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
-export type NewUserSchemaType = zod.infer<typeof NewUserSchema>;
-
 export const NewUserSchema = zod.object({
-  avatarUrl: schemaHelper.file({ message: 'Avatar is required!' }),
   fName: zod.string().min(1, { message: 'First Name is required!' }),
   lName: zod.string().min(1, { message: 'Last Name is required!' }),
-
+  dob: zod.string().min(1, { message: 'Date of Birth is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  accountNummber: zod.string().min(1, { message: 'Account Nummber is required!' }),
-  utrNumber: zod.string().min(1, { message: 'Company is required!' }),
-  password: zod.string().min(1, { message: 'Password is required!' }),
-  sortCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  // Not required
-  status: zod.string(),
-  isVerified: zod.boolean(),
+  postCode: zod.string().min(1, { message: 'Post code is required!' }),
+  accountNumber: zod.string().min(1, { message: 'Account Number is required!' }),
+  sortCode: zod.string().min(1, { message: 'Sort code is required!' }),
+  utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
+  password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
+  status: zod.enum(['active', 'inactive']).optional(),
 });
+
+export type NewUserSchemaType = zod.infer<typeof NewUserSchema>;
 
 // ----------------------------------------------------------------------
 
@@ -56,17 +48,17 @@ type Props = {
 
 export function UserNewEditForm({ currentUser }: Props) {
   const router = useRouter();
+  const auth = useAuthContext();
+  const authToken = auth.user?.accessToken;
 
   const defaultValues: NewUserSchemaType = {
-    status: '',
-    avatarUrl: null,
-    isVerified: true,
     fName: '',
     lName: '',
     email: '',
-    phoneNumber: '',
-    accountNummber: '',
+    dob: '',
+    accountNumber: '',
     address: '',
+    postCode: '',
     sortCode: '',
     utrNumber: '',
     password: '',
@@ -80,23 +72,46 @@ export function UserNewEditForm({ currentUser }: Props) {
   });
 
   const {
-    reset,
-    watch,
-    control,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const values = watch();
+  const createAgent = async (data: NewUserSchemaType) => {
+    const apiUrl = 'https://us-central1-uni-enroll-e95e7.cloudfunctions.net/api/agents';
+
+    const payload = {
+      firstName: data.fName.trim(),
+      lastName: data.lName.trim(),
+      dateOfBirth: formatDateToDDMMYYYY(data.dob),
+      email: data.email.trim(),
+      address: data.address.trim(),
+      postCode: data.postCode.trim(),
+      bankDetails: {
+        accountNumber: data.accountNumber.trim(),
+        sortCode: data.sortCode.trim(),
+      },
+      utrNumber: data.utrNumber.trim(),
+      password: data.password.trim(),
+      status: 'active',
+    };
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const response = await axios.post<{ id: string }>(apiUrl, payload, config);
+    return response.data;
+  };
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
+      await createAgent(data);
       toast.success(currentUser ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.agent.list);
-      console.info('DATA', data);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
     }
   });
@@ -116,34 +131,32 @@ export function UserNewEditForm({ currentUser }: Props) {
             >
               <Field.Text name="fName" label="First Name" />
               <Field.Text name="lName" label="Last Name" />
-
-              <Field.Text name="dob" label="Date of Birth" placeholder="dd/mm/yyyy" />
+              <Field.DatePicker name="dob" label="Date of Birth" />
               <Field.Text name="email" label="Email Address" />
+              <Field.Text name="address" label="Address" />
+              <Field.Text name="postCode" label="Post Code" />
 
-              <Field.Text name="address" label="Address" fullWidth sx={{ gridColumn: 'span 2' }} />
-
-              <Grid size={{ xs: 24 }} spacing={2}>
-                <Card sx={{ p: 2, m: 4 }}>
+              <Grid size={{ xs: 24 }} spacing={4}>
+                <Card sx={{ p: 1 }}>
                   <Typography variant="subtitle2" sx={{ mb: 2, color: '#919eab' }}>
                     Bank Details
                   </Typography>
-                  <Field.Text name="sortCode" label="Sort Code" />
-                  <Field.Text name="accountNumber" label="Account Number" />
+                  <Box
+                    sx={{
+                      rowGap: 3,
+                      columnGap: 2,
+                      display: 'grid',
+                      gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                    }}
+                  >
+                    <Field.Text name="sortCode" label="Sort Code" />
+                    <Field.Text name="accountNumber" label="Account Number" />
+                  </Box>
                 </Card>
               </Grid>
 
-              <Field.Text
-                name="utrNumber"
-                label="UTR Number"
-                fullWidth
-                sx={{ gridColumn: 'span 2' }}
-              />
-              <Field.Text
-                name="password"
-                label="Password"
-                fullWidth
-                sx={{ gridColumn: 'span 2' }}
-              />
+              <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
+              <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
             </Box>
 
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>

@@ -24,7 +24,6 @@ import { NavHorizontal } from './nav-horizontal';
 import { _account } from '../nav-config-account';
 import { MainSection } from '../core/main-section';
 import { Searchbar } from '../components/searchbar';
-import { _workspaces } from '../nav-config-workspace';
 import { MenuButton } from '../components/menu-button';
 import { HeaderSection } from '../core/header-section';
 import { LayoutSection } from '../core/layout-section';
@@ -124,39 +123,10 @@ export function DashboardLayout({
           {isNavHorizontal && (
             <VerticalDivider sx={{ [theme.breakpoints.up(layoutQuery)]: { display: 'flex' } }} />
           )}
-
-          {/** @slot Workspace popover */}
-          <WorkspacesPopover
-            data={_workspaces}
-            sx={{ color: 'var(--layout-nav-text-primary-color)' }}
-          />
         </>
       ),
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
-          {/** @slot Searchbar */}
-          <Searchbar data={navData} />
-
-          {/** @slot Language popover */}
-          <LanguagePopover
-            data={[
-              { value: 'en', label: 'English', countryCode: 'GB' },
-              { value: 'fr', label: 'French', countryCode: 'FR' },
-              { value: 'vi', label: 'Vietnamese', countryCode: 'VN' },
-              { value: 'cn', label: 'Chinese', countryCode: 'CN' },
-              { value: 'ar', label: 'Arabic', countryCode: 'SA' },
-            ]}
-          />
-
-          {/** @slot Notifications popover */}
-          <NotificationsDrawer data={_notifications} />
-
-          {/** @slot Contacts popover */}
-          <ContactsPopover data={_contacts} />
-
-          {/** @slot Settings button */}
-          <SettingsButton />
-
           {/** @slot Account drawer */}
           <AccountDrawer data={_account} />
         </Box>
