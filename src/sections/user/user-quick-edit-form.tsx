@@ -19,29 +19,45 @@ import { USER_STATUS_OPTIONS } from 'src/_mock';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { Grid2, Card, Typography } from '@mui/material';
+import { fData } from 'src/utils/format-number';
+import axios from 'axios';
+import router from 'next/router';
+import { paths } from 'src/routes/paths';
+
+import { useAuthContext } from 'src/auth/hooks';
+import { formatDateToDDMMYYYY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
 export type UserQuickEditSchemaType = zod.infer<typeof UserQuickEditSchema>;
 
 export const UserQuickEditSchema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required!' }),
+  avatarUrl: schemaHelper.file({ message: 'Avatar is required!' }),
+  fName: zod.string().min(1, { message: 'First Name is required!' }),
+  lName: zod.string().min(1, { message: 'Last Name is required!' }),
+  dob: zod.string().min(1, { message: 'Date of Birth is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
-  country: schemaHelper.nullableInput(zod.string().min(1, { message: 'Country is required!' }), {
-    // message for null value
-    message: 'Country is required!',
-  }),
-  state: zod.string().min(1, { message: 'State is required!' }),
-  city: zod.string().min(1, { message: 'City is required!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  postCode: zod.string().min(1, { message: 'Post Code is required!' }),
-  company: zod.string().min(1, { message: 'Company is required!' }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
-  // Not required
+  postCode: zod.string().min(1, { message: 'Post code is required!' }),
+  accountNumber: zod
+    .string()
+    .min(1, { message: 'Account Number is required!' })
+    .regex(/^\d{8}$/, { message: 'Account number should be 10 digits' }),
+  sortCode: zod
+    .string()
+    .min(1, { message: 'Sort code is required!' })
+    .regex(/^\d{2}-\d{2}-\d{2}$/, {
+      message: 'Sort code should be in the format XX-XX-XX',
+    })
+    .refine((val) => val.replace(/\D/g, '').length === 6, {
+      message: 'Sort code must be exactly 6 digits!',
+    }),
+  utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
+  password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.string(),
 });
 
@@ -54,18 +70,21 @@ type Props = {
 };
 
 export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
+  const auth = useAuthContext();
+  const authToken = 'auth.accessToken';
   const defaultValues: UserQuickEditSchemaType = {
-    name: '',
-    email: '',
-    phoneNumber: '',
-    address: '',
-    country: '',
-    state: '',
-    city: '',
-    postCode: '',
     status: '',
-    company: '',
-    role: '',
+    avatarUrl: null,
+    fName: '',
+    lName: '',
+    email: '',
+    dob: '',
+    accountNumber: '',
+    address: '',
+    postCode: '',
+    sortCode: '',
+    utrNumber: '',
+    password: '',
   };
 
   const methods = useForm<UserQuickEditSchemaType>({
@@ -81,23 +100,44 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
     formState: { isSubmitting },
   } = methods;
 
+  const updateAgent = async (data: UserQuickEditSchemaType) => {
+    const payload = {
+      avatarUrl: data.avatarUrl ?? null,
+      firstName: data.fName.trim(),
+      lastName: data.lName.trim(),
+      dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
+      email: data.email.trim(),
+      address: data.address.trim(),
+      postCode: data.postCode.trim(),
+      bankDetails: {
+        accountNumber: data.accountNumber.trim(),
+        sortCode: data.sortCode.trim(),
+      },
+      utrNumber: data.utrNumber.trim(),
+      password: data.password.trim(),
+      status: 'active',
+    };
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const agentId = `pWTLPoAxrKPAPoRsUhMzpquxT2v2`;
+    const apiUrl = `https://us-central1-uni-enroll-e95e7.cloudfunctions.net/api/agents/${agentId}`;
+    const response = await axios.put<{ id: string }>(apiUrl, payload, config);
+    const avatarAPIUrl = `http://us-central1-uni-enroll-e95e7.cloudfunctions.net/agent-endpoint/${agentId}/profile-photo" `;
+    const avtarResponse = await axios.put<{ id: string }>(avatarAPIUrl, payload.avatarUrl, config);
+    return [response.data, avtarResponse.data];
+  };
+
   const onSubmit = handleSubmit(async (data) => {
-    const promise = new Promise((resolve) => setTimeout(resolve, 1000));
-
     try {
-      reset();
-      onClose();
-
-      toast.promise(promise, {
-        loading: 'Loading...',
-        success: 'Update success!',
-        error: 'Update error!',
-      });
-
-      await promise;
-
-      console.info('DATA', data);
-    } catch (error) {
+      await updateAgent(data);
+      toast.success(currentUser ? 'Update success!' : 'Update error!');
+      router.push(paths.dashboard.agent.list);
+    } catch (error: any) {
       console.error(error);
     }
   });
@@ -117,7 +157,27 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
           <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
             Account is waiting for confirmation
           </Alert>
-
+          <Box sx={{ mb: 5 }}>
+            <Field.UploadAvatar
+              name="avatarUrl"
+              maxSize={3145728}
+              helperText={
+                <Typography
+                  variant="caption"
+                  sx={{
+                    mt: 3,
+                    mx: 'auto',
+                    display: 'block',
+                    textAlign: 'center',
+                    color: 'text.disabled',
+                  }}
+                >
+                  Allowed *.jpeg, *.jpg, *.png, *.gif
+                  <br /> max size of {fData(3145728)}
+                </Typography>
+              }
+            />
+          </Box>
           <Box
             sx={{
               rowGap: 3,
@@ -126,33 +186,42 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
               gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
             }}
           >
-            <Field.Select name="status" label="Status">
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
+            <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 2' }}>
               {USER_STATUS_OPTIONS.map((status) => (
                 <MenuItem key={status.value} value={status.value}>
                   {status.label}
                 </MenuItem>
               ))}
             </Field.Select>
-
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
-
-            <Field.Text name="name" label="Full name" />
-            <Field.Text name="email" label="Email address" />
-            <Field.Phone name="phoneNumber" label="Phone number" />
-
-            <Field.CountrySelect
-              fullWidth
-              name="country"
-              label="Country"
-              placeholder="Choose a country"
-            />
-
-            <Field.Text name="state" label="State/region" />
-            <Field.Text name="city" label="City" />
+            <Field.Text name="fName" label="First Name" />
+            <Field.Text name="lName" label="Last Name" />
+            <Field.DatePicker name="dob" label="Date of Birth" />
+            <Field.Text name="email" label="Email Address" />
             <Field.Text name="address" label="Address" />
-            <Field.Text name="postCode" label="Zip/code" />
-            <Field.Text name="company" label="Company" />
-            <Field.Text name="role" label="Role" />
+            <Field.Text name="postCode" label="Post Code" />
+
+            <Grid2 size={{ xs: 12 }} spacing={2} sx={{ gridColumn: 'span 2' }}>
+              <Card sx={{ p: 2 }}>
+                <Typography variant="subtitle2" sx={{ mb: 2, color: '#919eab' }}>
+                  Bank Details
+                </Typography>
+                <Box
+                  sx={{
+                    rowGap: 3,
+                    columnGap: 2,
+                    display: 'grid',
+                    gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                  }}
+                >
+                  <Field.Text name="accountNumber" label="Account Number" />
+                  <Field.Text name="sortCode" label="Sort Code" />
+                </Box>
+              </Card>
+            </Grid2>
+
+            <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
+            <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
           </Box>
         </DialogContent>
 

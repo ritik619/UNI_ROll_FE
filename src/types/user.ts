@@ -76,6 +76,7 @@ export type IUserCard = {
 
 export type IUserItem = {
   id: string;
+  avatarUrl: string | File | null;
   fName: string;
   lName: string;
   dob: string;

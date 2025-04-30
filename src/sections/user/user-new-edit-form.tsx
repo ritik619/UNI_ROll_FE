@@ -31,8 +31,19 @@ export const NewUserSchema = zod.object({
     .email({ message: 'Email must be a valid email address!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
   postCode: zod.string().min(1, { message: 'Post code is required!' }),
-  accountNumber: zod.string().min(1, { message: 'Account Number is required!' }),
-  sortCode: zod.string().min(1, { message: 'Sort code is required!' }),
+  accountNumber: zod
+    .string()
+    .min(1, { message: 'Account Number is required!' })
+    .regex(/^\d{8}$/, { message: 'Account number should be 10 digits' }),
+  sortCode: zod
+    .string()
+    .min(1, { message: 'Sort code is required!' })
+    .regex(/^\d{2}-\d{2}-\d{2}$/, {
+      message: 'Sort code should be in the format XX-XX-XX',
+    })
+    .refine((val) => val.replace(/\D/g, '').length === 6, {
+      message: 'Sort code must be exactly 6 digits!',
+    }),
   utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
   password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.enum(['active', 'inactive']).optional(),
@@ -77,12 +88,10 @@ export function UserNewEditForm({ currentUser }: Props) {
   } = methods;
 
   const createAgent = async (data: NewUserSchemaType) => {
-    const apiUrl = 'https://us-central1-uni-enroll-e95e7.cloudfunctions.net/api/agents';
-
     const payload = {
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
-      dateOfBirth: formatDateToDDMMYYYY(data.dob),
+      dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
       email: data.email.trim(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
@@ -101,7 +110,7 @@ export function UserNewEditForm({ currentUser }: Props) {
         'Content-Type': 'application/json',
       },
     };
-
+    const apiUrl = 'https://us-central1-uni-enroll-e95e7.cloudfunctions.net/api/agents';
     const response = await axios.post<{ id: string }>(apiUrl, payload, config);
     return response.data;
   };
