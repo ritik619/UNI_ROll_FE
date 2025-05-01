@@ -1,10 +1,10 @@
 'use client';
 
 import type { TableHeadCellProps } from 'src/components/table';
-import type { IUserItem, IUserTableFilters } from 'src/types/user';
+import type { IUserItem, IUserTableFilters } from 'src/types/agent';
 
-import { useState, useCallback } from 'react';
 import { varAlpha } from 'minimal-shared/utils';
+import { useState, useEffect, useCallback } from 'react';
 import { useBoolean, useSetState } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
@@ -20,8 +20,9 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
+import { USER_STATUS_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+import { fetchAgents } from 'src/services/agents/fetchAgents';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -42,7 +43,6 @@ import {
 } from 'src/components/table';
 
 import { UserTableRow } from '../user-table-row';
-import { UserTableToolbar } from '../user-table-toolbar';
 import { UserTableFiltersResult } from '../user-table-filters-result';
 
 // ----------------------------------------------------------------------
@@ -53,7 +53,7 @@ const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'name', label: 'Name' },
   { id: 'phoneNumber', label: 'Phone number', width: 180 },
   { id: 'company', label: 'Company', width: 220 },
-  { id: 'role', label: 'Role', width: 180 },
+  // { id: 'role', label: 'Role', width: 180 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
@@ -65,7 +65,8 @@ export function UserListView() {
 
   const confirmDialog = useBoolean();
 
-  const [tableData, setTableData] = useState<IUserItem[]>(_userList);
+  const [tableData, setTableData] = useState<IUserItem[]>([]);
+  const [totalCount,setTotalCount]=useState(0)
 
   const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
@@ -138,6 +139,23 @@ export function UserListView() {
       }
     />
   );
+  const fetchPaginatedAgents = useCallback(async () => {
+    // let data: response;
+    try {
+      const { agents, total } = await fetchAgents('all', table.page, table.rowsPerPage);
+      setTableData(agents);
+      setTotalCount(total)
+    } catch (err) {
+      console.error(err);
+    }
+  }, [table.page,table.rowsPerPage]);
+
+  useEffect(() => {
+    // table.setRowsPerPage(2);
+    fetchPaginatedAgents();
+  }, [fetchPaginatedAgents]);
+
+
 
   return (
     <>
@@ -185,14 +203,9 @@ export function UserListView() {
                       ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
                       'soft'
                     }
-                    color={
-                      (tab.value === 'active' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'banned' && 'error') ||
-                      'default'
-                    }
+                    color={(tab.value === 'Active' && 'success') || 'default'}
                   >
-                    {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
+                    {['Active', 'Inactive'].includes(tab.value)
                       ? tableData.filter((user) => user.status === tab.value).length
                       : tableData.length}
                   </Label>
@@ -201,11 +214,11 @@ export function UserListView() {
             ))}
           </Tabs>
 
-          <UserTableToolbar
+          {/* <UserTableToolbar
             filters={filters}
             onResetPage={table.onResetPage}
             options={{ roles: _roles }}
-          />
+          /> */}
 
           {canReset && (
             <UserTableFiltersResult
@@ -277,6 +290,27 @@ export function UserListView() {
 
                   <TableNoData notFound={notFound} />
                 </TableBody>
+                {/* <TableFooter style={{backgroundColor:'yellow',flex:1,}}>
+                  <TableRow >
+                    <TablePagination
+                      rowsPerPageOptions={[1, 5, 10, 25, { label: 'All', value: -1 }]}
+                      colSpan={6}
+                      count={tableData.length}
+                      rowsPerPage={table.rowsPerPage}
+                      page={table.page}
+                      slotProps={{
+                        select: {
+                          inputProps: {
+                            'aria-label': 'Rows per page',
+                          },
+                          native: true,
+                        },
+                      }}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                  </TableRow>
+                </TableFooter> */}
               </Table>
             </Scrollbar>
           </Box>
@@ -284,7 +318,7 @@ export function UserListView() {
           <TablePaginationCustom
             page={table.page}
             dense={table.dense}
-            count={dataFiltered.length}
+            count={totalCount}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             onChangeDense={table.onChangeDense}

@@ -50,7 +50,7 @@ export const navData: NavSectionProps['data'] = [
     items: [
       {
         title: 'Agent',
-        path: paths.dashboard.agent.root,
+        path: paths.dashboard.agent.list,
         icon: ICONS.agent,
         children: [
           // { title: 'Profile', path: paths.dashboard.agent.root },

@@ -87,6 +87,7 @@ export type IUserItem = {
   accountNumber: string;
   utrNumber: string;
   password: string;
+  status: 'active' | 'inactive';
 };
 
 export type IUserAccountBillingHistory = {

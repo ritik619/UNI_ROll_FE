@@ -1,8 +1,8 @@
 import type { IUserItem } from 'src/types/agent';
 
 import { z as zod } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -13,11 +13,15 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+
+import { formatDateToDDMMYYYY } from 'src/utils/format-date';
+
+import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
+
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
-import axios from 'axios';
+
 import { useAuthContext } from 'src/auth/hooks';
-import { formatDateToDDMMYYYY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
@@ -104,15 +108,8 @@ export function UserNewEditForm({ currentUser }: Props) {
       status: 'active',
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const apiUrl = 'https://us-central1-uni-enroll-e95e7.cloudfunctions.net/api/agents';
-    const response = await axios.post<{ id: string }>(apiUrl, payload, config);
-    return response.data;
+    const response = await authAxiosInstance.post<{ id: string }>(endpoints.agents.list, payload);
+    return response;
   };
 
   const onSubmit = handleSubmit(async (data) => {

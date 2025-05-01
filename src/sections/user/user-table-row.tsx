@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/agent';
 
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
 
@@ -106,7 +106,8 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
 
         <TableCell>
           <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-            <Avatar alt={row.name} src={row.avatarUrl} />
+            {/* TODO Add avatar URL */}
+            <Avatar alt={row.firstName} src={row?.avatarUrl} />
 
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
               <Link
@@ -115,7 +116,7 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
                 color="inherit"
                 sx={{ cursor: 'pointer' }}
               >
-                {row.name}
+                {row.firstName} {row.lastName}
               </Link>
               <Box component="span" sx={{ color: 'text.disabled' }}>
                 {row.email}
@@ -124,36 +125,36 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
           </Box>
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.utrNumber}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.company}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.postCode}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell>
+        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell> */}
 
         <TableCell>
           <Label
             variant="soft"
             color={
               (row.status === 'active' && 'success') ||
-              (row.status === 'pending' && 'warning') ||
-              (row.status === 'banned' && 'error') ||
+              (row.status === 'inactive' && 'warning') ||
               'default'
             }
           >
-            {row.status}
+            {/* TODO */}
+            {row.status ?? 'active'}
           </Label>
         </TableCell>
 
         <TableCell>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title="Quick Edit" placement="top" arrow>
+            {/* <Tooltip title="Quick Edit" placement="top" arrow>
               <IconButton
                 color={quickEditForm.value ? 'inherit' : 'default'}
                 onClick={quickEditForm.onTrue}
               >
                 <Iconify icon="solar:pen-bold" />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
 
             <IconButton
               color={menuActions.open ? 'inherit' : 'default'}
@@ -165,7 +166,7 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
         </TableCell>
       </TableRow>
 
-      {renderQuickEditForm()}
+      {/* {renderQuickEditForm()} */}
       {renderMenuActions()}
       {renderConfirmDialog()}
     </>

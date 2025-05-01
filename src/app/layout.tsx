@@ -15,6 +15,7 @@ import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { detectSettings } from 'src/components/settings/server';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
+import { AuthAxiosProvider } from 'src/auth/context';
 import { AuthProvider } from 'src/auth/context/firebase';
 
 // ----------------------------------------------------------------------
@@ -69,25 +70,27 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         />
 
         <AuthProvider>
-          <LocalizationProvider>
-            <SettingsProvider
-              cookieSettings={appConfig.cookieSettings}
-              defaultSettings={defaultSettings}
-            >
-              <AppRouterCacheProvider options={{ key: 'css' }}>
-                <ThemeProvider
-                  defaultMode={themeConfig.defaultMode}
-                  modeStorageKey={themeConfig.modeStorageKey}
-                >
-                  <MotionLazy>
-                    <ProgressBar />
-                    <SettingsDrawer defaultSettings={defaultSettings} />
-                    {children}
-                  </MotionLazy>
-                </ThemeProvider>
-              </AppRouterCacheProvider>
-            </SettingsProvider>
-          </LocalizationProvider>
+          <AuthAxiosProvider>
+            <LocalizationProvider>
+              <SettingsProvider
+                cookieSettings={appConfig.cookieSettings}
+                defaultSettings={defaultSettings}
+              >
+                <AppRouterCacheProvider options={{ key: 'css' }}>
+                  <ThemeProvider
+                    defaultMode={themeConfig.defaultMode}
+                    modeStorageKey={themeConfig.modeStorageKey}
+                  >
+                    <MotionLazy>
+                      <ProgressBar />
+                      <SettingsDrawer defaultSettings={defaultSettings} />
+                      {children}
+                    </MotionLazy>
+                  </ThemeProvider>
+                </AppRouterCacheProvider>
+              </SettingsProvider>
+            </LocalizationProvider>
+          </AuthAxiosProvider>
         </AuthProvider>
       </body>
     </html>

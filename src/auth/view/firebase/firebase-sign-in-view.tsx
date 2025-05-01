@@ -163,7 +163,8 @@ export function FirebaseSignInView() {
 
   return (
     <>
-      <FormHead
+    {/* TODO */}
+      {/* <FormHead
         title="Sign in to your account"
         description={
           <>
@@ -174,7 +175,7 @@ export function FirebaseSignInView() {
           </>
         }
         sx={{ textAlign: { xs: 'center', md: 'left' } }}
-      />
+      /> */}
 
       {!!errorMessage && (
         <Alert severity="error" sx={{ mb: 3 }}>
