@@ -1,6 +1,7 @@
 import type { IUserProfile } from 'src/types/agent';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
+import { toast } from 'sonner';
 
 type AgentResponse = {
   agents: IUserProfile[];
@@ -24,6 +25,7 @@ export const fetchAgents = async (
     return response.data;
   } catch (err) {
     console.error('Error fetching agents:', err);
+    toast.error('Error fetching agents!');
     throw err;
   }
 };

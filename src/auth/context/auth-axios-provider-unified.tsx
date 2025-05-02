@@ -1,7 +1,11 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
-import { authAxiosInstance, setAuthToken } from 'src/lib/axios-unified';
+import type { ReactNode} from 'react';
+
+import { useEffect } from 'react';
+
+import { setAuthToken } from 'src/lib/axios-unified';
+
 import { useAuthContext } from '../hooks/use-auth-context';
 
 // ----------------------------------------------------------------------

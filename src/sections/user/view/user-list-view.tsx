@@ -140,11 +140,10 @@ export function UserListView() {
     />
   );
   const fetchPaginatedAgents = useCallback(async () => {
-    // let data: response;
     try {
       const { agents, total } = await fetchAgents('all', table.page, table.rowsPerPage);
       setTableData(agents);
-      setTotalCount(total)
+      setTotalCount(total)      
     } catch (err) {
       console.error(err);
     }

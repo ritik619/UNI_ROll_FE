@@ -73,32 +73,14 @@ export const endpoints = {
   agents: {
     list: 'agents',
     details: (id: string) => `agents/${id}`,
+    profilePhoto: (id: string) => `agents/${id}/profile-photo`,
   },
   auth: {
     me: '/api/auth/me',
     signIn: '/api/auth/sign-in',
     signUp: '/api/auth/sign-up',
   },
-  // Include other endpoints from original file
-  chat: '/api/chat',
-  kanban: '/api/kanban',
-  calendar: '/api/calendar',
-  mail: {
-    list: '/api/mail/list',
-    details: '/api/mail/details',
-    labels: '/api/mail/labels',
-  },
-  post: {
-    list: '/api/post/list',
-    details: '/api/post/details',
-    latest: '/api/post/latest',
-    search: '/api/post/search',
-  },
-  product: {
-    list: '/api/product/list',
-    details: '/api/product/details',
-    search: '/api/product/search',
-  },
+
 };
 
 export default axiosInstance;

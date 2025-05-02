@@ -1,9 +1,9 @@
 import type { IUserItem } from 'src/types/agent';
 
 import { z as zod } from 'zod';
+import router from 'next/router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -14,29 +14,27 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import { Card, Grid2, Typography } from '@mui/material';
+
+import { paths } from 'src/routes/paths';
+
+import { fData } from 'src/utils/format-number';
 
 import { USER_STATUS_OPTIONS } from 'src/_mock';
+import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
-import { Grid2, Card, Typography } from '@mui/material';
-import { fData } from 'src/utils/format-number';
-import axios from 'axios';
-import router from 'next/router';
-import { paths } from 'src/routes/paths';
-
-import { useAuthContext } from 'src/auth/hooks';
-import { formatDateToDDMMYYYY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
 export type UserQuickEditSchemaType = zod.infer<typeof UserQuickEditSchema>;
 
 export const UserQuickEditSchema = zod.object({
-  avatarUrl: schemaHelper.file({ message: 'Avatar is required!' }),
-  fName: zod.string().min(1, { message: 'First Name is required!' }),
-  lName: zod.string().min(1, { message: 'Last Name is required!' }),
-  dob: zod.string().min(1, { message: 'Date of Birth is required!' }),
+  avatarUrl: schemaHelper.file().nullable().optional(),
+  firstName: zod.string().min(1, { message: 'First Name is required!' }),
+  lastName: zod.string().min(1, { message: 'Last Name is required!' }),
+  dateOfBirth: zod.string().min(1, { message: 'Date of Birth is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
@@ -57,7 +55,7 @@ export const UserQuickEditSchema = zod.object({
       message: 'Sort code must be exactly 6 digits!',
     }),
   utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
-  password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
+  // password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.string(),
 });
 
@@ -70,28 +68,30 @@ type Props = {
 };
 
 export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
-  const auth = useAuthContext();
-  const authToken = 'auth.accessToken';
   const defaultValues: UserQuickEditSchemaType = {
     status: '',
     avatarUrl: null,
-    fName: '',
-    lName: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    dob: '',
+    dateOfBirth: new Date().toString(),
     accountNumber: '',
     address: '',
     postCode: '',
     sortCode: '',
     utrNumber: '',
-    password: '',
+    // password: '',
   };
 
   const methods = useForm<UserQuickEditSchemaType>({
     mode: 'all',
     resolver: zodResolver(UserQuickEditSchema),
     defaultValues,
-    values: currentUser,
+    values: {
+      accountNumber: currentUser?.bankDetails?.accountNumber,
+      sortCode: currentUser?.bankDetails.sortCode,
+      ...currentUser,
+    },
   });
 
   const {
@@ -102,10 +102,10 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
 
   const updateAgent = async (data: UserQuickEditSchemaType) => {
     const payload = {
-      avatarUrl: data.avatarUrl ?? null,
-      firstName: data.fName.trim(),
-      lastName: data.lName.trim(),
-      dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
+      // avatarUrl: data.avatarUrl ?? null,
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
+      dateOfBirth: data.dateOfBirth,
       email: data.email.trim(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
@@ -114,25 +114,29 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
         sortCode: data.sortCode.trim(),
       },
       utrNumber: data.utrNumber.trim(),
-      password: data.password.trim(),
       status: 'active',
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const agentId = `pWTLPoAxrKPAPoRsUhMzpquxT2v2`;
+    const agentId = currentUser?.id;
     const apiUrl = `https://us-central1-uni-enroll-e95e7.cloudfunctions.net/api/agents/${agentId}`;
-    const response = await axios.put<{ id: string }>(apiUrl, payload, config);
-    const avatarAPIUrl = `http://us-central1-uni-enroll-e95e7.cloudfunctions.net/agent-endpoint/${agentId}/profile-photo" `;
-    const avtarResponse = await axios.put<{ id: string }>(avatarAPIUrl, payload.avatarUrl, config);
-    return [response.data, avtarResponse.data];
+    // const response = await authAxiosInstance.patch<{ id: string }>(apiUrl, payload);
+    // Then handle profile photo upload if available
+    if (data.avatarUrl && data.avatarUrl instanceof File) {
+      // Create FormData to match the FileInterceptor on the backend
+      const formData = new FormData();
+      formData.append('file', data.avatarUrl);
+      // Send the profile photo to the correct endpoint
+      await authAxiosInstance.post(endpoints.agents.profilePhoto(agentId || ''), formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    }
+    // return [response.data];
   };
 
   const onSubmit = handleSubmit(async (data) => {
+    console.log('onSubmit', data);
     try {
       await updateAgent(data);
       toast.success(currentUser ? 'Update success!' : 'Update error!');
@@ -194,9 +198,9 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
                 </MenuItem>
               ))}
             </Field.Select>
-            <Field.Text name="fName" label="First Name" />
-            <Field.Text name="lName" label="Last Name" />
-            <Field.DatePicker name="dob" label="Date of Birth" />
+            <Field.Text name="firstName" label="First Name" />
+            <Field.Text name="lastName" label="Last Name" />
+            <Field.DatePicker name="dateOfBirth" label="Date of Birth" />
             <Field.Text name="email" label="Email Address" />
             <Field.Text name="address" label="Address" />
             <Field.Text name="postCode" label="Post Code" />
@@ -221,7 +225,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
             </Grid2>
 
             <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
-            <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
+            {/* <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} /> */}
           </Box>
         </DialogContent>
 

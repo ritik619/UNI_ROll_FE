@@ -80,11 +80,13 @@ export type IUserItem = {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
+  bankDetails:{
+    sortCode: string;
+    accountNumber: string;
+  }
   email: string;
   address: string;
   postCode: string;
-  sortCode: string;
-  accountNumber: string;
   utrNumber: string;
   password: string;
   status: 'active' | 'inactive';

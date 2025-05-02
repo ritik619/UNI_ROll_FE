@@ -147,14 +147,14 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
 
         <TableCell>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {/* <Tooltip title="Quick Edit" placement="top" arrow>
+            <Tooltip title="Quick Edit" placement="top" arrow>
               <IconButton
                 color={quickEditForm.value ? 'inherit' : 'default'}
                 onClick={quickEditForm.onTrue}
               >
                 <Iconify icon="solar:pen-bold" />
               </IconButton>
-            </Tooltip> */}
+            </Tooltip>
 
             <IconButton
               color={menuActions.open ? 'inherit' : 'default'}
@@ -166,7 +166,7 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
         </TableCell>
       </TableRow>
 
-      {/* {renderQuickEditForm()} */}
+      {renderQuickEditForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}
     </>
