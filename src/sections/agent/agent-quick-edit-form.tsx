@@ -67,7 +67,7 @@ type Props = {
   currentUser?: IUserItem;
 };
 
-export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
+export function AgentQuickEditForm({ currentUser, open, onClose }: Props) {
   const defaultValues: UserQuickEditSchemaType = {
     status: '',
     avatarUrl: null,

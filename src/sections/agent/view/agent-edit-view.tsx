@@ -1,29 +1,36 @@
 'use client';
 
+import type { IUserItem } from 'src/types/agent';
+
 import { paths } from 'src/routes/paths';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserNewEditForm } from '../user-new-edit-form';
+import { UserNewEditForm } from '../agent-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserCreateView() {
+type Props = {
+  user?: IUserItem;
+};
+
+export function AgentEditView({ user: currentUser }: Props) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading="Edit"
+        backHref={paths.dashboard.agent.list}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Agent', href: paths.dashboard.agent.root },
-          { name: 'New Agent' },
+          { name: 'User', href: paths.dashboard.agent.root },
+          { name: currentUser?.fName },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm />
+      <UserNewEditForm currentUser={currentUser} />
     </DashboardContent>
   );
 }

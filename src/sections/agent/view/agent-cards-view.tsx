@@ -11,11 +11,11 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserCardList } from '../user-card-list';
+import { UserCardList } from '../agent-card-list';
 
 // ----------------------------------------------------------------------
 
-export function UserCardsView() {
+export function AgentCardsView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs

@@ -61,7 +61,7 @@ type Props = {
   currentUser?: IUserItem;
 };
 
-export function UserNewEditForm({ currentUser }: Props) {
+export function AgentNewEditForm({ currentUser }: Props) {
   const router = useRouter();
   const auth = useAuthContext();
   const authToken = auth.user?.accessToken;

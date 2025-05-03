@@ -1,9 +1,9 @@
-export * from './user-edit-view';
+export * from './agent-edit-view';
 
-export * from './user-list-view';
+export * from './agent-list-view';
 
-export * from './user-cards-view';
+export * from './agent-cards-view';
 
-export * from './user-create-view';
+export * from './agent-create-view';
 
-export * from './user-profile-view';
+export * from './agent-profile-view';

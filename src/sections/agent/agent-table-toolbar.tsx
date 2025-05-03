@@ -30,7 +30,7 @@ type Props = {
   };
 };
 
-export function UserTableToolbar({ filters, options, onResetPage }: Props) {
+export function AgentTableToolbar({ filters, options, onResetPage }: Props) {
   const menuActions = usePopover();
 
   const { state: currentFilters, setState: updateFilters } = filters;

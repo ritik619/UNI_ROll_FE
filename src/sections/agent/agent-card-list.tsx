@@ -5,7 +5,7 @@ import { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 
-import { UserCard } from './user-card';
+import { UserCard } from './agent-card';
 
 // ----------------------------------------------------------------------
 

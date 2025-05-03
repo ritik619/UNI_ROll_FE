@@ -44,8 +44,8 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { UserTableRow } from '../user-table-row';
-import { UserTableFiltersResult } from '../user-table-filters-result';
+import { AgentTableRow } from '../agent-table-row';
+import { AgentTableFiltersResult } from '../agent-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ const TABLE_HEAD: TableHeadCellProps[] = [
 
 // ----------------------------------------------------------------------
 
-export function UserListView() {
+export function AgentListView() {
   const table = useTable();
 
   const confirmDialog = useBoolean();
@@ -233,14 +233,14 @@ export function UserListView() {
             ))}
           </Tabs>
 
-          {/* <UserTableToolbar
+          {/* <AgentTableToolbar
             filters={filters}
             onResetPage={table.onResetPage}
             options={{ roles: _roles }}
           /> */}
 
           {canReset && (
-            <UserTableFiltersResult
+            <AgentTableFiltersResult
               filters={filters}
               totalResults={dataFiltered.length}
               onResetPage={table.onResetPage}
@@ -296,7 +296,7 @@ export function UserListView() {
                           table.page * table.rowsPerPage + table.rowsPerPage
                         )
                         .map((row) => (
-                          <UserTableRow
+                          <AgentTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(row.id)}

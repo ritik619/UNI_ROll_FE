@@ -21,7 +21,7 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
-import { UserQuickEditForm } from './user-quick-edit-form';
+import { AgentQuickEditForm } from './agent-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
@@ -34,13 +34,13 @@ type Props = {
   onToggleStatus?: (id: string, status: string) => void;
 };
 
-export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus }: Props) {
+export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus }: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
 
   const renderQuickEditForm = () => (
-    <UserQuickEditForm
+    <AgentQuickEditForm
       currentUser={row}
       open={quickEditForm.value}
       onClose={quickEditForm.onFalse}

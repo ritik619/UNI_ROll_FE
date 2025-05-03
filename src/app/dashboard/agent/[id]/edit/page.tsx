@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { CONFIG } from 'src/global-config';
 import { _userList } from 'src/_mock/_user';
 
-import { UserEditView } from 'src/sections/agent/view';
+import { AgentEditView } from 'src/sections/agent/view';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +18,7 @@ export default function Page({ params }: Props) {
 
   const currentUser = _userList.find((user) => user.id === id);
 
-  return <UserEditView user={currentUser} />;
+  return <AgentEditView user={currentUser} />;
 }
 
 // ----------------------------------------------------------------------
