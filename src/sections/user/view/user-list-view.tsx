@@ -38,6 +38,7 @@ import {
   getComparator,
   TableEmptyRows,
   TableHeadCustom,
+  TableSkeleton,
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
@@ -64,7 +65,7 @@ export function UserListView() {
   const table = useTable();
 
   const confirmDialog = useBoolean();
-
+  const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<IUserItem[]>([]);
   const [totalCount,setTotalCount]=useState(0)
 
@@ -141,13 +142,16 @@ export function UserListView() {
   );
   const fetchPaginatedAgents = useCallback(async () => {
     try {
+      setLoading(true);
       const { agents, total } = await fetchAgents('all', table.page, table.rowsPerPage);
       setTableData(agents);
-      setTotalCount(total)      
+      setTotalCount(total);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
-  }, [table.page,table.rowsPerPage]);
+  }, [table.page, table.rowsPerPage]);
 
   useEffect(() => {
     // table.setRowsPerPage(2);
@@ -266,28 +270,34 @@ export function UserListView() {
                 />
 
                 <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <UserTableRow
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        editHref={paths.dashboard.agent.edit(row.id)}
+                  {loading ? (
+                    <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
+                  ) : (
+                    <>
+                      {dataFiltered
+                        .slice(
+                          table.page * table.rowsPerPage,
+                          table.page * table.rowsPerPage + table.rowsPerPage
+                        )
+                        .map((row) => (
+                          <UserTableRow
+                            key={row.id}
+                            row={row}
+                            selected={table.selected.includes(row.id)}
+                            onSelectRow={() => table.onSelectRow(row.id)}
+                            onDeleteRow={() => handleDeleteRow(row.id)}
+                            editHref={paths.dashboard.agent.edit(row.id)}
+                          />
+                        ))}
+
+                      <TableEmptyRows
+                        height={table.dense ? 56 : 56 + 20}
+                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                       />
-                    ))}
 
-                  <TableEmptyRows
-                    height={table.dense ? 56 : 56 + 20}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                  />
-
-                  <TableNoData notFound={notFound} />
+                      <TableNoData notFound={notFound && !loading} />
+                    </>
+                  )}
                 </TableBody>
                 {/* <TableFooter style={{backgroundColor:'yellow',flex:1,}}>
                   <TableRow >
@@ -319,9 +329,10 @@ export function UserListView() {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onChangeDense={table.onChangeDense}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            onPageChange={loading ? () => {} : table.onChangePage}
+            onChangeDense={loading ? () => {} : table.onChangeDense}
+            onRowsPerPageChange={loading ? () => {} : table.onChangeRowsPerPage}
+            sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>
       </DashboardContent>
