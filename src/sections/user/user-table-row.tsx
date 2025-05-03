@@ -32,9 +32,10 @@ type Props = {
   editHref: string;
   onSelectRow: () => void;
   onDeleteRow: () => void;
+  onToggleStatus?: (id: string, status: string) => void;
 };
 
-export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow }: Props) {
+export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus }: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
@@ -56,11 +57,25 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
     >
       <MenuList>
         <li>
-          <MenuItem component={RouterLink} href={editHref} onClick={() => menuActions.onClose()}>
+          <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
         </li>
+
+        <MenuItem
+          onClick={() => {
+            if (onToggleStatus) {
+              const newStatus = row.status === 'active' ? 'inactive' : 'active';
+              onToggleStatus(row.id, newStatus);
+            }
+            menuActions.onClose();
+          }}
+          sx={{ color: row.status === 'active' ? 'warning.main' : 'success.main' }}
+        >
+          <Iconify icon={row.status === 'active' ? "material-symbols:toggle-off" : "material-symbols:toggle-on"} />
+          {row.status === 'active' ? 'Deactivate' : 'Activate'}
+        </MenuItem>
 
         <MenuItem
           onClick={() => {
@@ -147,14 +162,14 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
 
         <TableCell>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title="Quick Edit" placement="top" arrow>
+            {/* <Tooltip title="Quick Edit" placement="top" arrow>
               <IconButton
                 color={quickEditForm.value ? 'inherit' : 'default'}
                 onClick={quickEditForm.onTrue}
               >
                 <Iconify icon="solar:pen-bold" />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
 
             <IconButton
               color={menuActions.open ? 'inherit' : 'default'}

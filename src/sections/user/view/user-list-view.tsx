@@ -23,6 +23,7 @@ import { RouterLink } from 'src/routes/components';
 import { USER_STATUS_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { fetchAgents } from 'src/services/agents/fetchAgents';
+import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -36,9 +37,9 @@ import {
   rowInPage,
   TableNoData,
   getComparator,
+  TableSkeleton,
   TableEmptyRows,
   TableHeadCustom,
-  TableSkeleton,
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
@@ -67,7 +68,7 @@ export function UserListView() {
   const confirmDialog = useBoolean();
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<IUserItem[]>([]);
-  const [totalCount,setTotalCount]=useState(0)
+  const [totalCount, setTotalCount] = useState(0);
 
   const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
@@ -96,6 +97,23 @@ export function UserListView() {
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
     [dataInPage.length, table, tableData]
+  );
+
+  const handleToggleStatus = useCallback(
+    async (id: string, newStatus: 'active' | 'inactive') => {
+      // Here you would typically call an API to update the status
+      await authAxiosInstance.patch(endpoints.agents.status(id), {
+        status: newStatus,
+      });
+      // For now, we'll just update it locally
+      const updatedData = tableData.map((row) =>
+        row.id === id ? { ...row, status: newStatus } : row
+      );
+
+      setTableData(updatedData);
+      toast.success(`Status updated to ${newStatus}!`);
+    },
+    [tableData]
   );
 
   const handleDeleteRows = useCallback(() => {
@@ -158,8 +176,6 @@ export function UserListView() {
     fetchPaginatedAgents();
   }, [fetchPaginatedAgents]);
 
-
-
   return (
     <>
       <DashboardContent>
@@ -208,7 +224,7 @@ export function UserListView() {
                     }
                     color={(tab.value === 'Active' && 'success') || 'default'}
                   >
-                    {['Active', 'Inactive'].includes(tab.value)
+                    {['active', 'inactive'].includes(tab.value)
                       ? tableData.filter((user) => user.status === tab.value).length
                       : tableData.length}
                   </Label>
@@ -286,6 +302,7 @@ export function UserListView() {
                             selected={table.selected.includes(row.id)}
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}
+                            onToggleStatus={handleToggleStatus}
                             editHref={paths.dashboard.agent.edit(row.id)}
                           />
                         ))}
