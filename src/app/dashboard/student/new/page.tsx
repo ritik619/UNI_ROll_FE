@@ -2,12 +2,12 @@ import type { Metadata } from 'next';
 
 import { CONFIG } from 'src/global-config';
 
-import { UserListView } from 'src/sections/agent/view';
+import { StudentCreateView } from 'src/sections/agent/view';
 
 // ----------------------------------------------------------------------
 
-export const metadata: Metadata = { title: `User list | Dashboard - ${CONFIG.appName}` };
+export const metadata: Metadata = { title: `Create a Student | Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
-  return <UserListView />;
+  return <StudentCreateView />;
 }

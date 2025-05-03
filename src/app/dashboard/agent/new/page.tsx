@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 import { CONFIG } from 'src/global-config';
 
-import { UserCreateView } from 'src/sections/user/view';
+import { UserCreateView } from 'src/sections/agent/view';
 
 // ----------------------------------------------------------------------
 
