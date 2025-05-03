@@ -8,7 +8,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserNewEditForm } from '../agent-new-edit-form';
+import { AgentNewEditForm } from '../agent-new-edit-form';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ export function AgentEditView({ user: currentUser }: Props) {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm currentUser={currentUser} />
+      <AgentNewEditForm currentUser={currentUser} />
     </DashboardContent>
   );
 }

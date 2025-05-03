@@ -6,7 +6,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserNewEditForm } from '../agent-new-edit-form';
+import { AgentNewEditForm } from '../agent-new-edit-form';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ export function AgentCreateView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm />
+      <AgentNewEditForm />
     </DashboardContent>
   );
 }
