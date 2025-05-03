@@ -117,16 +117,18 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
       status: 'active',
     };
 
-    const agentId = currentUser?.id;
-    const apiUrl = `https://us-central1-uni-enroll-e95e7.cloudfunctions.net/api/agents/${agentId}`;
-    // const response = await authAxiosInstance.patch<{ id: string }>(apiUrl, payload);
+    const uId = currentUser?.id || '';
+    const response = await authAxiosInstance.patch<{ id: string }>(
+      endpoints.agents.details(uId),
+      payload
+    );
     // Then handle profile photo upload if available
     if (data.avatarUrl && data.avatarUrl instanceof File) {
       // Create FormData to match the FileInterceptor on the backend
       const formData = new FormData();
       formData.append('file', data.avatarUrl);
       // Send the profile photo to the correct endpoint
-      await authAxiosInstance.post(endpoints.agents.profilePhoto(agentId || ''), formData, {
+      await authAxiosInstance.post(endpoints.agents.profilePhoto(uId), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
