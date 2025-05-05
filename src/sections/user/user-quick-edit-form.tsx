@@ -160,9 +160,10 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
 
       <Form methods={methods} onSubmit={onSubmit}>
         <DialogContent>
+          {currentUser?.status==='inactive'&&
           <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
             Account is waiting for confirmation
-          </Alert>
+          </Alert>}
           <Box sx={{ mb: 5 }}>
             <Field.UploadAvatar
               name="avatarUrl"

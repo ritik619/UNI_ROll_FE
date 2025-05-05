@@ -5,6 +5,7 @@
 const isStaticExport = 'false';
 
 const nextConfig = {
+  // TODO
   typescript: {
     ignoreBuildErrors: true,
   },
