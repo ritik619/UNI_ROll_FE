@@ -10,6 +10,7 @@ import { primary } from 'src/theme/core/palette';
 import { LocalizationProvider } from 'src/locales';
 import { themeConfig, ThemeProvider } from 'src/theme';
 
+import { Snackbar } from 'src/components/snackbar';
 import { ProgressBar } from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { detectSettings } from 'src/components/settings/server';
@@ -83,6 +84,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                   >
                     <MotionLazy>
                       <ProgressBar />
+                      <Snackbar />
                       <SettingsDrawer defaultSettings={defaultSettings} />
                       {children}
                     </MotionLazy>

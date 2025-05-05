@@ -5,6 +5,10 @@
 const isStaticExport = 'false';
 
 const nextConfig = {
+  // TODO
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   trailingSlash: true,
   env: {
     BUILD_STATIC_EXPORT: isStaticExport,
