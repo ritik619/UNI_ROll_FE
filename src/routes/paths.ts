@@ -53,14 +53,19 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/agent`,
       new: `${ROOTS.DASHBOARD}/agent/new`,
       list: `${ROOTS.DASHBOARD}/agent/list`,
-      // cards: `${ROOTS.DASHBOARD}/agent/cards`,
+      cards: `${ROOTS.DASHBOARD}/agent/cards`,
       profile: `${ROOTS.DASHBOARD}/agent/profile`,
       // account: `${ROOTS.DASHBOARD}/agent/account`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/agent/${id}/edit`,
     },
 
     students: `${ROOTS.DASHBOARD}/students`,
-    universitiesAndCourses: `${ROOTS.DASHBOARD}/universities-&-courses`,
+    universitiesAndCourses: {
+      root: `${ROOTS.DASHBOARD}/universities-&-courses`,
+      list: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
+      new: `${ROOTS.DASHBOARD}/universities-&-courses/new`,
+      
+    },
     intakes: `${ROOTS.DASHBOARD}/intakes`,
     earningsoverview: `${ROOTS.DASHBOARD}/earnings-overview`,
   },

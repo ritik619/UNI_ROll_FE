@@ -54,9 +54,9 @@ export const navData: NavSectionProps['data'] = [
         icon: ICONS.agent,
         children: [
           // { title: 'Profile', path: paths.dashboard.agent.root },
-          // { title: 'Cards', path: paths.dashboard.agent.cards },
           { title: 'Add', path: paths.dashboard.agent.new },
           { title: 'List', path: paths.dashboard.agent.list },
+          // { title: 'Cards', path: paths.dashboard.agent.cards },
           // { title: 'Edit', path: paths.dashboard.agent.demo.edit },
           // { title: 'Account', path: paths.dashboard.agent.account },
         ],
@@ -68,8 +68,12 @@ export const navData: NavSectionProps['data'] = [
       },
       {
         title: 'Universities & Courses',
-        path: paths.dashboard.universitiesAndCourses,
+        path: paths.dashboard.universitiesAndCourses.list,
         icon: ICONS.course,
+        children: [
+          { title: 'List', path: paths.dashboard.universitiesAndCourses.list },
+          { title: 'Add', path: paths.dashboard.universitiesAndCourses.new },
+        ],
       },
       { title: 'Intakes', path: paths.dashboard.intakes, icon: ICONS.calendar },
       {

@@ -12,12 +12,12 @@ import { RouterLink } from 'src/routes/components';
 import { usePathname, useSearchParams } from 'src/routes/hooks';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } from 'src/_mock';
+import { _agentAbout, _agentFeeds, _agentFriends, _agentGallery, _agentFollowers } from 'src/_mock';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useMockedAgent } from 'src/auth/hooks';
 
 import { ProfileHome } from '../profile-home';
 import { ProfileCover } from '../profile-cover';
@@ -31,7 +31,7 @@ const NAV_ITEMS = [
   {
     value: '',
     label: 'Profile',
-    icon: <Iconify width={24} icon="solar:user-id-bold" />,
+    icon: <Iconify width={24} icon="solar:agent-id-bold" />,
   },
   {
     value: 'followers',
@@ -41,7 +41,7 @@ const NAV_ITEMS = [
   {
     value: 'friends',
     label: 'Friends',
-    icon: <Iconify width={24} icon="solar:users-group-rounded-bold" />,
+    icon: <Iconify width={24} icon="solar:agents-group-rounded-bold" />,
   },
   {
     value: 'gallery',
@@ -54,12 +54,12 @@ const NAV_ITEMS = [
 
 const TAB_PARAM = 'tab';
 
-export function UserProfileView() {
+export function AgentProfileView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const selectedTab = searchParams.get(TAB_PARAM) ?? '';
 
-  const { user } = useMockedUser();
+  const { agent } = useMockedAgent();
 
   const [searchFriends, setSearchFriends] = useState('');
 
@@ -79,17 +79,17 @@ export function UserProfileView() {
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Agent', href: paths.dashboard.agent.root },
-          { name: user?.displayName },
+          { name: agent?.displayName },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Card sx={{ mb: 3, height: 290 }}>
         <ProfileCover
-          role={_userAbout.role}
-          name={user?.displayName}
-          avatarUrl={user?.photoURL}
-          coverUrl={_userAbout.coverUrl}
+          role={_agentAbout.role}
+          name={agent?.displayName}
+          avatarUrl={agent?.photoURL}
+          coverUrl={_agentAbout.coverUrl}
         />
 
         <Box
@@ -119,19 +119,19 @@ export function UserProfileView() {
         </Box>
       </Card>
 
-      {selectedTab === '' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
+      {selectedTab === '' && <ProfileHome info={_agentAbout} posts={_agentFeeds} />}
 
-      {selectedTab === 'followers' && <ProfileFollowers followers={_userFollowers} />}
+      {selectedTab === 'followers' && <ProfileFollowers followers={_agentFollowers} />}
 
       {selectedTab === 'friends' && (
         <ProfileFriends
-          friends={_userFriends}
+          friends={_agentFriends}
           searchFriends={searchFriends}
           onSearchFriends={handleSearchFriends}
         />
       )}
 
-      {selectedTab === 'gallery' && <ProfileGallery gallery={_userGallery} />}
+      {selectedTab === 'gallery' && <ProfileGallery gallery={_agentGallery} />}
     </DashboardContent>
   );
 }

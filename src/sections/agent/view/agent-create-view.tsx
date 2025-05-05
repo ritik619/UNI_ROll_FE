@@ -14,7 +14,7 @@ export function AgentCreateView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading="Create a new agent"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Agent', href: paths.dashboard.agent.root },

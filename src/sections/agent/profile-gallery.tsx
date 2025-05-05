@@ -1,4 +1,4 @@
-import type { IUserProfileGallery } from 'src/types/agent';
+import type { IAgentProfileGallery } from 'src/types/agent';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -15,7 +15,7 @@ import { Lightbox, useLightBox } from 'src/components/lightbox';
 // ----------------------------------------------------------------------
 
 type Props = {
-  gallery: IUserProfileGallery[];
+  gallery: IAgentProfileGallery[];
 };
 
 export function ProfileGallery({ gallery }: Props) {

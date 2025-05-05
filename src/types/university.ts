@@ -2,20 +2,20 @@ import type { IDateValue, ISocialLink } from './common';
 
 // ----------------------------------------------------------------------
 
-export type IAgentTableFilters = {
+export type IUserTableFilters = {
   name: string;
   role: string[];
   status: string;
 };
 
-export type IAgentProfileCover = {
+export type IUserProfileCover = {
   name: string;
   role: string;
   coverUrl: string;
   avatarUrl: string;
 };
 
-export type IAgentProfile = {
+export type IUserProfile = {
   id: string;
   role: string;
   quote: string;
@@ -28,28 +28,28 @@ export type IAgentProfile = {
   socialLinks: ISocialLink;
 };
 
-export type IAgentProfileFollower = {
+export type IUserProfileFollower = {
   id: string;
   name: string;
   country: string;
   avatarUrl: string;
 };
 
-export type IAgentProfileGallery = {
+export type IUserProfileGallery = {
   id: string;
   title: string;
   imageUrl: string;
   postedAt: IDateValue;
 };
 
-export type IAgentProfileFriend = {
+export type IUserProfileFriend = {
   id: string;
   name: string;
   role: string;
   avatarUrl: string;
 };
 
-export type IAgentProfilePost = {
+export type IUserProfilePost = {
   id: string;
   media: string;
   message: string;
@@ -63,7 +63,7 @@ export type IAgentProfilePost = {
   }[];
 };
 
-export type IAgentCard = {
+export type IUserCard = {
   id: string;
   name: string;
   role: string;
@@ -74,7 +74,7 @@ export type IAgentCard = {
   totalFollowing: number;
 };
 
-export type IAgentItem = {
+export type IUserItem = {
   id: string;
   avatarUrl: string | File | null;
   firstName: string;
@@ -92,7 +92,7 @@ export type IAgentItem = {
   status: 'active' | 'inactive';
 };
 
-export type IAgentAccountBillingHistory = {
+export type IUserAccountBillingHistory = {
   id: string;
   price: number;
   invoiceNumber: string;

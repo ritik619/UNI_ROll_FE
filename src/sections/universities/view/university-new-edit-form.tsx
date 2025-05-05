@@ -1,4 +1,6 @@
-import type { IAgentItem } from 'src/types/agent';
+'use client';
+
+import type { IUserItem } from 'src/types/agent';
 
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -21,9 +23,11 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 
+import { useAuthContext } from 'src/auth/hooks';
+
 // ----------------------------------------------------------------------
 
-export const NewAgentSchema = zod.object({
+export const NewUniversitySchema = zod.object({
   fName: zod.string().min(1, { message: 'First Name is required!' }),
   lName: zod.string().min(1, { message: 'Last Name is required!' }),
   dob: zod.string().min(1, { message: 'Date of Birth is required!' }),
@@ -51,18 +55,20 @@ export const NewAgentSchema = zod.object({
   status: zod.enum(['active', 'inactive']).optional(),
 });
 
-export type NewAgentSchemaType = zod.infer<typeof NewAgentSchema>;
+export type NewUniversitySchemaType = zod.infer<typeof NewUniversitySchema>;
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  currentAgent?: IAgentItem;
+  currentUniversity?: IUserItem;
 };
 
-export function AgentNewEditForm({ currentAgent }: Props) {
+export function UniversityNewEditForm({ currentUniversity }: Props) {
   const router = useRouter();
+  const auth = useAuthContext();
+  const authToken = auth.user?.accessToken;
 
-  const defaultValues: NewAgentSchemaType = {
+  const defaultValues: NewUniversitySchemaType = {
     fName: '',
     lName: '',
     email: '',
@@ -75,11 +81,11 @@ export function AgentNewEditForm({ currentAgent }: Props) {
     password: '',
   };
 
-  const methods = useForm<NewAgentSchemaType>({
+  const methods = useForm<NewUniversitySchemaType>({
     mode: 'onSubmit',
-    resolver: zodResolver(NewAgentSchema),
+    resolver: zodResolver(NewUniversitySchema),
     defaultValues,
-    values: currentAgent,
+    values: currentUniversity,
   });
 
   const {
@@ -87,7 +93,7 @@ export function AgentNewEditForm({ currentAgent }: Props) {
     formState: { isSubmitting },
   } = methods;
 
-  const createAgent = async (data: NewAgentSchemaType) => {
+  const createAgent = async (data: NewUniversitySchemaType) => {
     const payload = {
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
@@ -111,7 +117,7 @@ export function AgentNewEditForm({ currentAgent }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await createAgent(data);
-      toast.success(currentAgent ? 'Update success!' : 'Create success!');
+      toast.success(currentUniversity ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.agent.list);
     } catch (error: any) {
       console.error(error);
@@ -163,7 +169,7 @@ export function AgentNewEditForm({ currentAgent }: Props) {
 
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentAgent ? 'Create agent' : 'Save changes'}
+                {!currentUniversity ? 'Create user' : 'Save changes'}
               </LoadingButton>
             </Stack>
           </Card>

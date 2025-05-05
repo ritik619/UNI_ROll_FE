@@ -43,9 +43,9 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
+import { AgentTableRow } from 'src/sections/agent/agent-table-row';
+import { AgentTableFiltersResult } from 'src/sections/agent/agent-table-filters-result';
 
-import { AgentTableRow } from '../agent-table-row';
-import { AgentTableFiltersResult } from '../agent-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ const TABLE_HEAD: TableHeadCellProps[] = [
 
 // ----------------------------------------------------------------------
 
-export function AgentListView() {
+export function UniversitytListView() {
   const table = useTable();
 
   const confirmDialog = useBoolean();

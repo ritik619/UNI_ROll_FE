@@ -1,6 +1,6 @@
 'use client';
 
-import type { IUserItem } from 'src/types/agent';
+import type { IAgentItem } from 'src/types/agent';
 
 import { paths } from 'src/routes/paths';
 
@@ -13,10 +13,10 @@ import { AgentNewEditForm } from '../agent-new-edit-form';
 // ----------------------------------------------------------------------
 
 type Props = {
-  user?: IUserItem;
+  agent?: IAgentItem;
 };
 
-export function AgentEditView({ user: currentUser }: Props) {
+export function AgentEditView({ agent: currentAgent }: Props) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
@@ -24,13 +24,13 @@ export function AgentEditView({ user: currentUser }: Props) {
         backHref={paths.dashboard.agent.list}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.agent.root },
-          { name: currentUser?.fName },
+          { name: 'Agent', href: paths.dashboard.agent.root },
+          { name: currentAgent?.firstName },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <AgentNewEditForm currentUser={currentUser} />
+      <AgentNewEditForm currentAgent={currentAgent} />
     </DashboardContent>
   );
 }

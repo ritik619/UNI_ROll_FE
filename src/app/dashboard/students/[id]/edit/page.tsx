@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { CONFIG } from 'src/global-config';
 import { _userList } from 'src/_mock/_user';
 
-import { UserEditView } from 'src/sections/agent/view';
+import { UserEditView } from 'src/sections/student/view';
 
 // ----------------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-import type { IUserProfilePost } from 'src/types/agent';
+import type { IAgentProfilePost } from 'src/types/agent';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useRef, useState, useCallback } from 'react';
@@ -24,16 +24,16 @@ import { fShortenNumber } from 'src/utils/format-number';
 import { Image } from 'src/components/image';
 import { Iconify } from 'src/components/iconify';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useMockedAgent } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  post: IUserProfilePost;
+  post: IAgentProfilePost;
 };
 
 export function ProfilePostItem({ post }: Props) {
-  const { user } = useMockedUser();
+  const { agent } = useMockedAgent();
 
   const commentRef = useRef<HTMLInputElement>(null);
 
@@ -61,13 +61,13 @@ export function ProfilePostItem({ post }: Props) {
     <CardHeader
       disableTypography
       avatar={
-        <Avatar src={user?.photoURL} alt={user?.displayName}>
-          {user?.displayName?.charAt(0).toUpperCase()}
+        <Avatar src={agent?.photoURL} alt={agent?.displayName}>
+          {agent?.displayName?.charAt(0).toUpperCase()}
         </Avatar>
       }
       title={
         <Link color="inherit" variant="subtitle1">
-          {user?.displayName}
+          {agent?.displayName}
         </Link>
       }
       subheader={
@@ -124,8 +124,8 @@ export function ProfilePostItem({ post }: Props) {
         }),
       ]}
     >
-      <Avatar src={user?.photoURL} alt={user?.displayName}>
-        {user?.displayName?.charAt(0).toUpperCase()}
+      <Avatar src={agent?.photoURL} alt={agent?.displayName}>
+        {agent?.displayName?.charAt(0).toUpperCase()}
       </Avatar>
 
       <InputBase

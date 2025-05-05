@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/agent';
+import type { IAgentItem } from 'src/types/agent';
 
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
 
@@ -26,7 +26,7 @@ import { AgentQuickEditForm } from './agent-quick-edit-form';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IUserItem;
+  row: IAgentItem;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -41,7 +41,7 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
 
   const renderQuickEditForm = () => (
     <AgentQuickEditForm
-      currentUser={row}
+      currentAgent={row}
       open={quickEditForm.value}
       onClose={quickEditForm.onFalse}
     />
@@ -124,14 +124,14 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
             <Avatar alt={row.firstName} src={row?.avatarUrl} />
 
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-              <Link
+              {/* <Link
                 component={RouterLink}
                 href={editHref}
                 color="inherit"
                 sx={{ cursor: 'pointer' }}
-              >
+              > */}
                 {row.firstName} {row.lastName}
-              </Link>
+              {/* </Link> */}
               <Box component="span" sx={{ color: 'text.disabled' }}>
                 {row.email}
               </Box>

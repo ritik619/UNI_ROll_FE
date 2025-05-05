@@ -1,4 +1,4 @@
-import type { IUserTableFilters } from 'src/types/agent';
+import type { IAgentTableFilters } from 'src/types/agent';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
 import type { FiltersResultProps } from 'src/components/filters-result';
 
@@ -12,7 +12,7 @@ import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-r
 
 type Props = FiltersResultProps & {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IUserTableFilters>;
+  filters: UseSetStateReturn<IAgentTableFilters>;
 };
 
 export function AgentTableFiltersResult({ filters, onResetPage, totalResults, sx }: Props) {

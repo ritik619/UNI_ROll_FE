@@ -5,13 +5,13 @@ import Button from '@mui/material/Button';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import { _userCards } from 'src/_mock';
+import { _agentCards } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserCardList } from '../agent-card-list';
+import { AgentCardList } from '../agent-card-list';
 
 // ----------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ export function AgentCardsView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="User cards"
+        heading="Agent cards"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Agent', href: paths.dashboard.agent.root },
@@ -32,13 +32,13 @@ export function AgentCardsView() {
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New user
+            New agent
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserCardList users={_userCards} />
+      <AgentCardList agents={_agentCards} />
     </DashboardContent>
   );
 }

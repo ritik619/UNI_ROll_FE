@@ -1,4 +1,4 @@
-import type { IUserTableFilters } from 'src/types/agent';
+import type { IAgentTableFilters } from 'src/types/agent';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
 
@@ -24,7 +24,7 @@ import { CustomPopover } from 'src/components/custom-popover';
 
 type Props = {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IUserTableFilters>;
+  filters: UseSetStateReturn<IAgentTableFilters>;
   options: {
     roles: string[];
   };

@@ -1,4 +1,4 @@
-import type { IUserProfileFriend } from 'src/types/agent';
+import type { IAgentProfileFriend } from 'src/types/agent';
 
 import { usePopover } from 'minimal-shared/hooks';
 
@@ -24,7 +24,7 @@ import { SearchNotFound } from 'src/components/search-not-found';
 
 type Props = {
   searchFriends: string;
-  friends: IUserProfileFriend[];
+  friends: IAgentProfileFriend[];
   onSearchFriends: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -89,7 +89,7 @@ export function ProfileFriends({ friends, searchFriends, onSearchFriends }: Prop
 // ----------------------------------------------------------------------
 
 type FriendCardProps = {
-  item: IUserProfileFriend;
+  item: IAgentProfileFriend;
 };
 
 function FriendCard({ item }: FriendCardProps) {
@@ -176,7 +176,7 @@ function FriendCard({ item }: FriendCardProps) {
 
 type ApplyFilterProps = {
   query: string;
-  inputData: IUserProfileFriend[];
+  inputData: IAgentProfileFriend[];
 };
 
 function applyFilter({ inputData, query }: ApplyFilterProps) {

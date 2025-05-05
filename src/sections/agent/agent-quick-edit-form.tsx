@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/agent';
+import type { IAgentItem } from 'src/types/agent';
 
 import { z as zod } from 'zod';
 import router from 'next/router';
@@ -28,9 +28,9 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export type UserQuickEditSchemaType = zod.infer<typeof UserQuickEditSchema>;
+export type AgentQuickEditSchemaType = zod.infer<typeof AgentQuickEditSchema>;
 
-export const UserQuickEditSchema = zod.object({
+export const AgentQuickEditSchema = zod.object({
   avatarUrl: schemaHelper.file().nullable().optional(),
   firstName: zod.string().min(1, { message: 'First Name is required!' }),
   lastName: zod.string().min(1, { message: 'Last Name is required!' }),
@@ -64,11 +64,11 @@ export const UserQuickEditSchema = zod.object({
 type Props = {
   open: boolean;
   onClose: () => void;
-  currentUser?: IUserItem;
+  currentAgent?: IAgentItem;
 };
 
-export function AgentQuickEditForm({ currentUser, open, onClose }: Props) {
-  const defaultValues: UserQuickEditSchemaType = {
+export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
+  const defaultValues: AgentQuickEditSchemaType = {
     status: '',
     avatarUrl: null,
     firstName: '',
@@ -83,14 +83,14 @@ export function AgentQuickEditForm({ currentUser, open, onClose }: Props) {
     // password: '',
   };
 
-  const methods = useForm<UserQuickEditSchemaType>({
+  const methods = useForm<AgentQuickEditSchemaType>({
     mode: 'all',
-    resolver: zodResolver(UserQuickEditSchema),
+    resolver: zodResolver(AgentQuickEditSchema),
     defaultValues,
     values: {
-      accountNumber: currentUser?.bankDetails?.accountNumber,
-      sortCode: currentUser?.bankDetails.sortCode,
-      ...currentUser,
+      accountNumber: currentAgent?.bankDetails?.accountNumber,
+      sortCode: currentAgent?.bankDetails.sortCode,
+      ...currentAgent,
     },
   });
 
@@ -100,7 +100,7 @@ export function AgentQuickEditForm({ currentUser, open, onClose }: Props) {
     formState: { isSubmitting },
   } = methods;
 
-  const updateAgent = async (data: UserQuickEditSchemaType) => {
+  const updateAgent = async (data: AgentQuickEditSchemaType) => {
     const payload = {
       // avatarUrl: data.avatarUrl ?? null,
       firstName: data.firstName.trim(),
@@ -117,7 +117,7 @@ export function AgentQuickEditForm({ currentUser, open, onClose }: Props) {
       status: 'active',
     };
 
-    const uId = currentUser?.id || '';
+    const uId = currentAgent?.id || '';
     const response = await authAxiosInstance.patch<{ id: string }>(
       endpoints.agents.details(uId),
       payload
@@ -141,7 +141,7 @@ export function AgentQuickEditForm({ currentUser, open, onClose }: Props) {
     console.log('onSubmit', data);
     try {
       await updateAgent(data);
-      toast.success(currentUser ? 'Update success!' : 'Update error!');
+      toast.success(currentAgent ? 'Update success!' : 'Update error!');
       router.push(paths.dashboard.agent.list);
     } catch (error: any) {
       console.error(error);
