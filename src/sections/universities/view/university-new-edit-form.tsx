@@ -1,9 +1,8 @@
 'use client';
 
-import type { IUserItem } from 'src/types/agent';
-
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
+import { useState, useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -16,51 +15,36 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { formatDateToDDMMYYYY } from 'src/utils/format-date';
-
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 import { toast } from 'src/components/snackbar';
+import { UploadAvatar } from 'src/components/upload';
 import { Form, Field } from 'src/components/hook-form';
 
 import { useAuthContext } from 'src/auth/hooks';
 
+import type { IUniversity, ICreateUniversity } from 'src/types/university';
+
 // ----------------------------------------------------------------------
 
 export const NewUniversitySchema = zod.object({
-  fName: zod.string().min(1, { message: 'First Name is required!' }),
-  lName: zod.string().min(1, { message: 'Last Name is required!' }),
-  dob: zod.string().min(1, { message: 'Date of Birth is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  address: zod.string().min(1, { message: 'Address is required!' }),
-  postCode: zod.string().min(1, { message: 'Post code is required!' }),
-  accountNumber: zod
-    .string()
-    .min(1, { message: 'Account Number is required!' })
-    .regex(/^\d{8}$/, { message: 'Account number should be 10 digits' }),
-  sortCode: zod
-    .string()
-    .min(1, { message: 'Sort code is required!' })
-    .regex(/^\d{2}-\d{2}-\d{2}$/, {
-      message: 'Sort code should be in the format XX-XX-XX',
-    })
-    .refine((val) => val.replace(/\D/g, '').length === 6, {
-      message: 'Sort code must be exactly 6 digits!',
-    }),
-  utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
-  password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
-  status: zod.enum(['active', 'inactive']).optional(),
+  name: zod.string().min(1, { message: 'University name is required!' }),
+  cityId: zod.string().min(1, { message: 'City ID is required!' }),
+  description: zod.string().optional(),
+  website: zod.string().url({ message: 'Website must be a valid URL!' }).optional(),
+  logoUrl: zod.any().optional(),
+  status: zod.enum(['active', 'inactive']).default('active'),
 });
 
 export type NewUniversitySchemaType = zod.infer<typeof NewUniversitySchema>;
 
+// This type matches our ICreateUniversity with Zod validation
+export type CreateUniversityType = ICreateUniversity;
+
 // ----------------------------------------------------------------------
 
 type Props = {
-  currentUniversity?: IUserItem;
+  currentUniversity?: IUniversity;
 };
 
 export function UniversityNewEditForm({ currentUniversity }: Props) {
@@ -68,65 +52,119 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
   const auth = useAuthContext();
   const authToken = auth.user?.accessToken;
 
+  const [file, setFile] = useState<File | null>(null);
+
   const defaultValues: NewUniversitySchemaType = {
-    fName: '',
-    lName: '',
-    email: '',
-    dob: '',
-    accountNumber: '',
-    address: '',
-    postCode: '',
-    sortCode: '',
-    utrNumber: '',
-    password: '',
+    name: '',
+    cityId: '',
+    description: '',
+    website: '',
+    logoUrl: null,
+    status: 'active',
   };
 
   const methods = useForm<NewUniversitySchemaType>({
     mode: 'onSubmit',
     resolver: zodResolver(NewUniversitySchema),
     defaultValues,
-    values: currentUniversity,
+    values: currentUniversity
+      ? {
+          name: currentUniversity.name || '',
+          cityId: currentUniversity.cityId || '',
+          description: currentUniversity.description || '',
+          website: currentUniversity.website || '',
+          logoUrl: currentUniversity.logoUrl || null,
+          status: currentUniversity.status || 'active',
+        }
+      : defaultValues,
   });
 
   const {
+    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const createAgent = async (data: NewUniversitySchemaType) => {
-    const payload = {
-      firstName: data.fName.trim(),
-      lastName: data.lName.trim(),
-      dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
-      email: data.email.trim(),
-      address: data.address.trim(),
-      postCode: data.postCode.trim(),
-      bankDetails: {
-        accountNumber: data.accountNumber.trim(),
-        sortCode: data.sortCode.trim(),
-      },
-      utrNumber: data.utrNumber.trim(),
-      password: data.password.trim(),
-      status: 'active',
-    };
+  const handleDropAvatar = useCallback(
+    (acceptedFiles: File[]) => {
+      const newFile = acceptedFiles[0];
+      if (newFile) {
+        setFile(newFile);
+        setValue('logoUrl', newFile, { shouldValidate: true });
+      }
+    },
+    [setValue]
+  );
 
-    const response = await authAxiosInstance.post<{ id: string }>(endpoints.agents.list, payload);
+  const createUniversity = async (data: ICreateUniversity) => {
+    const formData = new FormData();
+    formData.append('name', data.name.trim());
+    formData.append('cityId', data.cityId.trim());
+
+    if (data.description) {
+      formData.append('description', data.description.trim());
+    }
+
+    if (data.website) {
+      formData.append('website', data.website.trim());
+    }
+
+    if (data.status) {
+      formData.append('status', data.status);
+    }
+
+    if (file) {
+      formData.append('logo', file);
+    }
+
+    const response = await authAxiosInstance.post<{ id: string }>(
+      endpoints.universities.list,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
     return response;
   };
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await createAgent(data);
+      await createUniversity(data);
       toast.success(currentUniversity ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.agent.list);
+      router.push(paths.dashboard.universitiesAndCourses.list);
     } catch (error: any) {
       console.error(error);
+      toast.error(error.message || 'Something went wrong');
     }
   });
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>
+            <UploadAvatar
+              file={file}
+              accept={{ 'image/*': [] }}
+              maxSize={3145728}
+              onDrop={handleDropAvatar}
+              helperText={
+                <Typography
+                  variant="caption"
+                  sx={{
+                    mt: 3,
+                    mx: 'auto',
+                    display: 'block',
+                    textAlign: 'center',
+                    color: 'text.disabled',
+                  }}
+                >
+                  Allowed *.jpeg, *.jpg, *.png, *.gif
+                  <br /> max size of 3.1 MB
+                </Typography>
+              }
+            />
+          </Card>
+        </Grid>
+
         <Grid size={{ xs: 12, md: 8 }}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -137,39 +175,29 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <Field.Text name="fName" label="First Name" />
-              <Field.Text name="lName" label="Last Name" />
-              <Field.DatePicker name="dob" label="Date of Birth" />
-              <Field.Text name="email" label="Email Address" />
-              <Field.Text name="address" label="Address" />
-              <Field.Text name="postCode" label="Post Code" />
-
-              <Grid size={{ xs: 24 }} spacing={4}>
-                <Card sx={{ p: 1 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 2, color: '#919eab' }}>
-                    Bank Details
-                  </Typography>
-                  <Box
-                    sx={{
-                      rowGap: 3,
-                      columnGap: 2,
-                      display: 'grid',
-                      gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
-                    }}
-                  >
-                    <Field.Text name="sortCode" label="Sort Code" />
-                    <Field.Text name="accountNumber" label="Account Number" />
-                  </Box>
-                </Card>
-              </Grid>
-
-              <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
-              <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
+              <Field.Text name="name" label="University Name" />
+              <Field.Text name="cityId" label="City ID" />
+              <Field.Text
+                name="description"
+                label="Description"
+                multiline
+                rows={3}
+                sx={{ gridColumn: 'span 2' }}
+              />
+              <Field.Text name="website" label="Website" />
+              <Field.Select
+                name="status"
+                label="Status"
+                options={[
+                  { value: 'active', label: 'Active' },
+                  { value: 'inactive', label: 'Inactive' },
+                ]}
+              />
             </Box>
 
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUniversity ? 'Create user' : 'Save changes'}
+                {!currentUniversity ? 'Create University' : 'Save Changes'}
               </LoadingButton>
             </Stack>
           </Card>

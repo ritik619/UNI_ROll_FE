@@ -76,6 +76,11 @@ export const endpoints = {
     profilePhoto: (id: string) => `agents/${id}/profile-photo`,
     status: (id: string) => `agents/${id}/status`,
   },
+  universities: {
+    list: 'universities',
+    details: (id: string) => `universities/${id}`,
+    status: (id: string) => `universities/${id}/status`,
+  },
   auth: {
     me: '/api/auth/me',
     signIn: '/api/auth/sign-in',

@@ -2,66 +2,51 @@ import type { IDateValue, ISocialLink } from './common';
 
 // ----------------------------------------------------------------------
 
-export type IUserTableFilters = {
+export type IUniversityTableFilters = {
   name: string;
   role: string[];
   status: string;
 };
 
-export type IUserProfileCover = {
-  name: string;
-  role: string;
-  coverUrl: string;
-  avatarUrl: string;
-};
-
-export type IUserProfile = {
-  id: string;
-  role: string;
-  quote: string;
-  email: string;
-  school: string;
-  country: string;
-  company: string;
-  totalFollowers: number;
-  totalFollowing: number;
-  socialLinks: ISocialLink;
-};
-
-export type IUserProfileFollower = {
+export type IUniversity = {
   id: string;
   name: string;
-  country: string;
-  avatarUrl: string;
+  cityId: string;
+  cityName: string;
+  countryCode: string;
+  countryName: string;
+  description?: string;
+  website?: string;
+  logoUrl?: string | File | null;
+  status: 'active' | 'inactive';
+  createdAt: Date;
+  updatedAt: Date;
 };
 
-export type IUserProfileGallery = {
-  id: string;
-  title: string;
-  imageUrl: string;
-  postedAt: IDateValue;
-};
-
-export type IUserProfileFriend = {
-  id: string;
+export type ICreateUniversity = {
   name: string;
-  role: string;
-  avatarUrl: string;
+  cityId: string;
+  description?: string;
+  website?: string;
+  logoUrl?: string | File | null;
+  status?: 'active' | 'inactive';
 };
 
-export type IUserProfilePost = {
-  id: string;
-  media: string;
-  message: string;
-  createdAt: IDateValue;
-  personLikes: { name: string; avatarUrl: string }[];
-  comments: {
-    id: string;
-    message: string;
-    createdAt: IDateValue;
-    author: { id: string; name: string; avatarUrl: string };
-  }[];
+export type IUpdateUniversity = {
+  name?: string;
+  cityId?: string;
+  description?: string;
+  website?: string;
+  logoUrl?: string | File | null;
+  status?: 'active' | 'inactive';
 };
+
+export type IUpdateUniversityStatus = {
+  status: 'active' | 'inactive';
+};
+
+// For backward compatibility, keeping some of the existing types
+// These can be cleaned up later if not needed
 
 export type IUserCard = {
   id: string;

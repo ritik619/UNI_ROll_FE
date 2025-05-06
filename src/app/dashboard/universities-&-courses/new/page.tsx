@@ -2,12 +2,12 @@ import type { Metadata } from 'next';
 
 import { CONFIG } from 'src/global-config';
 
-import { UniversityNewEditForm } from 'src/sections/universities/view/university-new-edit-form';
+import UniversityCreateView from 'src/sections/universities/view/university-create-view';
 
 // ----------------------------------------------------------------------
 
-export const metadata: Metadata = { title: `Create a new agent | Dashboard - ${CONFIG.appName}` };
+export const metadata: Metadata = { title: `Create a new University | Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
-  return <UniversityNewEditForm />;
+  return <UniversityCreateView />;
 }

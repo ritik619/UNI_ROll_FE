@@ -1,7 +1,7 @@
 'use client';
 
 import type { TableHeadCellProps } from 'src/components/table';
-import type { IAgentItem, IAgentTableFilters } from 'src/types/agent';
+import type { IUniversity, IUniversityTableFilters } from 'src/types/university';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useState, useEffect, useCallback } from 'react';
@@ -43,8 +43,9 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-import { AgentTableRow } from 'src/sections/agent/agent-table-row';
-import { AgentTableFiltersResult } from 'src/sections/agent/agent-table-filters-result';
+
+import { UniversityTableRow } from '../university-table-row';
+import { UniversityTableFiltersResult } from '../university-table-filters-result';
 
 
 // ----------------------------------------------------------------------
@@ -52,25 +53,25 @@ import { AgentTableFiltersResult } from 'src/sections/agent/agent-table-filters-
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  // { id: 'role', label: 'Role', width: 180 },
+  { id: 'name', label: 'University Name' },
+  { id: 'cityName', label: 'City', width: 180 },
+  { id: 'countryName', label: 'Country', width: 180 },
+  { id: 'website', label: 'Website', width: 220 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
 
 // ----------------------------------------------------------------------
 
-export function UniversitytListView() {
+export function UniversityListView() {
   const table = useTable();
 
   const confirmDialog = useBoolean();
   const [loading, setLoading] = useState(false);
-  const [tableData, setTableData] = useState<IAgentItem[]>([]);
+  const [tableData, setTableData] = useState<IUniversity[]>([]);
   const [totalCount, setTotalCount] = useState(0);
 
-  const filters = useSetState<IAgentTableFilters>({ name: '', role: [], status: 'all' });
+  const filters = useSetState<IUniversityTableFilters>({ name: '', role: [], status: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
 
   const dataFiltered = applyFilter({
@@ -101,17 +102,23 @@ export function UniversitytListView() {
 
   const handleToggleStatus = useCallback(
     async (id: string, newStatus: 'active' | 'inactive') => {
-      // Here you would typically call an API to update the status
-      await authAxiosInstance.patch(endpoints.agents.status(id), {
-        status: newStatus,
-      });
-      // For now, we'll just update it locally
-      const updatedData = tableData.map((row) =>
-        row.id === id ? { ...row, status: newStatus } : row
-      );
+      try {
+        // Call API to update the university status
+        await authAxiosInstance.patch(endpoints.universities.status(id), {
+          status: newStatus,
+        });
+        
+        // Update the data locally
+        const updatedData = tableData.map((row) =>
+          row.id === id ? { ...row, status: newStatus } : row
+        );
 
-      setTableData(updatedData);
-      toast.success(`Status updated to ${newStatus}!`);
+        setTableData(updatedData);
+        toast.success(`University status updated to ${newStatus}!`);
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed to update university status');
+      }
     },
     [tableData]
   );
@@ -158,12 +165,22 @@ export function UniversitytListView() {
       }
     />
   );
-  const fetchPaginatedAgents = useCallback(async () => {
+  const fetchPaginatedUniversities = useCallback(async () => {
     try {
       setLoading(true);
-      const { agents, total } = await fetchAgents('all', table.page, table.rowsPerPage);
-      setTableData(agents);
-      setTotalCount(total);
+      // TODO: Replace with proper university fetch API when available
+      // For now, we're using the agent API as a placeholder
+      const response = await authAxiosInstance.get(endpoints.universities.list, {
+        params: {
+          page: table.page,
+          limit: table.rowsPerPage,
+        },
+      });
+      
+      if (response.data) {
+        setTableData(response.data.items || []);
+        setTotalCount(response.data.meta?.totalItems || 0);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -173,27 +190,27 @@ export function UniversitytListView() {
 
   useEffect(() => {
     // table.setRowsPerPage(2);
-    fetchPaginatedAgents();
-  }, [fetchPaginatedAgents]);
+    fetchPaginatedUniversities();
+  }, [fetchPaginatedUniversities]);
 
   return (
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Universities List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Agent', href: paths.dashboard.agent.root },
+            { name: 'Universities', href: paths.dashboard.universitiesAndCourses.root },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.agent.new}
+              href={paths.dashboard.universitiesAndCourses.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Agent
+              New University
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -240,7 +257,7 @@ export function UniversitytListView() {
           /> */}
 
           {canReset && (
-            <AgentTableFiltersResult
+            <UniversityTableFiltersResult
               filters={filters}
               totalResults={dataFiltered.length}
               onResetPage={table.onResetPage}
@@ -296,14 +313,14 @@ export function UniversitytListView() {
                           table.page * table.rowsPerPage + table.rowsPerPage
                         )
                         .map((row) => (
-                          <AgentTableRow
+                          <UniversityTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(row.id)}
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}
                             onToggleStatus={handleToggleStatus}
-                            editHref={paths.dashboard.agent.edit(row.id)}
+                            editHref={paths.dashboard.universitiesAndCourses.edit(row.id)}
                           />
                         ))}
 
@@ -362,8 +379,8 @@ export function UniversitytListView() {
 // ----------------------------------------------------------------------
 
 type ApplyFilterProps = {
-  inputData: IAgentItem[];
-  filters: IAgentTableFilters;
+  inputData: IUniversity[];
+  filters: IUniversityTableFilters;
   comparator: (a: any, b: any) => number;
 };
 
@@ -381,15 +398,17 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
-    inputData = inputData.filter((agent) => agent.name.toLowerCase().includes(name.toLowerCase()));
+    inputData = inputData.filter((university) => university.name.toLowerCase().includes(name.toLowerCase()));
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((agent) => agent.status === status);
+    inputData = inputData.filter((university) => university.status === status);
   }
 
   if (role.length) {
-    inputData = inputData.filter((agent) => role.includes(agent.role));
+    // Universities don't have roles, but keeping this for compatibility with the filter interface
+    // This can be updated later when the filter interface is properly adjusted for universities
+    inputData = inputData;
   }
 
   return inputData;
