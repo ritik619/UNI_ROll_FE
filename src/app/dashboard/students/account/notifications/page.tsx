@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 
 import { CONFIG } from 'src/global-config';
 
-import { AccountNotificationsView } from 'src/sections/account/view';
+// import { AccountNotificationsView } from 'src/sections/account/view';
+import { BlankView } from 'src/sections/blank/view';
 
 // ----------------------------------------------------------------------
 
@@ -11,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <AccountNotificationsView />;
+  return <BlankView />;
 }

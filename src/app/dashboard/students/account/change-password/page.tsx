@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 
 import { CONFIG } from 'src/global-config';
+import { BlankView } from 'src/sections/blank/view';
 
-import { AccountChangePasswordView } from 'src/sections/account/view';
+// import { AccountChangePasswordView } from 'src/sections/account/view';
 
 // ----------------------------------------------------------------------
 
@@ -11,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <AccountChangePasswordView />;
+  return <BlankView />;
 }
