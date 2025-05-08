@@ -7,6 +7,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 import { CONFIG } from 'src/global-config';
+import { FirebaseStorage, getStorage } from 'firebase/storage';
 
 // ----------------------------------------------------------------------
 
@@ -17,3 +18,5 @@ export const firebaseApp = isFirebase ? initializeApp(CONFIG.firebase) : ({} as 
 export const AUTH = isFirebase ? getAuth(firebaseApp) : ({} as AuthType);
 
 export const FIRESTORE = isFirebase ? getFirestore(firebaseApp) : ({} as FirestoreType);
+
+export const STORAGE = isFirebase ? getStorage(firebaseApp) : ({} as FirebaseStorage);

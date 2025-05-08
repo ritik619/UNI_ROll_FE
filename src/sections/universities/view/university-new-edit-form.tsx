@@ -1,5 +1,7 @@
 'use client';
 
+import type { IUniversity, ICreateUniversity } from 'src/types/university';
+
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { useState, useCallback } from 'react';
@@ -9,21 +11,22 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
+import { MenuItem } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
+import { fData } from 'src/utils/format-number';
+
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 import { toast } from 'src/components/snackbar';
-import { UploadAvatar } from 'src/components/upload';
 import { Form, Field } from 'src/components/hook-form';
 
 import { useAuthContext } from 'src/auth/hooks';
-
-import type { IUniversity, ICreateUniversity } from 'src/types/university';
+import { uploadFileAndGetURL } from 'src/auth/context';
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +34,20 @@ export const NewUniversitySchema = zod.object({
   name: zod.string().min(1, { message: 'University name is required!' }),
   cityId: zod.string().min(1, { message: 'City ID is required!' }),
   description: zod.string().optional(),
-  website: zod.string().url({ message: 'Website must be a valid URL!' }).optional(),
+  website: zod
+    .string()
+    .transform((val) => {
+      if (!val) return '';
+      // Add https:// if URL doesn't have a protocol
+      if (!/^https?:\/\//i.test(val)) {
+        return `https://${val}`;
+      }
+      return val;
+    })
+    .refine((val) => !val || /^https?:\/\/.+\..+/i.test(val), {
+      message: 'Please enter a valid website address',
+    })
+    .optional(),
   logoUrl: zod.any().optional(),
   status: zod.enum(['active', 'inactive']).default('active'),
 });
@@ -49,10 +65,6 @@ type Props = {
 
 export function UniversityNewEditForm({ currentUniversity }: Props) {
   const router = useRouter();
-  const auth = useAuthContext();
-  const authToken = auth.user?.accessToken;
-
-  const [file, setFile] = useState<File | null>(null);
 
   const defaultValues: NewUniversitySchemaType = {
     name: '',
@@ -75,6 +87,7 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
           website: currentUniversity.website || '',
           logoUrl: currentUniversity.logoUrl || null,
           status: currentUniversity.status || 'active',
+          countryCode: currentUniversity.cityId.split('-')[0] || '',
         }
       : defaultValues,
   });
@@ -82,19 +95,11 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
   const {
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    watch,
+    formState: { isSubmitting, errors },
   } = methods;
-
-  const handleDropAvatar = useCallback(
-    (acceptedFiles: File[]) => {
-      const newFile = acceptedFiles[0];
-      if (newFile) {
-        setFile(newFile);
-        setValue('logoUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
+  // Watch the Country field value in real-time
+  const selectedCountry = watch('countryCode');
 
   const createUniversity = async (data: ICreateUniversity) => {
     const formData = new FormData();
@@ -112,9 +117,14 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
     if (data.status) {
       formData.append('status', data.status);
     }
-
-    if (file) {
-      formData.append('logo', file);
+    if (data.logoUrl instanceof File) {
+      const url = await uploadFileAndGetURL(
+        data.logoUrl,
+        `universities/${data.name}.${data.logoUrl.name.split('.')[-1]}`
+      );
+      formData.append('logoUrl', url);
+    }else{
+      formData.append('logoUrl', data.logoUrl as string);
     }
 
     const response = await authAxiosInstance.post<{ id: string }>(
@@ -141,11 +151,9 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>
-            <UploadAvatar
-              file={file}
-              accept={{ 'image/*': [] }}
+            <Field.UploadAvatar
+              name="logoUrl"
               maxSize={3145728}
-              onDrop={handleDropAvatar}
               helperText={
                 <Typography
                   variant="caption"
@@ -158,7 +166,7 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
                   }}
                 >
                   Allowed *.jpeg, *.jpg, *.png, *.gif
-                  <br /> max size of 3.1 MB
+                  <br /> max size of {fData(3145728)}
                 </Typography>
               }
             />
@@ -176,7 +184,25 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
               }}
             >
               <Field.Text name="name" label="University Name" />
-              <Field.Text name="cityId" label="City ID" />
+              <Field.Select name="status" label="Status">
+                {[
+                  { value: 'active', label: 'Active' },
+                  { value: 'inactive', label: 'Inactive' },
+                ].map((status) => (
+                  <MenuItem key={status.value} value={status.value}>
+                    {status.label}
+                  </MenuItem>
+                ))}
+              </Field.Select>
+              <Field.CountrySelect name="countryCode" label="Country" getValue="code" />
+              {selectedCountry && (
+                <Field.CitySelect
+                  name="cityId"
+                  label="City"
+                  countryCode={selectedCountry}
+                  getValue="cityId"
+                />
+              )}
               <Field.Text
                 name="description"
                 label="Description"
@@ -185,14 +211,6 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
                 sx={{ gridColumn: 'span 2' }}
               />
               <Field.Text name="website" label="Website" />
-              <Field.Select
-                name="status"
-                label="Status"
-                options={[
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                ]}
-              />
             </Box>
 
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>

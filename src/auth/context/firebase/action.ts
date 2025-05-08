@@ -1,6 +1,7 @@
 'use client';
 
 import { doc, setDoc, collection } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {
   signOut as _signOut,
   signInWithPopup as _signInWithPopup,
@@ -13,7 +14,7 @@ import {
   createUserWithEmailAndPassword as _createUserWithEmailAndPassword,
 } from 'firebase/auth';
 
-import { AUTH, FIRESTORE } from 'src/lib/firebase';
+import { AUTH, STORAGE, FIRESTORE } from 'src/lib/firebase';
 
 // ----------------------------------------------------------------------
 
@@ -110,3 +111,21 @@ export const signOut = async (): Promise<void> => {
 export const sendPasswordResetEmail = async ({ email }: ForgotPasswordParams): Promise<void> => {
   await _sendPasswordResetEmail(AUTH, email);
 };
+
+// Assumes Firebase has already been initialized elsewhere in your app
+
+export async function uploadFileAndGetURL(file: File, pathInBucket: string): Promise<string> {
+  try {
+    const fileRef = ref(STORAGE, pathInBucket);
+
+    // Upload the file
+    const snapshot = await uploadBytes(fileRef, file);
+
+    // Get the download URL
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
+}

@@ -10,7 +10,7 @@ import { CONFIG } from 'src/global-config';
  * Create a base axios instance that can be used throughout the app
  */
 const createAxiosInstance = (baseURL?: string): AxiosInstance => {
-  const instance = axios.create({ 
+  const instance = axios.create({
     baseURL: baseURL || CONFIG.serverUrl,
   });
 
@@ -34,7 +34,10 @@ export const authAxiosInstance = createAxiosInstance();
 /**
  * Generic data fetcher for axios requests
  */
-export const fetcher = async (args: string | [string, AxiosRequestConfig], instance = axiosInstance) => {
+export const fetcher = async (
+  args: string | [string, AxiosRequestConfig],
+  instance = axiosInstance
+) => {
   try {
     const [url, config] = Array.isArray(args) ? args : [args, {}];
     const res = await instance.get(url, { ...config });
@@ -48,7 +51,8 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig], insta
 /**
  * Auth-enabled fetcher
  */
-export const authFetcher = async (args: string | [string, AxiosRequestConfig]) => fetcher(args, authAxiosInstance);
+export const authFetcher = async (args: string | [string, AxiosRequestConfig]) =>
+  fetcher(args, authAxiosInstance);
 
 // ----------------------------------------------------------------------
 
@@ -81,12 +85,15 @@ export const endpoints = {
     details: (id: string) => `universities/${id}`,
     status: (id: string) => `universities/${id}/status`,
   },
+  location: {
+    countries: 'locations/countries',
+    cities: 'locations/cities',
+  },
   auth: {
     me: '/api/auth/me',
     signIn: '/api/auth/sign-in',
     signUp: '/api/auth/sign-up',
   },
-
 };
 
 export default axiosInstance;
