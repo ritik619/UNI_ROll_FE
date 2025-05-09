@@ -1,14 +1,8 @@
-import type { IUserProfile } from 'src/types/agent';
+import type {} from 'src/types/agent';
 
-import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 import { toast } from 'sonner';
 
-type AgentResponse = {
-  agents: IUserProfile[];
-  total: number;
-  page: number;
-  limit: number;
-};
+import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 export const fetchUniversities = async (
   status: 'active' | 'inactive' | 'all',

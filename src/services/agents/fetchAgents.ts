@@ -1,14 +1,6 @@
-import type { IUserProfile } from 'src/types/agent';
-
-import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 import { toast } from 'sonner';
 
-type AgentResponse = {
-  agents: IUserProfile[];
-  total: number;
-  page: number;
-  limit: number;
-};
+import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 export const fetchAgents = async (
   status: 'active' | 'inactive' | 'all',
@@ -20,7 +12,7 @@ export const fetchAgents = async (
     if (status !== 'all') {
       params.status = status;
     }
-    
+
     const response = await authAxiosInstance.get(endpoints.agents.list, { params });
     return response.data;
   } catch (err) {
