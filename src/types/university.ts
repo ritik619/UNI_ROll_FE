@@ -6,8 +6,8 @@ export type IUniversityTableFilters = {
   name: string;
   role: string[];
   status: 'all' | 'active' | 'inactive';
-  cityId: 'string';
-  countryCode: 'string';
+  cityId: string;
+  countryCode: string;
 };
 
 export type IUniversity = {

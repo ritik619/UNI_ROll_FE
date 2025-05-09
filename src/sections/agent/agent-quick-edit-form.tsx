@@ -21,10 +21,12 @@ import { paths } from 'src/routes/paths';
 import { fData } from 'src/utils/format-number';
 
 import { USER_STATUS_OPTIONS } from 'src/_mock';
-import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
+import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
+
+import { uploadFileAndGetURL } from 'src/auth/context';
 
 // ----------------------------------------------------------------------
 
@@ -102,7 +104,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
 
   const updateAgent = async (data: AgentQuickEditSchemaType) => {
     const payload = {
-      // avatarUrl: data.avatarUrl ?? null,
+      avatarUrl: data.avatarUrl ?? null,
       firstName: data.firstName.trim(),
       lastName: data.lastName.trim(),
       dateOfBirth: data.dateOfBirth,
@@ -118,23 +120,15 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
     };
 
     const uId = currentAgent?.id || '';
-    const response = await authAxiosInstance.patch<{ id: string }>(
-      endpoints.agents.details(uId),
-      payload
-    );
     // Then handle profile photo upload if available
-    if (data.avatarUrl && data.avatarUrl instanceof File) {
-      // Create FormData to match the FileInterceptor on the backend
-      const formData = new FormData();
-      formData.append('file', data.avatarUrl);
-      // Send the profile photo to the correct endpoint
-      await authAxiosInstance.post(endpoints.agents.profilePhoto(uId), formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    if (data.avatarUrl instanceof File) {
+      const fileName = `${uId}.${data.avatarUrl.name.split('.').pop()}`;
+      const url = await uploadFileAndGetURL(data.avatarUrl, `agent/${fileName}`);
+      payload['avatarUrl'] = url;
+    } else {
+      payload['avatarUrl'] = data.avatarUrl as string;
     }
-    // return [response.data];
+    return await authAxiosInstance.patch<{ id: string }>(endpoints.agents.details(uId), payload);
   };
 
   const onSubmit = handleSubmit(async (data) => {
@@ -160,9 +154,11 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
 
       <Form methods={methods} onSubmit={onSubmit}>
         <DialogContent>
-          <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-            Account is waiting for confirmation
-          </Alert>
+          {currentAgent?.status === 'inactive' && (
+            <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
+              Account is waiting for confirmation
+            </Alert>
+          )}
           <Box sx={{ mb: 5 }}>
             <Field.UploadAvatar
               name="avatarUrl"

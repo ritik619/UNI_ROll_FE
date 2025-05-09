@@ -1,5 +1,5 @@
-import type { IAgentTableFilters } from 'src/types/agent';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
+import type { IUniversityTableFilters } from 'src/types/university';
 import type { FiltersResultProps } from 'src/components/filters-result';
 
 import { useCallback } from 'react';
@@ -12,7 +12,7 @@ import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-r
 
 type Props = FiltersResultProps & {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IAgentTableFilters>;
+  filters: UseSetStateReturn<IUniversityTableFilters>;
 };
 
 export function UniversityTableFiltersResult({ filters, onResetPage, totalResults, sx }: Props) {

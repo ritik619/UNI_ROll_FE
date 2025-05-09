@@ -25,6 +25,8 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
+import { uploadFileAndGetURL } from 'src/auth/context';
+
 // ----------------------------------------------------------------------
 
 export type UniversityQuickEditSchemaType = zod.infer<typeof UniversityQuickEditSchema>;
@@ -69,7 +71,7 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
           cityId: currentUniversity.cityId || '',
           description: currentUniversity.description || '',
           website: currentUniversity.website || '',
-          logoUrl: currentUniversity.logoUrl as File | null || null,
+          logoUrl: currentUniversity.logoUrl || null,
           status: currentUniversity.status || 'active',
         }
       : defaultValues,
@@ -95,32 +97,29 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
   const updateUniversity = async (data: IUpdateUniversity) => {
     if (!currentUniversity?.id) return;
 
-    const formData = new FormData();
-    
-    formData.append('name', data.name!.trim());
-    formData.append('cityId', data.cityId!.trim());
-
-    if (data.description) {
-      formData.append('description', data.description.trim());
+    const formData = {
+      logoUrl: data.logoUrl,
+      name: data.name!.trim(),
+      cityId: data.cityId!.trim(),
+      status: data.status,
+    } as any;
+    if (data?.description) {
+      formData.description = data?.description?.trim() || '';
+    }
+    if (data?.website) {
+      formData.website = data?.website?.trim() || '';
     }
 
-    if (data.website) {
-      formData.append('website', data.website.trim());
+    // Then handle profile photo upload if available
+    if (data.logoUrl instanceof File) {
+      const fileName = `${currentUniversity?.id}.${data.logoUrl.name.split('.').pop()}`;
+      const url = await uploadFileAndGetURL(data.logoUrl, `agent/${fileName}`);
+      formData['logoUrl'] = url;
+    } else {
+      formData['logoUrl'] = data.logoUrl as string;
     }
 
-    if (data.status) {
-      formData.append('status', data.status);
-    }
-
-    if (file) {
-      formData.append('logo', file);
-    }
-
-    await authAxiosInstance.patch(
-      endpoints.universities.details(currentUniversity.id),
-      formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    );
+    await authAxiosInstance.patch(endpoints.universities.details(currentUniversity.id), formData);
   };
 
   const onSubmit = handleSubmit(async (data) => {
@@ -179,7 +178,7 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
           >
             <Field.Text name="name" label="University Name" />
             <Field.Text name="cityId" label="City ID" />
-            
+
             <Field.Text
               name="description"
               label="Description"
@@ -187,14 +186,10 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
               rows={3}
               sx={{ gridColumn: 'span 2' }}
             />
-            
+
             <Field.Text name="website" label="Website" />
-            
-            <Field.Select
-              name="status"
-              label="Status"
-              sx={{ gridColumn: 'span 1' }}
-            >
+
+            <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
               <MenuItem value="active">Active</MenuItem>
               <MenuItem value="inactive">Inactive</MenuItem>
             </Field.Select>

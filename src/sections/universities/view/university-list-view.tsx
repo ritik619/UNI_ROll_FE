@@ -22,8 +22,8 @@ import { RouterLink } from 'src/routes/components';
 
 import { USER_STATUS_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { fetchAgents } from 'src/services/agents/fetchAgents';
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
+import { fetchUniversities } from 'src/services/universities/fetchUniversities';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -46,7 +46,9 @@ import {
 
 import { UniversityTableRow } from '../university-table-row';
 import { UniversityTableFiltersResult } from '../university-table-filters-result';
-
+import { UniversityTableToolbar } from '../university-table-toolbar';
+import { Field } from 'src/components/hook-form';
+import { CitySelect, CountrySelect } from 'src/components/country-select';
 
 // ----------------------------------------------------------------------
 
@@ -71,7 +73,13 @@ export function UniversityListView() {
   const [tableData, setTableData] = useState<IUniversity[]>([]);
   const [totalCount, setTotalCount] = useState(0);
 
-  const filters = useSetState<IUniversityTableFilters>({ name: '', role: [], status: 'all' });
+  const filters = useSetState<IUniversityTableFilters>({
+    name: '',
+    role: [],
+    status: 'all',
+    countryCode: '',
+    cityId: '',
+  });
   const { state: currentFilters, setState: updateFilters } = filters;
 
   const dataFiltered = applyFilter({
@@ -107,7 +115,7 @@ export function UniversityListView() {
         await authAxiosInstance.patch(endpoints.universities.status(id), {
           status: newStatus,
         });
-        
+
         // Update the data locally
         const updatedData = tableData.map((row) =>
           row.id === id ? { ...row, status: newStatus } : row
@@ -140,7 +148,7 @@ export function UniversityListView() {
     },
     [updateFilters, table]
   );
-
+  console.log(filters);
   const renderConfirmDialog = () => (
     <ConfirmDialog
       open={confirmDialog.value}
@@ -168,25 +176,22 @@ export function UniversityListView() {
   const fetchPaginatedUniversities = useCallback(async () => {
     try {
       setLoading(true);
-      // TODO: Replace with proper university fetch API when available
-      // For now, we're using the agent API as a placeholder
-      const response = await authAxiosInstance.get(endpoints.universities.list, {
-        params: {
-          page: table.page,
-          limit: table.rowsPerPage,
-        },
-      });
-      
-      if (response.data) {
-        setTableData(response.data.items || []);
-        setTotalCount(response.data.meta?.totalItems || 0);
-      }
+      const { universities, total } = await fetchUniversities(
+        filters.state.status,
+        table.page,
+        table.rowsPerPage,
+        filters.state.cityId,
+        filters.state.countryCode
+      );
+      console.log(universities);
+      setTableData(universities);
+      setTotalCount(total);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [table.page, table.rowsPerPage]);
+  }, [table.page, table.rowsPerPage, filters.state]);
 
   useEffect(() => {
     // table.setRowsPerPage(2);
@@ -249,13 +254,45 @@ export function UniversityListView() {
               />
             ))}
           </Tabs>
-
-          {/* <AgentTableToolbar
+          {/* <UniversityTableToolbar
             filters={filters}
             onResetPage={table.onResetPage}
-            options={{ roles: _roles }}
+            options={{ roles:  }}
           /> */}
-
+          <Box
+            sx={{
+              rowGap: 3,
+              columnGap: 2,
+              display: 'grid',
+              m: 3,
+              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+            }}
+          >
+            <CountrySelect
+              id="country-id"
+              label="Country"
+              getValue="code"
+              placeholder="Choose a country"
+              onChange={(event, newValue) => {
+                // Handle value change
+                console.log(newValue);
+                filters.setState({ countryCode: newValue });
+              }}
+            />
+            {filters.state.countryCode && (
+              <CitySelect
+                id="city-id"
+                label="City"
+                getValue="cityId"
+                onChange={(event, newValue) => {
+                  // Handle value change
+                  console.log(newValue);
+                  filters.setState({ cityId: newValue });
+                }}
+                countryCode={filters.state.countryCode}
+              />
+            )}
+          </Box>
           {canReset && (
             <UniversityTableFiltersResult
               filters={filters}
@@ -264,7 +301,6 @@ export function UniversityListView() {
               sx={{ p: 2.5, pt: 0 }}
             />
           )}
-
           <Box sx={{ position: 'relative' }}>
             <TableSelectedAction
               dense={table.dense}
@@ -319,8 +355,8 @@ export function UniversityListView() {
                             selected={table.selected.includes(row.id)}
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}
-                            onToggleStatus={handleToggleStatus}
-                            editHref={paths.dashboard.universitiesAndCourses.edit(row.id)}
+                            onToggleStatus={handleToggleStatus as any}
+                            editHref={paths.dashboard.universitiesAndCourses.list}
                           />
                         ))}
 
@@ -357,7 +393,6 @@ export function UniversityListView() {
               </Table>
             </Scrollbar>
           </Box>
-
           <TablePaginationCustom
             page={table.page}
             dense={table.dense}
@@ -398,7 +433,9 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
-    inputData = inputData.filter((university) => university.name.toLowerCase().includes(name.toLowerCase()));
+    inputData = inputData.filter((university) =>
+      university.name.toLowerCase().includes(name.toLowerCase())
+    );
   }
 
   if (status !== 'all') {
