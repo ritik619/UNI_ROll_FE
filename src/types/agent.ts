@@ -5,7 +5,7 @@ import type { IDateValue, ISocialLink } from './common';
 export type IAgentTableFilters = {
   name: string;
   role: string[];
-  status: string;
+  status: 'all' | 'active' | 'inactive';
 };
 
 export type IAgentProfileCover = {

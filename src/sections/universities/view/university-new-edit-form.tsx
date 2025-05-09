@@ -25,7 +25,6 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 
-import { useAuthContext } from 'src/auth/hooks';
 import { uploadFileAndGetURL } from 'src/auth/context';
 
 // ----------------------------------------------------------------------
@@ -102,35 +101,32 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
   const selectedCountry = watch('countryCode');
 
   const createUniversity = async (data: ICreateUniversity) => {
-    const formData = new FormData();
-    formData.append('name', data.name.trim());
-    formData.append('cityId', data.cityId.trim());
+    const formData = {} as any;
+    formData['name'] = data.name.trim();
+    formData['cityId'] = data.cityId.trim();
 
     if (data.description) {
-      formData.append('description', data.description.trim());
+      formData['description'] = data.description.trim();
     }
 
     if (data.website) {
-      formData.append('website', data.website.trim());
+      formData['website'] = data.website.trim();
     }
 
     if (data.status) {
-      formData.append('status', data.status);
+      formData['status'] = data.status;
     }
     if (data.logoUrl instanceof File) {
-      const url = await uploadFileAndGetURL(
-        data.logoUrl,
-        `universities/${data.name}.${data.logoUrl.name.split('.')[-1]}`
-      );
-      formData.append('logoUrl', url);
-    }else{
-      formData.append('logoUrl', data.logoUrl as string);
+      const fileName = `${data.name}.${data.logoUrl.name.split('.').pop()}`;
+      const url = await uploadFileAndGetURL(data.logoUrl, `universities/${fileName}`);
+      formData['logoUrl'] = url;
+    } else {
+      formData['logoUrl'] = data.logoUrl as string;
     }
 
     const response = await authAxiosInstance.post<{ id: string }>(
       endpoints.universities.list,
-      formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
+      formData
     );
     return response;
   };

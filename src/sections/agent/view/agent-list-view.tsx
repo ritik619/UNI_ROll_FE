@@ -161,7 +161,11 @@ export function AgentListView() {
   const fetchPaginatedAgents = useCallback(async () => {
     try {
       setLoading(true);
-      const { agents, total } = await fetchAgents('all', table.page, table.rowsPerPage);
+      const { agents, total } = await fetchAgents(
+        filters.state.status,
+        table.page,
+        table.rowsPerPage
+      );
       setTableData(agents);
       setTotalCount(total);
     } catch (err) {

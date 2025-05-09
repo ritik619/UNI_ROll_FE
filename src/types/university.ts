@@ -5,7 +5,9 @@ import type { IDateValue, ISocialLink } from './common';
 export type IUniversityTableFilters = {
   name: string;
   role: string[];
-  status: string;
+  status: 'all' | 'active' | 'inactive';
+  cityId: 'string';
+  countryCode: 'string';
 };
 
 export type IUniversity = {
@@ -65,10 +67,10 @@ export type IUserItem = {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
-  bankDetails:{
+  bankDetails: {
     sortCode: string;
     accountNumber: string;
-  }
+  };
   email: string;
   address: string;
   postCode: string;
