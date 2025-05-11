@@ -71,8 +71,9 @@ export const navData: NavSectionProps['data'] = [
         path: paths.dashboard.universitiesAndCourses.list,
         icon: ICONS.course,
         children: [
-          { title: 'List', path: paths.dashboard.universitiesAndCourses.list },
-          { title: 'Add', path: paths.dashboard.universitiesAndCourses.new },
+          { title: 'List Universities', path: paths.dashboard.universitiesAndCourses.list },
+          { title: 'Add University', path: paths.dashboard.universitiesAndCourses.new },
+          { title: 'Add Course', path: paths.dashboard.universitiesAndCourses.addCourse },
         ],
       },
       { title: 'Intakes', path: paths.dashboard.intakes, icon: ICONS.calendar },

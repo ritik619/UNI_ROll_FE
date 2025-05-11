@@ -85,6 +85,11 @@ export const endpoints = {
     details: (id: string) => `universities/${id}`,
     status: (id: string) => `universities/${id}/status`,
   },
+  courses: {
+    list: 'courses',
+    details: (id: string) => `courses/${id}`,
+    status: (id: string) => `courses/${id}/status`,
+  },
   location: {
     countries: 'locations/countries',
     cities: 'locations/cities',

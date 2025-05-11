@@ -8,8 +8,8 @@ export const fetchUniversities = async (
   status: 'active' | 'inactive' | 'all',
   page: number,
   limit: number,
-  cityId: string,
-  countryCode: string
+  cityId?: string,
+  countryCode?: string
 ) => {
   try {
     const params: Record<string, any> = { page, limit };

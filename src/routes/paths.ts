@@ -64,7 +64,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/universities-&-courses`,
       list: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
       new: `${ROOTS.DASHBOARD}/universities-&-courses/new`,
-      
+      addCourse: `${ROOTS.DASHBOARD}/universities-&-courses/add-course`,
     },
     intakes: `${ROOTS.DASHBOARD}/intakes`,
     earningsoverview: `${ROOTS.DASHBOARD}/earnings-overview`,
