@@ -1,12 +1,13 @@
 'use client';
 
 import { doc, getDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useSetState } from 'minimal-shared/hooks';
 import { useMemo, useEffect, useCallback } from 'react';
 
 import axios from 'src/lib/axios';
 import { AUTH, FIRESTORE } from 'src/lib/firebase';
+import { setLogoutHandler } from 'src/lib/axios-unified';
 
 import { AuthContext } from '../auth-context';
 
@@ -26,6 +27,35 @@ type Props = {
 
 export function AuthProvider({ children }: Props) {
   const { state, setState } = useSetState<AuthState>({ user: null, loading: true });
+
+  // Function to handle logout (called by axios interceptor on auth error)
+  const handleLogout = useCallback(async () => {
+    try {
+      // Sign out from Firebase
+      await signOut(AUTH);
+      
+      // Clear auth state
+      setState({ user: null, loading: false });
+      
+      // Clean up headers
+      delete axios.defaults.headers.common.Authorization;
+      
+      // Add a message to localStorage to show on next page load
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('sessionExpired', 'true');
+        
+        // Redirect to sign-in page
+        window.location.href = '/auth/firebase/sign-in';
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  }, [setState]);
+
+  // Register the logout handler with axios interceptor
+  useEffect(() => {
+    setLogoutHandler(handleLogout);
+  }, [handleLogout]);
 
   const checkUserSession = useCallback(async () => {
     try {

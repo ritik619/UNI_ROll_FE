@@ -61,10 +61,12 @@ export const paths = {
 
     students: `${ROOTS.DASHBOARD}/students`,
     universitiesAndCourses: {
-      root: `${ROOTS.DASHBOARD}/universities-&-courses`,
+      root: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
       list: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
       new: `${ROOTS.DASHBOARD}/universities-&-courses/new`,
       addCourse: `${ROOTS.DASHBOARD}/universities-&-courses/add-course`,
+      editCourse: (id: string) => `${ROOTS.DASHBOARD}/universities-&-courses/edit-course/${id}`,
+      universityCourses: (id: string) => `${ROOTS.DASHBOARD}/universities-&-courses/university/${id}`,
     },
     intakes: `${ROOTS.DASHBOARD}/intakes`,
     earningsoverview: `${ROOTS.DASHBOARD}/earnings-overview`,

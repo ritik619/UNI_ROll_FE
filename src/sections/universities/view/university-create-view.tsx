@@ -18,7 +18,7 @@ export default function UniversityCreateView() {
         heading="Create a new University"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'University', href: paths.dashboard.universitiesAndCourses.root },
+          { name: 'University', href: paths.dashboard.universitiesAndCourses.list },
           { name: 'New University' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

@@ -1,7 +1,7 @@
 'use client';
 
 import { z as zod } from 'zod';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -57,6 +57,23 @@ export function FirebaseSignInView() {
   const { checkUserSession } = useAuthContext();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [sessionExpiredMessage, setSessionExpiredMessage] = useState<string | null>(null);
+  
+  // Check for session expired notification in localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const sessionExpired = window.localStorage.getItem('sessionExpired');
+      const unauthorizedRedirect = window.localStorage.getItem('unauthorizedRedirect');
+      
+      if (sessionExpired === 'true') {
+        setSessionExpiredMessage('Your session has expired. Please sign in again.');
+        window.localStorage.removeItem('sessionExpired');
+      } else if (unauthorizedRedirect === 'true') {
+        setSessionExpiredMessage('Authentication required. Please sign in to continue.');
+        window.localStorage.removeItem('unauthorizedRedirect');
+      }
+    }
+  }, []);
 
   const defaultValues: SignInSchemaType = {
     email: '',
@@ -177,6 +194,12 @@ export function FirebaseSignInView() {
         sx={{ textAlign: { xs: 'center', md: 'left' } }}
       /> */}
 
+      {!!sessionExpiredMessage && (
+        <Alert severity="warning" sx={{ mb: 3 }}>
+          {sessionExpiredMessage}
+        </Alert>
+      )}
+      
       {!!errorMessage && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {errorMessage}

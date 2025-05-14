@@ -15,8 +15,7 @@ export type ICourse = {
   universityId: string;
   universityName: string;
   description?: string;
-  durationYears?: number;
-  durationMonths?: number;
+  durationMonths?: number; // Total months for duration
   tuitionFee?: number;
   startDates?: string[];
   status: 'active' | 'inactive';
@@ -29,8 +28,8 @@ export type ICreateCourse = {
   code: string;
   universityId: string;
   description?: string;
-  durationYears?: number;
-  durationMonths?: number;
+  durationYears?: number; // For UI only
+  durationMonths?: number; // Backend will only receive total months
   tuitionFee?: number;
   startDates?: string[];
   status?: 'active' | 'inactive';
@@ -41,8 +40,7 @@ export type IUpdateCourse = {
   code?: string;
   universityId?: string;
   description?: string;
-  durationYears?: number;
-  durationMonths?: number;
+  durationMonths?: number; // Total duration in months
   tuitionFee?: number;
   startDates?: string[];
   status?: 'active' | 'inactive';

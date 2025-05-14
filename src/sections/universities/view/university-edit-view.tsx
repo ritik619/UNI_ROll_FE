@@ -3,31 +3,28 @@
 // ----------------------------------------------------------------------
 
 import { paths } from 'src/routes/paths';
-import { useSearchParams } from 'src/routes/hooks';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { CourseNewEditForm } from './course-new-edit-form';
+import { UniversityNewEditForm } from './university-new-edit-form';
 
-export default function CourseCreateView() {
-  const searchParams = useSearchParams();
-  const universityId = searchParams.get('universityId') || '';
 
+export default function UniversityEditView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new Course"
+        heading="EditUniversity"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Courses', href: paths.dashboard.universitiesAndCourses.list },
-          { name: 'New Course' },
+          { name: 'University', href: paths.dashboard.universitiesAndCourses.list },
+          { name: 'New University' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <CourseNewEditForm initialUniversityId={universityId} />
+      <UniversityNewEditForm />
     </DashboardContent>
   );
 }

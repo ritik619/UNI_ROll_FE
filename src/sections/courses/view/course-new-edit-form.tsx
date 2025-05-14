@@ -21,11 +21,11 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
+import { fetchUniversities } from 'src/services/universities/fetchUniversities';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
-import { fetchUniversities } from 'src/services/universities/fetchUniversities';
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +36,8 @@ export const NewCourseSchema = zod
     universityId: zod.string().min(1, { message: 'University is required!' }),
     description: zod.string().optional(),
     durationYears: zod.number().min(0).max(10).optional(),
-    durationMonths: zod.number().min(1).max(12).optional(),
+    durationMonths: zod.number().min(0).max(11).optional(),
+    durationTotalMonths: zod.number().min(1).optional(), // This will be calculated and used for DB storage
     tuitionFee: zod.number().optional(),
     startDates: zod.array(zod.string()).optional(),
     newStartDate: zod.any().optional(), // For the date picker
@@ -44,14 +45,11 @@ export const NewCourseSchema = zod
   })
   .refine(
     (data) => {
-      // Ensure at least months or years has a value > 0
-      if (
-        (data.durationYears === 0 || data.durationYears === undefined) &&
-        (data.durationMonths === undefined || data.durationMonths === 0)
-      ) {
-        return false;
-      }
-      return true;
+      // Ensure the calculated total months is at least 1
+      const years = data.durationYears || 0;
+      const months = data.durationMonths || 0;
+      const totalMonths = years * 12 + months;
+      return totalMonths >= 1;
     },
     {
       message: 'Course must have a duration (at least 1 month)',
@@ -68,9 +66,10 @@ export type CreateCourseType = ICreateCourse;
 
 type Props = {
   currentCourse?: ICourse;
+  initialUniversityId?: string;
 };
 
-export function CourseNewEditForm({ currentCourse }: Props) {
+export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props) {
   const router = useRouter();
   const [universities, setUniversities] = useState<{ id: string; name: string }[]>([]);
   const [startDates, setStartDates] = useState<string[]>(currentCourse?.startDates || []);
@@ -83,14 +82,14 @@ export function CourseNewEditForm({ currentCourse }: Props) {
 
   // Generate month options (1-12)
   const monthOptions = Array.from({ length: 12 }, (_, i) => ({
-    value: i + 1,
-    label: i + 1 === 1 ? `${i + 1} Month` : `${i + 1} Months`,
+    value: i,
+    label: i === 1 ? `${i} Month` : `${i} Months`,
   }));
 
   useEffect(() => {
     const getUniversities = async () => {
       try {
-        const { universities:uni } =await fetchUniversities('active', 1, 100);
+        const { universities: uni } = await fetchUniversities('active', 1, 100);
         console.log('universities', uni);
         setUniversities(uni || []);
       } catch (error) {
@@ -105,16 +104,34 @@ export function CourseNewEditForm({ currentCourse }: Props) {
   const defaultValues: NewCourseSchemaType = {
     name: '',
     code: '',
-    universityId: '',
+    universityId: initialUniversityId || '',
     description: '',
     durationYears: 0,
     durationMonths: 1,
+    durationTotalMonths: 1, // Default to 1 month
     tuitionFee: undefined,
     startDates: [],
     newStartDate: null,
     status: 'active',
   };
   console.log('defaultValues', universities);
+  // Function to convert total months to years and months
+  const convertTotalMonthsToYearsMonths = (totalMonths: number) => {
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+    return { years, months };
+  };
+
+  // If we have a current course, calculate years and months from total months
+  let initialYears = 0;
+  let initialMonths = 0;
+
+  if (currentCourse && currentCourse.durationMonths) {
+    const { years, months } = convertTotalMonthsToYearsMonths(currentCourse.durationMonths);
+    initialYears = years;
+    initialMonths = months;
+  }
+
   const methods = useForm<NewCourseSchemaType>({
     mode: 'onSubmit',
     resolver: zodResolver(NewCourseSchema),
@@ -125,12 +142,14 @@ export function CourseNewEditForm({ currentCourse }: Props) {
           code: currentCourse.code || '',
           universityId: currentCourse.universityId || '',
           description: currentCourse.description || '',
-          durationYears: currentCourse.durationYears || 0,
-          durationMonths: currentCourse.durationMonths || 0,
+          durationYears: initialYears,
+          durationMonths: initialMonths,
+          durationTotalMonths: currentCourse.durationMonths || 1,
           tuitionFee: currentCourse.tuitionFee,
           startDates: currentCourse.startDates || [],
           newStartDate: null,
           status: currentCourse.status || 'active',
+          feeCurrency: 'USD',
         }
       : defaultValues,
   });
@@ -146,9 +165,10 @@ export function CourseNewEditForm({ currentCourse }: Props) {
 
   const handleAddStartDate = () => {
     if (watchNewStartDate) {
-      const date=new Date(watchNewStartDate)
+      const date = new Date(watchNewStartDate);
       console.log('Adding start date:', date);
-      const dateString = date.toISOString().split('T')[0];
+      // Format the date as YYYY-MM-DD
+      const dateString = date.toISOString().split('T')[0]; // e.g. 2025-09-01
       if (!startDates.includes(dateString)) {
         const updatedDates = [...startDates, dateString];
         setStartDates(updatedDates);
@@ -166,28 +186,88 @@ export function CourseNewEditForm({ currentCourse }: Props) {
 
   const createCourse = async (data: ICreateCourse) => {
     console.log('Creating course with data:', data);
-        // Create a direct payload object instead of using formData
+    // Calculate total months from years and months
+    const years = data.durationYears || 0;
+    const months = data.durationMonths || 0;
+    const totalMonths = years * 12 + months;
+
+    // Create a direct payload object instead of using formData
     const payload = {
       name: data.name.trim(),
       code: data.code.trim(),
       universityId: data.universityId.trim(),
       description: data.description?.trim(),
-      durationYears: data.durationYears !== undefined ? Number(data.durationYears) : undefined,
-      durationMonths: data.durationMonths !== undefined ? Number(data.durationMonths) : undefined,
+      // Only send durationMonths to backend
+      durationMonths: totalMonths,
       tuitionFee: data.tuitionFee ? Number(data.tuitionFee) : undefined,
       startDates: data.startDates && data.startDates.length > 0 ? data.startDates : undefined,
       status: data.status,
+      feeCurrency: 'USD',
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.courses.list, payload);
     return response;
   };
 
+  const updateCourse = async (data: ICreateCourse) => {
+    console.log('Updating course with data:', data);
+    // Calculate total months from years and months
+    const years = data.durationYears || 0;
+    const months = data.durationMonths || 0;
+    const totalMonths = years * 12 + months;
+
+    const payload = {
+      name: data.name.trim(),
+      code: data.code.trim(),
+      description: data.description?.trim(),
+      // Only send durationMonths to backend
+      durationMonths: totalMonths,
+      tuitionFee: data.tuitionFee ? Number(data.tuitionFee) : undefined,
+      startDates: data.startDates && data.startDates.length > 0 ? data.startDates : undefined,
+      status: data.status,
+      feeCurrency: 'USD',
+      // Note: universityId is not included in the update payload as it cannot be changed
+    };
+    console.log(
+      'Payload for update:',
+      currentCourse?.id,
+      `${endpoints.courses.details(currentCourse?.id)}`
+    );
+    const response = await authAxiosInstance.patch<{ id: string }>(
+      `${endpoints.courses.details(currentCourse?.id)}`,
+      payload
+    );
+    return response;
+  };
+
+  // Function to update total months when either years or months change
+  const updateTotalMonths = () => {
+    const years = Number(methods.getValues('durationYears') || 0);
+    const months = Number(methods.getValues('durationMonths') || 0);
+    const totalMonths = years * 12 + months;
+    methods.setValue('durationTotalMonths', totalMonths);
+  };
+
+  // Set up watches to update total months when either years or months change
+  const watchYears = watch('durationYears');
+  const watchMonths = watch('durationMonths');
+
+  useEffect(() => {
+    updateTotalMonths();
+  }, [watchYears, watchMonths]);
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await createCourse(data);
+      // Make sure total months is updated before submission
+      updateTotalMonths();
+
+      if (currentCourse) {
+        await updateCourse(data);
+      } else {
+        await createCourse(data);
+      }
       toast.success(currentCourse ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.universitiesAndCourses.root);
+      router.push(paths.dashboard.universitiesAndCourses.list);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || 'Something went wrong');
@@ -225,19 +305,36 @@ export function CourseNewEditForm({ currentCourse }: Props) {
                 helperText="Enter a unique course code"
               />
 
-              <Field.Select
-                name="universityId"
-                label="University"
-                helperText="Select the university offering this course"
-              >
-                <MenuItem value="">None</MenuItem>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {universities.map((university) => (
-                  <MenuItem key={university.id} value={university.id}>
-                    {university.name} {" "} ({university.cityName})
-                  </MenuItem>
-                ))}
-              </Field.Select>
+              {currentCourse ? (
+                <Field.Text
+                  name="universityName"
+                  label="University"
+                  value={currentCourse.universityName}
+                  InputProps={{
+                    readOnly: true,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Iconify icon="mdi:university" sx={{ color: 'text.disabled' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  helperText="University cannot be changed after course creation"
+                />
+              ) : (
+                <Field.Select
+                  name="universityId"
+                  label="University"
+                  helperText="Select the university offering this course"
+                >
+                  <MenuItem value="">None</MenuItem>
+                  <Divider sx={{ borderStyle: 'dashed' }} />
+                  {universities.map((university) => (
+                    <MenuItem key={university.id} value={university.id}>
+                      {university.name} ({university.cityName})
+                    </MenuItem>
+                  ))}
+                </Field.Select>
+              )}
 
               <Field.Select
                 name="status"
@@ -281,7 +378,7 @@ export function CourseNewEditForm({ currentCourse }: Props) {
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>£</Box>
+                        <Box sx={{ typography: 'subtitle2', color: 'text.disabled' }}>$</Box>
                       </InputAdornment>
                     ),
                   },
@@ -384,7 +481,7 @@ export function CourseNewEditForm({ currentCourse }: Props) {
               <LoadingButton
                 color="inherit"
                 variant="outlined"
-                onClick={() => router.push(paths.dashboard.universitiesAndCourses.root)}
+                onClick={() => router.push(paths.dashboard.universitiesAndCourses.list)}
               >
                 Cancel
               </LoadingButton>

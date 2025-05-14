@@ -1,10 +1,19 @@
-import type { AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 
 import axios from 'axios';
-
 import { CONFIG } from 'src/global-config';
 
 // ----------------------------------------------------------------------
+
+// For redirecting to login page on token expiration
+let logoutHandler: () => void;
+
+/**
+ * Set a handler function to be called when token expires
+ */
+export const setLogoutHandler = (handler: () => void) => {
+  logoutHandler = handler;
+};
 
 /**
  * Create a base axios instance that can be used throughout the app
@@ -17,7 +26,34 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
   // Add response interceptor to handle errors more gracefully
   instance.interceptors.response.use(
     (response) => response,
-    (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong!')
+    (error) => {
+      // Check if this is an auth error (401 Unauthorized)
+      if (
+        error.response && 
+        error.response.status === 401 &&
+        error.config && 
+        !error.config.__isRetryRequest
+      ) {
+        console.warn('Token expired or invalid. Redirecting to login...');
+        
+        // If we have a logout handler, call it
+        if (logoutHandler) {
+          logoutHandler();
+        } else {
+          // Fallback: attempt to redirect to sign-in page
+          try {
+            if (typeof window !== 'undefined') {
+              window.localStorage.setItem('unauthorizedRedirect', 'true');
+              window.location.href = '/auth/firebase/sign-in';
+            }
+          } catch (e) {
+            console.error('Failed to redirect after auth error:', e);
+          }
+        }
+      }
+      
+      return Promise.reject((error.response && error.response.data) || 'Something went wrong!');
+    }
   );
 
   return instance;

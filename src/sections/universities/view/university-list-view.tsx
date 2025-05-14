@@ -205,7 +205,7 @@ export function UniversityListView() {
           heading="Universities List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Universities', href: paths.dashboard.universitiesAndCourses.root },
+            { name: 'Universities', href: paths.dashboard.universitiesAndCourses.list },
             { name: 'List' },
           ]}
           action={
