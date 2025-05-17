@@ -54,7 +54,7 @@ const NAV_ITEMS = [
 
 const TAB_PARAM = 'tab';
 
-export function UserProfileView() {
+export function StudentsProfileView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const selectedTab = searchParams.get(TAB_PARAM) ?? '';
@@ -78,7 +78,7 @@ export function UserProfileView() {
         heading="Profile"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Agent', href: paths.dashboard.agent.root },
+          { name: 'Students', href: paths.dashboard.students.root },
           { name: user?.displayName },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

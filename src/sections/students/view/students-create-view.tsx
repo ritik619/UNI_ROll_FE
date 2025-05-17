@@ -6,24 +6,24 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserNewEditForm } from '../user-new-edit-form';
+import { StudentsNewEditForm } from '../students-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserCreateView() {
+export function StudentsCreateView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading="Create a new student"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Agent', href: paths.dashboard.agent.root },
-          { name: 'New Agent' },
+          { name: 'Students', href: paths.dashboard.students.root },
+          { name: 'New Student' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm />
+      <StudentsNewEditForm />
     </DashboardContent>
   );
 }

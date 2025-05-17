@@ -63,8 +63,16 @@ export const navData: NavSectionProps['data'] = [
       },
       {
         title: 'Students',
-        path: paths.dashboard.students,
+        path: paths.dashboard.students.root,
         icon: ICONS.booking,
+        children: [
+          // { title: 'Profile', path: paths.dashboard.students.root },
+          { title: 'Add', path: paths.dashboard.students.new },
+          { title: 'List', path: paths.dashboard.students.list },
+          // { title: 'Cards', path: paths.dashboard.students.cards },
+          // { title: 'Edit', path: paths.dashboard.students.demo.edit },
+          // { title: 'Account', path: paths.dashboard.students.account },
+        ],
       },
       {
         title: 'Universities & Courses',

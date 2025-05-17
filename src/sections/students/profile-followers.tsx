@@ -1,5 +1,5 @@
 import type { CardProps } from '@mui/material/Card';
-import type { IUserProfileFollower } from 'src/types/agent';
+import type { IStudentsProfileFollower } from 'src/types/students';
 
 import { useState, useCallback } from 'react';
 
@@ -15,7 +15,7 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 type Props = {
-  followers: IUserProfileFollower[];
+  followers: IStudentsProfileFollower[];
 };
 
 export function ProfileFollowers({ followers }: Props) {
@@ -65,7 +65,7 @@ export function ProfileFollowers({ followers }: Props) {
 type CardItemProps = CardProps & {
   selected: boolean;
   onSelected: () => void;
-  follower: IUserProfileFollower;
+  follower: IStudentsProfileFollower;
 };
 
 function CardItem({ follower, selected, onSelected, sx, ...other }: CardItemProps) {

@@ -58,15 +58,24 @@ export const paths = {
       // account: `${ROOTS.DASHBOARD}/agent/account`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/agent/${id}/edit`,
     },
+    students: {
+      root: `${ROOTS.DASHBOARD}/students`,
+      new: `${ROOTS.DASHBOARD}/students/new`,
+      list: `${ROOTS.DASHBOARD}/students/list`,
+      cards: `${ROOTS.DASHBOARD}/students/cards`,
+      profile: `${ROOTS.DASHBOARD}/students/profile`,
+      // account: `${ROOTS.DASHBOARD}/students/account`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/students/${id}/edit`,
+    },
 
-    students: `${ROOTS.DASHBOARD}/students`,
     universitiesAndCourses: {
       root: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
       list: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
       new: `${ROOTS.DASHBOARD}/universities-&-courses/new`,
       addCourse: `${ROOTS.DASHBOARD}/universities-&-courses/add-course`,
       editCourse: (id: string) => `${ROOTS.DASHBOARD}/universities-&-courses/edit-course/${id}`,
-      universityCourses: (id: string) => `${ROOTS.DASHBOARD}/universities-&-courses/university/${id}`,
+      universityCourses: (id: string) =>
+        `${ROOTS.DASHBOARD}/universities-&-courses/university/${id}`,
     },
     intakes: `${ROOTS.DASHBOARD}/intakes`,
     earningsoverview: `${ROOTS.DASHBOARD}/earnings-overview`,

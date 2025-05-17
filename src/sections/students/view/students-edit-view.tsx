@@ -1,6 +1,6 @@
 'use client';
 
-import type { IUserItem } from 'src/types/agent';
+import type { IStudentsItem } from 'src/types/students';
 
 import { paths } from 'src/routes/paths';
 
@@ -8,29 +8,29 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserNewEditForm } from '../user-new-edit-form';
+import { StudentsNewEditForm } from '../students-new-edit-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  user?: IUserItem;
+  students?: IStudentsItem;
 };
 
-export function UserEditView({ user: currentUser }: Props) {
+export function StudentsEditView({ students: currentStudents }: Props) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
         heading="Edit"
-        backHref={paths.dashboard.agent.list}
+        backHref={paths.dashboard.students.list}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.agent.root },
-          { name: currentUser?.fName },
+          { name: 'Students', href: paths.dashboard.students.root },
+          { name: currentStudents?.firstName },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm currentUser={currentUser} />
+      <StudentsNewEditForm currentStudents={currentStudents} />
     </DashboardContent>
   );
 }

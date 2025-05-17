@@ -1,4 +1,4 @@
-import type { IUserProfilePost } from 'src/types/agent';
+import type { IStudentsProfilePost } from 'src/types/students';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useRef, useState, useCallback } from 'react';
@@ -29,7 +29,7 @@ import { useMockedUser } from 'src/auth/hooks';
 // ----------------------------------------------------------------------
 
 type Props = {
-  post: IUserProfilePost;
+  post: IStudentsProfilePost;
 };
 
 export function ProfilePostItem({ post }: Props) {

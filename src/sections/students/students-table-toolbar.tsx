@@ -1,4 +1,4 @@
-import type { IUserTableFilters } from 'src/types/agent';
+import type { IStudentsTableFilters } from 'src/types/students';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
 
@@ -24,13 +24,13 @@ import { CustomPopover } from 'src/components/custom-popover';
 
 type Props = {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IUserTableFilters>;
+  filters: UseSetStateReturn<IStudentsTableFilters>;
   options: {
     roles: string[];
   };
 };
 
-export function UserTableToolbar({ filters, options, onResetPage }: Props) {
+export function StudentsTableToolbar({ filters, options, onResetPage }: Props) {
   const menuActions = usePopover();
 
   const { state: currentFilters, setState: updateFilters } = filters;

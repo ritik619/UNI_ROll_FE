@@ -1,19 +1,19 @@
-import type { IUserCard } from 'src/types/agent';
+import type { IStudentsCard } from 'src/types/students';
 
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 
-import { UserCard } from './user-card';
+import { StudentsCard } from './students-card';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  users: IUserCard[];
+  studentss: IStudentsCard[];
 };
 
-export function UserCardList({ users }: Props) {
+export function StudentsCardList({ studentss }: Props) {
   const [page, setPage] = useState(1);
 
   const rowsPerPage = 12;
@@ -31,17 +31,17 @@ export function UserCardList({ users }: Props) {
           gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
         }}
       >
-        {users
+        {studentss
           .slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
-          .map((user) => (
-            <UserCard key={user.id} user={user} />
+          .map((students) => (
+            <StudentsCard key={students.id} students={students} />
           ))}
       </Box>
 
       <Pagination
         page={page}
         shape="circular"
-        count={Math.ceil(users.length / rowsPerPage)}
+        count={Math.ceil(studentss.length / rowsPerPage)}
         onChange={handleChangePage}
         sx={{ mt: { xs: 5, md: 8 }, mx: 'auto' }}
       />

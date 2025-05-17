@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import { _agentCards } from 'src/_mock';
+import { _userCards } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
@@ -38,7 +38,7 @@ export function AgentCardsView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <AgentCardList agents={_agentCards} />
+      <AgentCardList agents={_userCards} />
     </DashboardContent>
   );
 }

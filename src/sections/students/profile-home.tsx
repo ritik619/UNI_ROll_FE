@@ -1,4 +1,4 @@
-import type { IUserProfile, IUserProfilePost } from 'src/types/agent';
+import type { IStudentsProfile, IStudentsProfilePost } from 'src/types/students';
 
 import { useRef } from 'react';
 import { varAlpha } from 'minimal-shared/utils';
@@ -26,8 +26,8 @@ import { ProfilePostItem } from './profile-post-item';
 // ----------------------------------------------------------------------
 
 type Props = {
-  info: IUserProfile;
-  posts: IUserProfilePost[];
+  info: IStudentsProfile;
+  posts: IStudentsProfilePost[];
 };
 
 export function ProfileHome({ info, posts }: Props) {

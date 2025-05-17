@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/agent';
+import type { IStudentsItem } from 'src/types/students';
 
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
 
@@ -21,12 +21,12 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
-import { UserQuickEditForm } from './user-quick-edit-form';
+import { StudentsQuickEditForm } from './students-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IUserItem;
+  row: IStudentsItem;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -34,14 +34,21 @@ type Props = {
   onToggleStatus?: (id: string, status: string) => void;
 };
 
-export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus }: Props) {
+export function StudentsTableRow({
+  row,
+  selected,
+  editHref,
+  onSelectRow,
+  onDeleteRow,
+  onToggleStatus,
+}: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
 
   const renderQuickEditForm = () => (
-    <UserQuickEditForm
-      currentUser={row}
+    <StudentsQuickEditForm
+      currentStudents={row}
       open={quickEditForm.value}
       onClose={quickEditForm.onFalse}
     />
@@ -72,7 +79,11 @@ export function UserTableRow({ row, selected, editHref, onSelectRow, onDeleteRow
           }}
           sx={{ color: row.status === 'active' ? 'warning.main' : 'success.main' }}
         >
-          <Iconify icon={row.status === 'active' ? "material-symbols:toggle-off" : "material-symbols:toggle-on"} />
+          <Iconify
+            icon={
+              row.status === 'active' ? 'material-symbols:toggle-off' : 'material-symbols:toggle-on'
+            }
+          />
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import type { TableHeadCellProps } from 'src/components/table';
-import type { IUserItem, IUserTableFilters } from 'src/types/agent';
+import type { IStudentsItem, IStudentsTableFilters } from 'src/types/students';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useState, useEffect, useCallback } from 'react';
@@ -22,7 +22,7 @@ import { RouterLink } from 'src/routes/components';
 
 import { USER_STATUS_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { fetchAgents } from 'src/services/agents/fetchAgents';
+import { fetchStudents } from 'src/services/students/fetchStudents';
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 import { Label } from 'src/components/label';
@@ -44,8 +44,8 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { UserTableRow } from '../user-table-row';
-import { UserTableFiltersResult } from '../user-table-filters-result';
+import { StudentsTableRow } from '../students-table-row';
+import { StudentsTableFiltersResult } from '../students-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -62,15 +62,15 @@ const TABLE_HEAD: TableHeadCellProps[] = [
 
 // ----------------------------------------------------------------------
 
-export function UserListView() {
+export function StudentsListView() {
   const table = useTable();
 
   const confirmDialog = useBoolean();
   const [loading, setLoading] = useState(false);
-  const [tableData, setTableData] = useState<IUserItem[]>([]);
+  const [tableData, setTableData] = useState<IStudentsItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
 
-  const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
+  const filters = useSetState<IStudentsTableFilters>({ name: '', role: [], status: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
 
   const dataFiltered = applyFilter({
@@ -102,7 +102,7 @@ export function UserListView() {
   const handleToggleStatus = useCallback(
     async (id: string, newStatus: 'active' | 'inactive') => {
       // Here you would typically call an API to update the status
-      await authAxiosInstance.patch(endpoints.agents.status(id), {
+      await authAxiosInstance.patch(endpoints.students.status(id), {
         status: newStatus,
       });
       // For now, we'll just update it locally
@@ -161,8 +161,8 @@ export function UserListView() {
   const fetchPaginatedAgents = useCallback(async () => {
     try {
       setLoading(true);
-      const { agents, total } = await fetchAgents('all', table.page, table.rowsPerPage);
-      setTableData(agents);
+      const { students, total } = await fetchStudents('all', table.page, table.rowsPerPage);
+      setTableData(students);
       setTotalCount(total);
     } catch (err) {
       console.error(err);
@@ -183,17 +183,17 @@ export function UserListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Agent', href: paths.dashboard.agent.root },
+            { name: 'Students', href: paths.dashboard.students.root },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.agent.new}
+              href={paths.dashboard.students.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New user
+              New Student
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -225,7 +225,7 @@ export function UserListView() {
                     color={(tab.value === 'Active' && 'success') || 'default'}
                   >
                     {['active', 'inactive'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
+                      ? tableData.filter((students) => students.status === tab.value).length
                       : tableData.length}
                   </Label>
                 }
@@ -233,14 +233,14 @@ export function UserListView() {
             ))}
           </Tabs>
 
-          {/* <UserTableToolbar
+          {/* <StudentsTableToolbar
             filters={filters}
             onResetPage={table.onResetPage}
             options={{ roles: _roles }}
           /> */}
 
           {canReset && (
-            <UserTableFiltersResult
+            <StudentsTableFiltersResult
               filters={filters}
               totalResults={dataFiltered.length}
               onResetPage={table.onResetPage}
@@ -296,14 +296,14 @@ export function UserListView() {
                           table.page * table.rowsPerPage + table.rowsPerPage
                         )
                         .map((row) => (
-                          <UserTableRow
+                          <StudentsTableRow
                             key={row.id}
                             row={row}
                             selected={table.selected.includes(row.id)}
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}
                             onToggleStatus={handleToggleStatus}
-                            editHref={paths.dashboard.agent.edit(row.id)}
+                            editHref={paths.dashboard.students.edit(row.id)}
                           />
                         ))}
 
@@ -362,8 +362,8 @@ export function UserListView() {
 // ----------------------------------------------------------------------
 
 type ApplyFilterProps = {
-  inputData: IUserItem[];
-  filters: IUserTableFilters;
+  inputData: IStudentsItem[];
+  filters: IStudentsTableFilters;
   comparator: (a: any, b: any) => number;
 };
 
@@ -381,15 +381,17 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
-    inputData = inputData.filter((user) => user.name.toLowerCase().includes(name.toLowerCase()));
+    inputData = inputData.filter((students) =>
+      students.name.toLowerCase().includes(name.toLowerCase())
+    );
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((user) => user.status === status);
+    inputData = inputData.filter((students) => students.status === status);
   }
 
   if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
+    inputData = inputData.filter((students) => role.includes(students.role));
   }
 
   return inputData;

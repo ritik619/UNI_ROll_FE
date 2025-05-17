@@ -1,4 +1,4 @@
-import type { IUserTableFilters } from 'src/types/agent';
+import type { IStudentsTableFilters } from 'src/types/students';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
 import type { FiltersResultProps } from 'src/components/filters-result';
 
@@ -12,10 +12,10 @@ import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-r
 
 type Props = FiltersResultProps & {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IUserTableFilters>;
+  filters: UseSetStateReturn<IStudentsTableFilters>;
 };
 
-export function UserTableFiltersResult({ filters, onResetPage, totalResults, sx }: Props) {
+export function StudentsTableFiltersResult({ filters, onResetPage, totalResults, sx }: Props) {
   const { state: currentFilters, setState: updateFilters, resetState: resetFilters } = filters;
 
   const handleRemoveKeyword = useCallback(() => {

@@ -11,34 +11,34 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserCardList } from '../user-card-list';
+import { StudentsCardList } from '../students-card-list';
 
 // ----------------------------------------------------------------------
 
-export function UserCardsView() {
+export function StudentsCardsView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="User cards"
+        heading="Students cards"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Agent', href: paths.dashboard.agent.root },
+          { name: 'Students', href: paths.dashboard.students.root },
           { name: 'Cards' },
         ]}
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.agent.new}
+            href={paths.dashboard.students.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New user
+            New Student
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserCardList users={_userCards} />
+      <StudentsCardList students={_userCards} />
     </DashboardContent>
   );
 }

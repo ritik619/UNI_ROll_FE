@@ -29,13 +29,13 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
     (error) => {
       // Check if this is an auth error (401 Unauthorized)
       if (
-        error.response && 
+        error.response &&
         error.response.status === 401 &&
-        error.config && 
+        error.config &&
         !error.config.__isRetryRequest
       ) {
         console.warn('Token expired or invalid. Redirecting to login...');
-        
+
         // If we have a logout handler, call it
         if (logoutHandler) {
           logoutHandler();
@@ -51,7 +51,7 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
           }
         }
       }
-      
+
       return Promise.reject((error.response && error.response.data) || 'Something went wrong!');
     }
   );
@@ -115,6 +115,12 @@ export const endpoints = {
     details: (id: string) => `agents/${id}`,
     profilePhoto: (id: string) => `agents/${id}/profile-photo`,
     status: (id: string) => `agents/${id}/status`,
+  },
+  students: {
+    list: 'students',
+    details: (id: string) => `students/${id}`,
+    profilePhoto: (id: string) => `students/${id}/profile-photo`,
+    status: (id: string) => `students/${id}/status`,
   },
   universities: {
     list: 'universities',

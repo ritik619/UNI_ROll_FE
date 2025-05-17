@@ -1,5 +1,5 @@
 import type { BoxProps } from '@mui/material/Box';
-import type { IUserProfileCover } from 'src/types/agent';
+import type { IStudentsProfileCover } from 'src/types/students';
 
 import { varAlpha } from 'minimal-shared/utils';
 
@@ -16,7 +16,7 @@ export function ProfileCover({
   coverUrl,
   avatarUrl,
   ...other
-}: BoxProps & IUserProfileCover) {
+}: BoxProps & IStudentsProfileCover) {
   return (
     <Box
       sx={[

@@ -1,4 +1,4 @@
-import type { IUserItem } from 'src/types/agent';
+import type { IStudentsItem } from 'src/types/students';
 
 import { z as zod } from 'zod';
 import router from 'next/router';
@@ -28,9 +28,9 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export type UserQuickEditSchemaType = zod.infer<typeof UserQuickEditSchema>;
+export type StudentsQuickEditSchemaType = zod.infer<typeof StudentsQuickEditSchema>;
 
-export const UserQuickEditSchema = zod.object({
+export const StudentsQuickEditSchema = zod.object({
   avatarUrl: schemaHelper.file().nullable().optional(),
   firstName: zod.string().min(1, { message: 'First Name is required!' }),
   lastName: zod.string().min(1, { message: 'Last Name is required!' }),
@@ -64,11 +64,11 @@ export const UserQuickEditSchema = zod.object({
 type Props = {
   open: boolean;
   onClose: () => void;
-  currentUser?: IUserItem;
+  currentStudents?: IStudentsItem;
 };
 
-export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
-  const defaultValues: UserQuickEditSchemaType = {
+export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props) {
+  const defaultValues: StudentsQuickEditSchemaType = {
     status: '',
     avatarUrl: null,
     firstName: '',
@@ -83,14 +83,14 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
     // password: '',
   };
 
-  const methods = useForm<UserQuickEditSchemaType>({
+  const methods = useForm<StudentsQuickEditSchemaType>({
     mode: 'all',
-    resolver: zodResolver(UserQuickEditSchema),
+    resolver: zodResolver(StudentsQuickEditSchema),
     defaultValues,
     values: {
-      accountNumber: currentUser?.bankDetails?.accountNumber,
-      sortCode: currentUser?.bankDetails.sortCode,
-      ...currentUser,
+      accountNumber: currentStudents?.bankDetails?.accountNumber,
+      sortCode: currentStudents?.bankDetails.sortCode,
+      ...currentStudents,
     },
   });
 
@@ -100,7 +100,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
     formState: { isSubmitting },
   } = methods;
 
-  const updateAgent = async (data: UserQuickEditSchemaType) => {
+  const updateAgent = async (data: StudentsQuickEditSchemaType) => {
     const payload = {
       // avatarUrl: data.avatarUrl ?? null,
       firstName: data.firstName.trim(),
@@ -117,7 +117,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
       status: 'active',
     };
 
-    const uId = currentUser?.id || '';
+    const uId = currentStudents?.id || '';
     const response = await authAxiosInstance.patch<{ id: string }>(
       endpoints.agents.details(uId),
       payload
@@ -141,7 +141,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
     console.log('onSubmit', data);
     try {
       await updateAgent(data);
-      toast.success(currentUser ? 'Update success!' : 'Update error!');
+      toast.success(currentStudents ? 'Update success!' : 'Update error!');
       router.push(paths.dashboard.agent.list);
     } catch (error: any) {
       console.error(error);
@@ -160,10 +160,11 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
 
       <Form methods={methods} onSubmit={onSubmit}>
         <DialogContent>
-          {currentUser?.status==='inactive'&&
-          <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-            Account is waiting for confirmation
-          </Alert>}
+          {currentStudents?.status === 'inactive' && (
+            <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
+              Account is waiting for confirmation
+            </Alert>
+          )}
           <Box sx={{ mb: 5 }}>
             <Field.UploadAvatar
               name="avatarUrl"

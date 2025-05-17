@@ -1,4 +1,4 @@
-import type { IUserCard } from 'src/types/agent';
+import type { IStudentsCard } from 'src/types/agent';
 import type { CardProps } from '@mui/material/Card';
 
 import { varAlpha } from 'minimal-shared/utils';
@@ -21,10 +21,10 @@ import { Image } from 'src/components/image';
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
-  user: IUserCard;
+  students: IStudentsCard;
 };
 
-export function UserCard({ user, sx, ...other }: Props) {
+export function StudentsCard({ students, sx, ...other }: Props) {
   return (
     <Card sx={[{ textAlign: 'center' }, ...(Array.isArray(sx) ? sx : [sx])]} {...other}>
       <Box sx={{ position: 'relative' }}>
@@ -40,8 +40,8 @@ export function UserCard({ user, sx, ...other }: Props) {
         />
 
         <Avatar
-          alt={user.name}
-          src={user.avatarUrl}
+          alt={students.name}
+          src={students.avatarUrl}
           sx={{
             left: 0,
             right: 0,
@@ -55,8 +55,8 @@ export function UserCard({ user, sx, ...other }: Props) {
         />
 
         <Image
-          src={user.coverUrl}
-          alt={user.coverUrl}
+          src={students.coverUrl}
+          alt={students.coverUrl}
           ratio="16/9"
           slotProps={{
             overlay: {
@@ -70,8 +70,8 @@ export function UserCard({ user, sx, ...other }: Props) {
 
       <ListItemText
         sx={{ mt: 7, mb: 1 }}
-        primary={user.name}
-        secondary={user.role}
+        primary={students.name}
+        secondary={students.role}
         slotProps={{
           primary: { sx: { typography: 'subtitle1' } },
           secondary: { sx: { mt: 0.5 } },
@@ -107,9 +107,9 @@ export function UserCard({ user, sx, ...other }: Props) {
         }}
       >
         {[
-          { label: 'Follower', value: user.totalFollowers },
-          { label: 'Following', value: user.totalFollowing },
-          { label: 'Total post', value: user.totalPosts },
+          { label: 'Follower', value: students.totalFollowers },
+          { label: 'Following', value: students.totalFollowing },
+          { label: 'Total post', value: students.totalPosts },
         ].map((stat) => (
           <Box key={stat.label} sx={{ gap: 0.5, display: 'flex', flexDirection: 'column' }}>
             <Box component="span" sx={{ typography: 'caption', color: 'text.secondary' }}>

@@ -12,12 +12,12 @@ import { RouterLink } from 'src/routes/components';
 import { usePathname, useSearchParams } from 'src/routes/hooks';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _agentAbout, _agentFeeds, _agentFriends, _agentGallery, _agentFollowers } from 'src/_mock';
+import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } from 'src/_mock';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { useMockedAgent } from 'src/auth/hooks';
+import { useMockedUser } from 'src/auth/hooks';
 
 import { ProfileHome } from '../profile-home';
 import { ProfileCover } from '../profile-cover';
@@ -59,7 +59,7 @@ export function AgentProfileView() {
   const searchParams = useSearchParams();
   const selectedTab = searchParams.get(TAB_PARAM) ?? '';
 
-  const { agent } = useMockedAgent();
+  const { agent } = useMockedUser();
 
   const [searchFriends, setSearchFriends] = useState('');
 
@@ -86,10 +86,10 @@ export function AgentProfileView() {
 
       <Card sx={{ mb: 3, height: 290 }}>
         <ProfileCover
-          role={_agentAbout.role}
+          role={_userAbout.role}
           name={agent?.displayName}
           avatarUrl={agent?.photoURL}
-          coverUrl={_agentAbout.coverUrl}
+          coverUrl={_userAbout.coverUrl}
         />
 
         <Box
@@ -119,19 +119,19 @@ export function AgentProfileView() {
         </Box>
       </Card>
 
-      {selectedTab === '' && <ProfileHome info={_agentAbout} posts={_agentFeeds} />}
+      {selectedTab === '' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
 
-      {selectedTab === 'followers' && <ProfileFollowers followers={_agentFollowers} />}
+      {selectedTab === 'followers' && <ProfileFollowers followers={_userFollowers} />}
 
       {selectedTab === 'friends' && (
         <ProfileFriends
-          friends={_agentFriends}
+          friends={_userFriends}
           searchFriends={searchFriends}
           onSearchFriends={handleSearchFriends}
         />
       )}
 
-      {selectedTab === 'gallery' && <ProfileGallery gallery={_agentGallery} />}
+      {selectedTab === 'gallery' && <ProfileGallery gallery={_userGallery} />}
     </DashboardContent>
   );
 }
