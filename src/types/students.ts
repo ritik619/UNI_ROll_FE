@@ -5,7 +5,7 @@ import type { IDateValue, ISocialLink } from './common';
 export type IStudentsTableFilters = {
   name: string;
   role: string[];
-  status: 'all' | 'active' | 'inactive';
+  status: 'all' | 'free' | 'interested' | 'enrolled' | 'unenrolled';
 };
 
 export type IStudentsProfileCover = {
@@ -80,21 +80,21 @@ export type IStudentsItem = {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
-  bankDetails: {
-    sortCode: string;
-    accountNumber: string;
-  };
+  // bankDetails: {
+  //   sortCode: string;
+  //   accountNumber: string;
+  // };
   email: string;
   address: string;
   postCode: string;
   utrNumber: string;
   password: string;
-  status: 'active' | 'inactive';
+  status: 'free' | 'interested' | 'enrolled' | 'unenrolled';
 };
 
-export type IStudentsAccountBillingHistory = {
-  id: string;
-  price: number;
-  invoiceNumber: string;
-  createdAt: IDateValue;
-};
+// export type IStudentsAccountBillingHistory = {
+//   id: string;
+//   price: number;
+//   invoiceNumber: string;
+//   createdAt: IDateValue;
+// };

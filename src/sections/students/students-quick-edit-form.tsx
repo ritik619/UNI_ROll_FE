@@ -41,19 +41,19 @@ export const StudentsQuickEditSchema = zod.object({
     .email({ message: 'Email must be a valid email address!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
   postCode: zod.string().min(1, { message: 'Post code is required!' }),
-  accountNumber: zod
-    .string()
-    .min(1, { message: 'Account Number is required!' })
-    .regex(/^\d{8}$/, { message: 'Account number should be 10 digits' }),
-  sortCode: zod
-    .string()
-    .min(1, { message: 'Sort code is required!' })
-    .regex(/^\d{2}-\d{2}-\d{2}$/, {
-      message: 'Sort code should be in the format XX-XX-XX',
-    })
-    .refine((val) => val.replace(/\D/g, '').length === 6, {
-      message: 'Sort code must be exactly 6 digits!',
-    }),
+  // accountNumber: zod
+  //   .string()
+  //   .min(1, { message: 'Account Number is required!' })
+  //   .regex(/^\d{8}$/, { message: 'Account number should be 10 digits' }),
+  // sortCode: zod
+  //   .string()
+  //   .min(1, { message: 'Sort code is required!' })
+  //   .regex(/^\d{2}-\d{2}-\d{2}$/, {
+  //     message: 'Sort code should be in the format XX-XX-XX',
+  //   })
+  // .refine((val) => val.replace(/\D/g, '').length === 6, {
+  //   message: 'Sort code must be exactly 6 digits!',
+  // }),
   utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
   // password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.string(),
@@ -75,10 +75,10 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
     lastName: '',
     email: '',
     dateOfBirth: new Date().toString(),
-    accountNumber: '',
+    // accountNumber: '',
     address: '',
     postCode: '',
-    sortCode: '',
+    // sortCode: '',
     utrNumber: '',
     // password: '',
   };
@@ -88,8 +88,8 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
     resolver: zodResolver(StudentsQuickEditSchema),
     defaultValues,
     values: {
-      accountNumber: currentStudents?.bankDetails?.accountNumber,
-      sortCode: currentStudents?.bankDetails.sortCode,
+      // accountNumber: currentStudents?.bankDetails?.accountNumber,
+      // sortCode: currentStudents?.bankDetails.sortCode,
       ...currentStudents,
     },
   });
@@ -109,10 +109,10 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
       email: data.email.trim(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
-      bankDetails: {
-        accountNumber: data.accountNumber.trim(),
-        sortCode: data.sortCode.trim(),
-      },
+      // bankDetails: {
+      //   accountNumber: data.accountNumber.trim(),
+      //   sortCode: data.sortCode.trim(),
+      // },
       utrNumber: data.utrNumber.trim(),
       status: 'active',
     };
@@ -208,7 +208,7 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
             <Field.Text name="email" label="Email Address" />
             <Field.Text name="address" label="Address" />
             <Field.Text name="postCode" label="Post Code" />
-
+            {/*
             <Grid2 size={{ xs: 12 }} spacing={2} sx={{ gridColumn: 'span 2' }}>
               <Card sx={{ p: 2 }}>
                 <Typography variant="subtitle2" sx={{ mb: 2, color: '#919eab' }}>
@@ -226,7 +226,7 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
                   <Field.Text name="sortCode" label="Sort Code" />
                 </Box>
               </Card>
-            </Grid2>
+            </Grid2> */}
 
             <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
             {/* <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} /> */}

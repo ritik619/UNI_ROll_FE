@@ -72,19 +72,21 @@ export function StudentsTableRow({
         <MenuItem
           onClick={() => {
             if (onToggleStatus) {
-              const newStatus = row.status === 'active' ? 'inactive' : 'active';
+              const newStatus = row.status === 'enrolled' ? 'unenrolled' : 'enrolled';
               onToggleStatus(row.id, newStatus);
             }
             menuActions.onClose();
           }}
-          sx={{ color: row.status === 'active' ? 'warning.main' : 'success.main' }}
+          sx={{ color: row.status === 'enrolled' ? 'warning.main' : 'success.main' }}
         >
           <Iconify
             icon={
-              row.status === 'active' ? 'material-symbols:toggle-off' : 'material-symbols:toggle-on'
+              row.status === 'enrolled'
+                ? 'material-symbols:toggle-off'
+                : 'material-symbols:toggle-on'
             }
           />
-          {row.status === 'active' ? 'Deactivate' : 'Activate'}
+          {row.status === 'enrolled' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
         <MenuItem
@@ -160,13 +162,15 @@ export function StudentsTableRow({
           <Label
             variant="soft"
             color={
-              (row.status === 'active' && 'success') ||
-              (row.status === 'inactive' && 'warning') ||
-              'default'
+              (row.status === 'free' && 'default') || // maybe gray/default for free
+              (row.status === 'interested' && 'info') || // blue-ish for interested
+              (row.status === 'enrolled' && 'success') || // green for enrolled (like active)
+              (row.status === 'unenrolled' && 'warning') || // orange/yellow for unrolled (like inactive)
+              'default' // fallback
             }
           >
             {/* TODO */}
-            {row.status ?? 'active'}
+            {row.status}
           </Label>
         </TableCell>
 

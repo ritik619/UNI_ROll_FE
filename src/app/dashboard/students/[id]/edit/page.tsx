@@ -3,11 +3,11 @@ import type { Metadata } from 'next';
 import { CONFIG } from 'src/global-config';
 import { _userList } from 'src/_mock/_user';
 
-import { UserEditView } from 'src/sections/student/view';
+import { StudentsEditView } from 'src/sections/students/view';
 
 // ----------------------------------------------------------------------
 
-export const metadata: Metadata = { title: `User edit | Dashboard - ${CONFIG.appName}` };
+export const metadata: Metadata = { title: `Students edit | Dashboard - ${CONFIG.appName}` };
 
 type Props = {
   params: { id: string };
@@ -16,9 +16,9 @@ type Props = {
 export default function Page({ params }: Props) {
   const { id } = params;
 
-  const currentUser = _userList.find((user) => user.id === id);
+  const currentStudents = _userList.find((students) => students.id === id);
 
-  return <UserEditView user={currentUser} />;
+  return <StudentsEditView students={currentStudents} />;
 }
 
 // ----------------------------------------------------------------------
@@ -37,7 +37,7 @@ export { dynamic };
  */
 export async function generateStaticParams() {
   if (CONFIG.isStaticExport) {
-    return _userList.map((user) => ({ id: user.id }));
+    return _userList.map((students) => ({ id: students.id }));
   }
   return [];
 }

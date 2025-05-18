@@ -1,16 +1,16 @@
-import type { Metadata } from 'next';
+// import type { Metadata } from 'next';
 
-import { CONFIG } from 'src/global-config';
+// import { CONFIG } from 'src/global-config';
 
-// import { AccountSocialsView } from 'src/sections/account/view';
-import { BlankView } from 'src/sections/blank/view';
+// // import { AccountSocialsView } from 'src/sections/account/view';
+// import { BlankView } from 'src/sections/blank/view';
 
-// ----------------------------------------------------------------------
+// // ----------------------------------------------------------------------
 
-export const metadata: Metadata = {
-  title: `Account socials settings | Dashboard - ${CONFIG.appName}`,
-};
+// export const metadata: Metadata = {
+//   title: `Account socials settings | Dashboard - ${CONFIG.appName}`,
+// };
 
-export default function Page() {
-  return <BlankView />;
-}
+// export default function Page() {
+//   return <BlankView />;
+// }

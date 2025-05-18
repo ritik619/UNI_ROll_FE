@@ -20,7 +20,7 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import { USER_STATUS_OPTIONS } from 'src/_mock';
+import { STUDENTS_STATUS_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { fetchStudents } from 'src/services/students/fetchStudents';
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
@@ -49,13 +49,13 @@ import { StudentsTableFiltersResult } from '../students-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...STUDENTS_STATUS_OPTIONS];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'name', label: 'Name' },
   { id: 'phoneNumber', label: 'Phone number', width: 180 },
   { id: 'company', label: 'Company', width: 220 },
-  // { id: 'role', label: 'Role', width: 180 },
+  { id: 'role', label: 'Role', width: 180 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
@@ -100,18 +100,25 @@ export function StudentsListView() {
   );
 
   const handleToggleStatus = useCallback(
-    async (id: string, newStatus: 'active' | 'inactive') => {
-      // Here you would typically call an API to update the status
-      await authAxiosInstance.patch(endpoints.students.status(id), {
-        status: newStatus,
-      });
-      // For now, we'll just update it locally
-      const updatedData = tableData.map((row) =>
-        row.id === id ? { ...row, status: newStatus } : row
-      );
+    (id: string, newStatus: string) => {
+      // Cast newStatus to the union if you want to be safe
+      const typedStatus = newStatus as 'free' | 'interested' | 'enrolled' | 'unenrolled';
 
-      setTableData(updatedData);
-      toast.success(`Status updated to ${newStatus}!`);
+      // Call async function but don't await it here (fire & forget)
+      (async () => {
+        try {
+          await authAxiosInstance.patch(endpoints.students.status(id), {
+            status: typedStatus,
+          });
+          const updatedData = tableData.map((row) =>
+            row.id === id ? { ...row, status: typedStatus } : row
+          );
+          setTableData(updatedData);
+          toast.success(`Status updated to ${typedStatus}!`);
+        } catch (error) {
+          toast.error('Failed to update status');
+        }
+      })();
     },
     [tableData]
   );
@@ -127,7 +134,10 @@ export function StudentsListView() {
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleFilterStatus = useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
+    (
+      event: React.SyntheticEvent,
+      newValue: 'all' | 'free' | 'interested' | 'enrolled' | 'unenrolled'
+    ) => {
       table.onResetPage();
       updateFilters({ status: newValue });
     },
@@ -158,10 +168,14 @@ export function StudentsListView() {
       }
     />
   );
-  const fetchPaginatedAgents = useCallback(async () => {
+  const fetchPaginatedStudents = useCallback(async () => {
     try {
       setLoading(true);
-      const { students, total } = await fetchStudents('all', table.page, table.rowsPerPage);
+      const { students, total } = await fetchStudents(
+        currentFilters.status,
+        table.page,
+        table.rowsPerPage
+      );
       setTableData(students);
       setTotalCount(total);
     } catch (err) {
@@ -169,12 +183,12 @@ export function StudentsListView() {
     } finally {
       setLoading(false);
     }
-  }, [table.page, table.rowsPerPage]);
+  }, [currentFilters.status, table.page, table.rowsPerPage]);
 
   useEffect(() => {
     // table.setRowsPerPage(2);
-    fetchPaginatedAgents();
-  }, [fetchPaginatedAgents]);
+    fetchPaginatedStudents();
+  }, [fetchPaginatedStudents]);
 
   return (
     <>
@@ -222,9 +236,9 @@ export function StudentsListView() {
                       ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
                       'soft'
                     }
-                    color={(tab.value === 'Active' && 'success') || 'default'}
+                    color={(tab.value === 'enrolled' && 'success') || 'default'}
                   >
-                    {['active', 'inactive'].includes(tab.value)
+                    {['enrolled', 'unenrolled'].includes(tab.value)
                       ? tableData.filter((students) => students.status === tab.value).length
                       : tableData.length}
                   </Label>
@@ -382,7 +396,7 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
 
   if (name) {
     inputData = inputData.filter((students) =>
-      students.name.toLowerCase().includes(name.toLowerCase())
+      students.firstName.toLowerCase().includes(name.toLowerCase())
     );
   }
 

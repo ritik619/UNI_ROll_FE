@@ -1,16 +1,16 @@
-import type { Metadata } from 'next';
+// import type { Metadata } from 'next';
 
-import { CONFIG } from 'src/global-config';
-import { BlankView } from 'src/sections/blank/view';
+// import { CONFIG } from 'src/global-config';
+// import { BlankView } from 'src/sections/blank/view';
 
-// import { AccountChangePasswordView } from 'src/sections/account/view';
+// // import { AccountChangePasswordView } from 'src/sections/account/view';
 
-// ----------------------------------------------------------------------
+// // ----------------------------------------------------------------------
 
-export const metadata: Metadata = {
-  title: `Account change password settings | Dashboard - ${CONFIG.appName}`,
-};
+// export const metadata: Metadata = {
+//   title: `Account change password settings | Dashboard - ${CONFIG.appName}`,
+// };
 
-export default function Page() {
-  return <BlankView />;
-}
+// export default function Page() {
+//   return <BlankView />;
+// }
