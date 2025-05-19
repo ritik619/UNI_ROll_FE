@@ -1,6 +1,6 @@
 'use client';
 
-import type { ICourse } from 'src/types/course';
+import type { ICourse } from 'src/types/intake';
 import type { IUniversity } from 'src/types/university';
 
 import { useState } from 'react';

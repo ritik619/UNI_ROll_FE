@@ -84,7 +84,21 @@ export const navData: NavSectionProps['data'] = [
           { title: 'Add Course', path: paths.dashboard.universitiesAndCourses.addCourse },
         ],
       },
-      { title: 'Intakes', path: paths.dashboard.intakes, icon: ICONS.calendar },
+      {
+        title: 'Intakes',
+        path: paths.dashboard.intakes.root,
+        icon: ICONS.calendar,
+        children: [
+          {
+            title: 'list Intakes',
+            path: paths.dashboard.intakes.root,
+          },
+          {
+            title: 'Add Intakes',
+            path: paths.dashboard.intakes.new,
+          },
+        ],
+      },
       {
         title: 'Earnings OverView',
         path: paths.dashboard.earningsoverview,

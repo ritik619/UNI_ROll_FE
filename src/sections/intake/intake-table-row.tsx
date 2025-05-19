@@ -1,5 +1,5 @@
-import type { ICourse } from 'src/types/course';
-import type { IUniversity } from 'src/types/university';
+
+import type { IIntake } from 'src/types/intake';
 
 import { useState, useEffect } from 'react';
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
@@ -34,68 +34,68 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
-import { UniversityQuickEditForm } from './university-quick-edit-form';
+// import { IntakeQuickEditForm } from './intake-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
-// Mock data for demonstration
-const MOCK_COURSES: { [key: string]: ICourse[] } = {
-  default: [
-    {
-      id: 'course-1',
-      name: 'Bachelor of Computer Science',
-      code: 'CS-BSC-01',
-      universityId: 'uni-1',
-      universityName: 'Oxford University',
-      description:
-        'A comprehensive program covering fundamentals of computer science, algorithms, and software development.',
-      durationMonths: 36, // 3 years
-      tuitionFee: 9250,
-      startDates: ['2023-09-01', '2024-01-15'],
-      status: 'active',
-      createdAt: new Date('2023-01-15'),
-      updatedAt: new Date('2023-03-20'),
-    },
-    {
-      id: 'course-2',
-      name: 'Master of Data Science',
-      code: 'CS-MDS-01',
-      universityId: 'uni-1',
-      universityName: 'Oxford University',
-      description:
-        'Advanced program focusing on statistical analysis, machine learning, and big data technologies.',
-      durationMonths: 18, // 1 year 6 months
-      tuitionFee: 12500,
-      startDates: ['2023-09-15', '2024-02-01'],
-      status: 'active',
-      createdAt: new Date('2023-02-10'),
-      updatedAt: new Date('2023-04-05'),
-    },
-  ],
-  'uni-2': [
-    {
-      id: 'course-3',
-      name: 'Bachelor of Business Administration',
-      code: 'BUS-BBA-01',
-      universityId: 'uni-2',
-      universityName: 'Cambridge University',
-      description:
-        'A program designed to develop skills in business management, finance, and marketing.',
-      durationMonths: 36, // 3 years
-      tuitionFee: 8750,
-      startDates: ['2023-09-01'],
-      status: 'active',
-      createdAt: new Date('2023-01-20'),
-      updatedAt: new Date('2023-03-15'),
-    },
-  ],
-  'uni-3': [],
-};
+// // Mock data for demonstration
+// const MOCK_COURSES: { [key: string]:IIntake[] } = {
+//   default: [
+//     {
+//       id: 'course-1',
+//       name: 'Bachelor of Computer Science',
+//       code: 'CS-BSC-01',
+//       intakeId: 'uni-1',
+//       intakeName: 'Oxford Intake',
+//       description:
+//         'A comprehensive program covering fundamentals of computer science, algorithms, and software development.',
+//       durationMonths: 36, // 3 years
+//       tuitionFee: 9250,
+//       startDates: ['2023-09-01', '2024-01-15'],
+//       status: 'active',
+//       createdAt: new Date('2023-01-15'),
+//       updatedAt: new Date('2023-03-20'),
+//     },
+//     {
+//       id: 'course-2',
+//       name: 'Master of Data Science',
+//       code: 'CS-MDS-01',
+//       intakeId: 'uni-1',
+//       intakeName: 'Oxford Intake',
+//       description:
+//         'Advanced program focusing on statistical analysis, machine learning, and big data technologies.',
+//       durationMonths: 18, // 1 year 6 months
+//       tuitionFee: 12500,
+//       startDates: ['2023-09-15', '2024-02-01'],
+//       status: 'active',
+//       createdAt: new Date('2023-02-10'),
+//       updatedAt: new Date('2023-04-05'),
+//     },
+//   ],
+//   'uni-2': [
+//     {
+//       id: 'course-3',
+//       name: 'Bachelor of Business Administration',
+//       code: 'BUS-BBA-01',
+//       intakeId: 'uni-2',
+//       intakeName: 'Cambridge Intake',
+//       description:
+//         'A program designed to develop skills in business management, finance, and marketing.',
+//       durationMonths: 36, // 3 years
+//       tuitionFee: 8750,
+//       startDates: ['2023-09-01'],
+//       status: 'active',
+//       createdAt: new Date('2023-01-20'),
+//       updatedAt: new Date('2023-03-15'),
+//     },
+//   ],
+//   'uni-3': [],
+// };
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IUniversity;
+  row: IIntake;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -103,7 +103,7 @@ type Props = {
   onToggleStatus?: (id: string, status: string) => void;
 };
 
-export function UniversityTableRow({
+export function IntakeTableRow({
   row,
   selected,
   editHref,
@@ -111,7 +111,7 @@ export function UniversityTableRow({
   onDeleteRow,
   onToggleStatus,
 }: Props) {
-  const menuActions = usePopover(); // For university row actions
+  const menuActions = usePopover(); // For intake row actions
   const courseMenuActions = usePopover(); // For course row actions
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
@@ -126,7 +126,7 @@ export function UniversityTableRow({
   // Fetch courses when row is expanded - using mock data for now
   useEffect(() => {
     if (collapseRow.value) {
-      const fetchCoursesByUniversityId = async () => {
+      const fetchCoursesByIntakeId = async () => {
         setLoading(true);
         try {
           const { courses: c } = await fetchCourses('all', undefined, undefined, row.id);
@@ -138,7 +138,7 @@ export function UniversityTableRow({
         }
       };
 
-      fetchCoursesByUniversityId();
+      fetchCoursesByIntakeId();
     }
   }, [collapseRow.value, row.id]);
 
@@ -165,13 +165,13 @@ export function UniversityTableRow({
     }
   };
 
-  const renderQuickEditForm = () => (
-    <UniversityQuickEditForm
-      currentUniversity={row}
-      open={quickEditForm.value}
-      onClose={quickEditForm.onFalse}
-    />
-  );
+  // const renderQuickEditForm = () => (
+  //   <IntakeQuickEditForm
+  //     currentIntake={row}
+  //     open={quickEditForm.value}
+  //     onClose={quickEditForm.onFalse}
+  //   />
+  // );
 
   const renderMenuActions = () => (
     <CustomPopover
@@ -254,7 +254,7 @@ export function UniversityTableRow({
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
             <Link
               component={RouterLink}
-              href={paths.dashboard.universitiesAndCourses.universityCourses(row.id)}
+              href={paths.dashboard.intakes.edit(row.id)}
               color="inherit"
               sx={{ cursor: 'pointer' }}
             >
@@ -625,7 +625,7 @@ export function UniversityTableRow({
     <>
       {renderPrimaryRow()}
       {renderCoursesRow()}
-      {renderQuickEditForm()}
+      {/* {renderQuickEditForm()} */}
       {renderMenuActions()}
       {renderConfirmDialog()}
       {renderCourseDeleteDialog()}

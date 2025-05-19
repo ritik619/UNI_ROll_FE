@@ -132,6 +132,11 @@ export const endpoints = {
     details: (id: string) => `courses/${id}`,
     status: (id: string) => `courses/${id}/status`,
   },
+  intakes: {
+    list: 'intakes',
+    details: (id: string) => `intakes/${id}`,
+    status: (id: string) => `intakes/${id}/status`,
+  },
   location: {
     countries: 'locations/countries',
     cities: 'locations/cities',

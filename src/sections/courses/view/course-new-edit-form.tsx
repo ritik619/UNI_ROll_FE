@@ -33,14 +33,14 @@ export const NewCourseSchema = zod
   .object({
     name: zod.string().min(1, { message: 'Course name is required!' }),
     code: zod.string().min(1, { message: 'Course code is required!' }),
-    universityId: zod.string().min(1, { message: 'University is required!' }),
+    // universityId: zod.string().min(1, { message: 'University is required!' }),
     description: zod.string().optional(),
     durationYears: zod.number().min(0).max(10).optional(),
     durationMonths: zod.number().min(0).max(11).optional(),
     durationTotalMonths: zod.number().min(1).optional(), // This will be calculated and used for DB storage
-    tuitionFee: zod.number().optional(),
-    startDates: zod.array(zod.string()).optional(),
-    newStartDate: zod.any().optional(), // For the date picker
+    // tuitionFee: zod.number().optional(),
+    // startDates: zod.array(zod.string()).optional(),
+    // newStartDate: zod.any().optional(), // For the date picker
     status: zod.enum(['active', 'inactive']).default('active'),
   })
   .refine(
@@ -66,10 +66,13 @@ export type CreateCourseType = ICreateCourse;
 
 type Props = {
   currentCourse?: ICourse;
-  initialUniversityId?: string;
+  // initialUniversityId?: string;
 };
 
-export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props) {
+export function CourseNewEditForm({
+  currentCourse,
+  // initialUniversityId
+}: Props) {
   const router = useRouter();
   const [universities, setUniversities] = useState<{ id: string; name: string }[]>([]);
   const [startDates, setStartDates] = useState<string[]>(currentCourse?.startDates || []);
@@ -104,14 +107,14 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
   const defaultValues: NewCourseSchemaType = {
     name: '',
     code: '',
-    universityId: initialUniversityId || '',
+    // universityId: initialUniversityId || '',
     description: '',
     durationYears: 0,
     durationMonths: 1,
     durationTotalMonths: 1, // Default to 1 month
-    tuitionFee: undefined,
-    startDates: [],
-    newStartDate: null,
+    // tuitionFee: undefined,
+    // startDates: [],
+    // newStartDate: null,
     status: 'active',
   };
   console.log('defaultValues', universities);
@@ -140,16 +143,16 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
       ? {
           name: currentCourse.name || '',
           code: currentCourse.code || '',
-          universityId: currentCourse.universityId || '',
+          // universityId: currentCourse.universityId || '',
           description: currentCourse.description || '',
           durationYears: initialYears,
           durationMonths: initialMonths,
           durationTotalMonths: currentCourse.durationMonths || 1,
-          tuitionFee: currentCourse.tuitionFee,
-          startDates: currentCourse.startDates || [],
-          newStartDate: null,
+          // tuitionFee: currentCourse.tuitionFee,
+          // startDates: currentCourse.startDates || [],
+          // newStartDate: null,
           status: currentCourse.status || 'active',
-          feeCurrency: 'USD',
+          // feeCurrency: 'USD',
         }
       : defaultValues,
   });
@@ -195,14 +198,14 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
     const payload = {
       name: data.name.trim(),
       code: data.code.trim(),
-      universityId: data.universityId.trim(),
+      // universityId: data.universityId.trim(),
       description: data.description?.trim(),
       // Only send durationMonths to backend
       durationMonths: totalMonths,
-      tuitionFee: data.tuitionFee ? Number(data.tuitionFee) : undefined,
-      startDates: data.startDates && data.startDates.length > 0 ? data.startDates : undefined,
+      // tuitionFee: data.tuitionFee ? Number(data.tuitionFee) : undefined,
+      // startDates: data.startDates && data.startDates.length > 0 ? data.startDates : undefined,
       status: data.status,
-      feeCurrency: 'USD',
+      // feeCurrency: 'USD',
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.courses.list, payload);
@@ -222,10 +225,10 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
       description: data.description?.trim(),
       // Only send durationMonths to backend
       durationMonths: totalMonths,
-      tuitionFee: data.tuitionFee ? Number(data.tuitionFee) : undefined,
-      startDates: data.startDates && data.startDates.length > 0 ? data.startDates : undefined,
+      // tuitionFee: data.tuitionFee ? Number(data.tuitionFee) : undefined,
+      // startDates: data.startDates && data.startDates.length > 0 ? data.startDates : undefined,
       status: data.status,
-      feeCurrency: 'USD',
+      // feeCurrency: 'USD',
       // Note: universityId is not included in the update payload as it cannot be changed
     };
     console.log(
@@ -305,7 +308,7 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
                 helperText="Enter a unique course code"
               />
 
-              {currentCourse ? (
+              {/* {currentCourse ? (
                 <Field.Text
                   name="universityName"
                   label="University"
@@ -334,18 +337,17 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
                     </MenuItem>
                   ))}
                 </Field.Select>
-              )}
-
-              <Field.Select
-                name="status"
-                label="Status"
-                helperText="Set the current status of this course"
-              >
-                <MenuItem value="active">Active</MenuItem>
-                <MenuItem value="inactive">Inactive</MenuItem>
-              </Field.Select>
+              )} */}
 
               <Stack spacing={2}>
+                <Field.Select
+                  name="status"
+                  label="Status"
+                  helperText="Set the current status of this course"
+                >
+                  <MenuItem value="active">Active</MenuItem>
+                  <MenuItem value="inactive">Inactive</MenuItem>
+                </Field.Select>
                 <Typography variant="subtitle2">Course Duration</Typography>
                 <Box sx={{ display: 'flex', gap: 2 }}>
                   <Field.Select name="durationYears" label="Years" sx={{ flex: 1 }}>
@@ -369,7 +371,7 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
                 </Typography>
               </Stack>
 
-              <Field.Text
+              {/* <Field.Text
                 type="number"
                 name="tuitionFee"
                 label="Tuition Fee"
@@ -383,9 +385,9 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
                     ),
                   },
                 }}
-              />
+              /> */}
 
-              <Stack spacing={1.5} sx={{ gridColumn: 'span 2' }}>
+              {/* <Stack spacing={1.5} sx={{ gridColumn: 'span 2' }}>
                 <Typography variant="subtitle2">Course Start Dates</Typography>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
@@ -462,7 +464,7 @@ export function CourseNewEditForm({ currentCourse, initialUniversityId }: Props)
                     </Typography>
                   </Box>
                 )}
-              </Stack>
+              </Stack> */}
 
               <Field.Text
                 name="description"

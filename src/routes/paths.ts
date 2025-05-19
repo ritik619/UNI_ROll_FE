@@ -77,7 +77,11 @@ export const paths = {
       universityCourses: (id: string) =>
         `${ROOTS.DASHBOARD}/universities-&-courses/university/${id}`,
     },
-    intakes: `${ROOTS.DASHBOARD}/intakes`,
+    intakes: {
+      edit: (id: string) => `${ROOTS.DASHBOARD}/intakes/${id}`,
+      root: `${ROOTS.DASHBOARD}/intakes`,
+      new: `${ROOTS.DASHBOARD}/intakes/new`,
+    },
     earningsoverview: `${ROOTS.DASHBOARD}/earnings-overview`,
   },
 };
