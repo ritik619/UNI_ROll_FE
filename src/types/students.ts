@@ -20,9 +20,8 @@ export type IStudentsProfile = {
   role: string;
   quote: string;
   email: string;
-  school: string;
+  university: string;
   country: string;
-  company: string;
   totalFollowers: number;
   totalFollowing: number;
   socialLinks: ISocialLink;
@@ -80,15 +79,10 @@ export type IStudentsItem = {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
-  // bankDetails: {
-  //   sortCode: string;
-  //   accountNumber: string;
-  // };
   email: string;
   address: string;
-  postCode: string;
-  utrNumber: string;
-  password: string;
+  university: string;
+  courses: string;
   status: 'free' | 'interested' | 'enrolled' | 'unenrolled';
 };
 

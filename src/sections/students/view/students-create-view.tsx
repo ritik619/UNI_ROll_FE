@@ -14,7 +14,7 @@ export function StudentsCreateView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new student"
+        heading="Create a new Student"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Students', href: paths.dashboard.students.root },

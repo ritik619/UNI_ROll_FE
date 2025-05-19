@@ -53,10 +53,10 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...STUDENTS_STATUS_OPTIO
 
 const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  { id: 'role', label: 'Role', width: 180 },
+  { id: 'id', label: 'ID' },
+  { id: 'University', label: 'University', width: 220 },
   { id: 'status', label: 'Status', width: 100 },
+  // { id: 'role', label: 'Role', width: 180 },
   { id: '', width: 88 },
 ];
 
@@ -382,7 +382,7 @@ type ApplyFilterProps = {
 };
 
 function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
-  const { name, status, role } = filters;
+  const { name, status } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -404,9 +404,9 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
     inputData = inputData.filter((students) => students.status === status);
   }
 
-  if (role.length) {
-    inputData = inputData.filter((students) => role.includes(students.role));
-  }
+  // if (role.length) {
+  //   inputData = inputData.filter((students) => role.includes(students.role));
+  // }
 
   return inputData;
 }

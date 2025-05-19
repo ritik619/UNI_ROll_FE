@@ -27,6 +27,7 @@ import {
   _courseNames,
   _fullAddress,
   _companyNames,
+  _universityNames,
   _productNames,
   _descriptions,
   _phoneNumbers,
@@ -59,6 +60,7 @@ export const _mock = {
   firstName: (index: number) => _firstNames[index],
   lastName: (index: number) => _lastNames[index],
   fullName: (index: number) => _fullNames[index],
+  universityNames: (index: number) => _universityNames[index],
   companyNames: (index: number) => _companyNames[index],
   countryNames: (index: number) => _countryNames[index],
   // Number
@@ -82,6 +84,8 @@ export const _mock = {
     course: (index: number) =>
       `${CONFIG.assetsDir}/assets/images/mock/course/course-${index + 1}.webp`,
     company: (index: number) =>
+      `${CONFIG.assetsDir}/assets/images/mock/company/company-${index + 1}.webp`,
+    university: (index: number) =>
       `${CONFIG.assetsDir}/assets/images/mock/company/company-${index + 1}.webp`,
     product: (index: number) =>
       `${CONFIG.assetsDir}/assets/images/mock/m-product/product-${index + 1}.webp`,

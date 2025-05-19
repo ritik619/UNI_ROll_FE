@@ -615,6 +615,32 @@ export const _eventNames = [
   `Wedding Expo`,
 ];
 
+export const _universityNames = [
+  `Annual General Meeting`,
+  `Summer Music Festival`,
+  `Tech Innovators Conference`,
+  `Charity Gala Dinner`,
+  `Spring Art Exhibition`,
+  `Corporate Training Workshop`,
+  `Community Health Fair`,
+  `Startup Pitch Night`,
+  `Regional Sports Tournament`,
+  `Book Launch Event`,
+  `Film Premiere Screening`,
+  `Industry Networking Mixer`,
+  `Holiday Craft Fair`,
+  `Environmental Awareness Week`,
+  `New Year's Eve Party`,
+  `Product Release Showcase`,
+  `Cultural Heritage Festival`,
+  `Science and Technology Expo`,
+  `Annual Awards Ceremony`,
+  `Fashion Week Runway Show`,
+  `Food and Wine Tasting`,
+  `Outdoor Adventure Camp`,
+  `Leadership Summit`,
+  `Wedding Expo`,
+];
 // ----------------------------------------------------------------------
 
 export const _sentences = [

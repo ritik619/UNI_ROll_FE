@@ -20,7 +20,7 @@ export function StudentsEditView({ students: currentStudents }: Props) {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Edit"
+        heading="`Edit Student"
         backHref={paths.dashboard.students.list}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },

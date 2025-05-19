@@ -45,9 +45,8 @@ export const fetchStudents = async (
         dateOfBirth: `199${index % 10}-0${(index % 9) + 1}-15`,
         email: `student${index}@example.com`,
         address: `Flat ${index}, Dummy Street, City ${index}`,
-        postCode: `P${index}C${index + 100}`,
-        utrNumber: `UTR${index.toString().padStart(7, '0')}`,
-        password: `password${index}`,
+        university: `P${index}C${index + 100}`,
+        courses: `UTR${index}`,
         status:
           status === 'all'
             ? index % 4 === 0

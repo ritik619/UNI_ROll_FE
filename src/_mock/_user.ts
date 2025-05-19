@@ -10,9 +10,9 @@ export const USER_STATUS_OPTIONS = [
 ];
 
 export const STUDENTS_STATUS_OPTIONS = [
-  { value: 'free', label: 'free' },
+  { value: 'free', label: 'Free' },
   { value: 'interested', label: 'Interested' },
-  { value: 'enrolled', label: 'enrolled' },
+  { value: 'enrolled', label: 'Enrolled' },
   { value: 'unenrolled', label: 'Unenrolled' },
 ];
 
@@ -22,6 +22,8 @@ export const _userAbout = {
   email: _mock.email(1),
   school: _mock.companyNames(2),
   company: _mock.companyNames(1),
+  university: _mock.universityNames(1),
+  courses: _mock.courseNames(1),
   country: _mock.countryNames(2),
   coverUrl: _mock.image.cover(3),
   totalFollowers: _mock.number.nativeL(1),
@@ -142,6 +144,8 @@ export const _userList = Array.from({ length: 20 }, (_, index) => ({
   name: _mock.fullName(index),
   isVerified: _mock.boolean(index),
   company: _mock.companyNames(index),
+  courses: _mock.courseNames(index),
+  university: _mock.universityNames(index),
   country: _mock.countryNames(index),
   avatarUrl: _mock.image.avatar(index),
   phoneNumber: _mock.phoneNumber(index),

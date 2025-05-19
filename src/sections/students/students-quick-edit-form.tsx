@@ -20,7 +20,7 @@ import { paths } from 'src/routes/paths';
 
 import { fData } from 'src/utils/format-number';
 
-import { USER_STATUS_OPTIONS } from 'src/_mock';
+import { STUDENTS_STATUS_OPTIONS, USER_STATUS_OPTIONS } from 'src/_mock';
 import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 
 import { toast } from 'src/components/snackbar';
@@ -40,7 +40,7 @@ export const StudentsQuickEditSchema = zod.object({
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  postCode: zod.string().min(1, { message: 'Post code is required!' }),
+  university: zod.string().min(1, { message: 'University Name is required!' }),
   // accountNumber: zod
   //   .string()
   //   .min(1, { message: 'Account Number is required!' })
@@ -54,7 +54,7 @@ export const StudentsQuickEditSchema = zod.object({
   // .refine((val) => val.replace(/\D/g, '').length === 6, {
   //   message: 'Sort code must be exactly 6 digits!',
   // }),
-  utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
+  courses: zod.string().min(1, { message: 'Courses is required!' }),
   // password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.string(),
 });
@@ -108,13 +108,13 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
       dateOfBirth: data.dateOfBirth,
       email: data.email.trim(),
       address: data.address.trim(),
-      postCode: data.postCode.trim(),
+      university: data.university.trim(),
       // bankDetails: {
       //   accountNumber: data.accountNumber.trim(),
       //   sortCode: data.sortCode.trim(),
       // },
-      utrNumber: data.utrNumber.trim(),
-      status: 'active',
+      courses: data.utrNcoursesumber.trim(),
+      status: data.status,
     };
 
     const uId = currentStudents?.id || '';
@@ -160,7 +160,7 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
 
       <Form methods={methods} onSubmit={onSubmit}>
         <DialogContent>
-          {currentStudents?.status === 'inactive' && (
+          {currentStudents?.status === 'unenrolled' && (
             <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
               Account is waiting for confirmation
             </Alert>
@@ -196,7 +196,7 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
           >
             <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
             <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 2' }}>
-              {USER_STATUS_OPTIONS.map((status) => (
+              {STUDENTS_STATUS_OPTIONS.map((status) => (
                 <MenuItem key={status.value} value={status.value}>
                   {status.label}
                 </MenuItem>
@@ -206,8 +206,9 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
             <Field.Text name="lastName" label="Last Name" />
             <Field.DatePicker name="dateOfBirth" label="Date of Birth" />
             <Field.Text name="email" label="Email Address" />
-            <Field.Text name="address" label="Address" />
-            <Field.Text name="postCode" label="Post Code" />
+            <Field.Text name="university" label="University" />
+            <Field.Text name="courses" label="Courses" />
+            <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
             {/*
             <Grid2 size={{ xs: 12 }} spacing={2} sx={{ gridColumn: 'span 2' }}>
               <Card sx={{ p: 2 }}>
@@ -228,7 +229,6 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
               </Card>
             </Grid2> */}
 
-            <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
             {/* <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} /> */}
           </Box>
         </DialogContent>

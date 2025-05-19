@@ -86,7 +86,7 @@ export function ProfileHome({ info, posts }: Props) {
           <Iconify width={24} icon="ic:round-business-center" sx={{ mr: 2 }} />
           {info.role} {`at `}
           <Link variant="subtitle2" color="inherit">
-            &nbsp;{info.company}
+            &nbsp;{info.university}
           </Link>
         </Box>
 
@@ -94,7 +94,7 @@ export function ProfileHome({ info, posts }: Props) {
           <Iconify width={24} icon="ic:round-business-center" sx={{ mr: 2 }} />
           Studied at
           <Link variant="subtitle2" color="inherit">
-            &nbsp;{info.school}
+            &nbsp;{info.university}
           </Link>
         </Box>
       </Stack>

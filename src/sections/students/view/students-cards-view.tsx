@@ -38,7 +38,7 @@ export function StudentsCardsView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <StudentsCardList students={_userCards} />
+      <StudentsCardList user={_userCards} />
     </DashboardContent>
   );
 }

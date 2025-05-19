@@ -34,7 +34,7 @@ export const NewStudentsSchema = zod.object({
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
-  postCode: zod.string().min(1, { message: 'Post code is required!' }),
+  university: zod.string().min(1, { message: 'University Name is required!' }),
   // accountNumber: zod
   //   .string()
   //   .min(1, { message: 'Account Number is required!' })
@@ -48,9 +48,8 @@ export const NewStudentsSchema = zod.object({
   //   .refine((val) => val.replace(/\D/g, '').length === 6, {
   //     message: 'Sort code must be exactly 6 digits!',
   //   }),
-  utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
-  password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
-  status: zod.enum(['active', 'inactive']).optional(),
+  courses: zod.string().regex(/^\d{10}$/, { message: 'Courses is required!' }),
+  status: zod.enum(['free', 'interested', 'enrolled', 'unenrolled']).optional(),
 });
 
 export type NewStudentsSchemaType = zod.infer<typeof NewStudentsSchema>;
@@ -73,10 +72,8 @@ export function StudentsNewEditForm({ currentStudents }: Props) {
     dob: '',
     // accountNumber: '',
     address: '',
-    postCode: '',
-    // sortCode: '',
-    utrNumber: '',
-    password: '',
+    university: '',
+    courses: '',
   };
 
   const methods = useForm<NewStudentsSchemaType>({
@@ -98,14 +95,13 @@ export function StudentsNewEditForm({ currentStudents }: Props) {
       dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
       email: data.email.trim(),
       address: data.address.trim(),
-      postCode: data.postCode.trim(),
+      university: data.university.trim(),
       // bankDetails: {
       //   accountNumber: data.accountNumber.trim(),
       //   sortCode: data.sortCode.trim(),
       // },
-      utrNumber: data.utrNumber.trim(),
-      password: data.password.trim(),
-      status: 'active',
+      courses: data.courses.trim(),
+      status: 'free',
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.students.list, payload);
@@ -139,9 +135,9 @@ export function StudentsNewEditForm({ currentStudents }: Props) {
               <Field.Text name="lName" label="Last Name" />
               <Field.DatePicker name="dob" label="Date of Birth" />
               <Field.Text name="email" label="Email Address" />
-              <Field.Text name="address" label="Address" />
-              <Field.Text name="postCode" label="Post Code" />
-
+              <Field.Text name="university" label="University" />
+              <Field.Text name="courses" label="Courses" />
+              <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
               {/* <Grid size={{ xs: 24 }} spacing={4}>
                 <Card sx={{ p: 1 }}>
                   <Typography variant="subtitle2" sx={{ mb: 2, color: '#919eab' }}>
@@ -160,9 +156,6 @@ export function StudentsNewEditForm({ currentStudents }: Props) {
                   </Box>
                 </Card>
               </Grid> */}
-
-              <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
-              <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
             </Box>
 
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
