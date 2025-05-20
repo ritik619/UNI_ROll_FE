@@ -15,6 +15,12 @@ export const STUDENTS_STATUS_OPTIONS = [
   { value: 'enrolled', label: 'Enrolled' },
   { value: 'unenrolled', label: 'Unenrolled' },
 ];
+export const COURSES_STATUS_OPTIONS = [
+  { value: 'active', label: 'Active' },
+  { value: 'inactive', label: 'Inactive' },
+  { value: 'upcoming', label: 'Upcoming' },
+  { value: 'completed', label: 'Completed' },
+];
 
 export const _userAbout = {
   id: _mock.id(1),

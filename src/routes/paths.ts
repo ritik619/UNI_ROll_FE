@@ -69,9 +69,9 @@ export const paths = {
     },
 
     universitiesAndCourses: {
-      root: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
       list: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
-      new: `${ROOTS.DASHBOARD}/universities-&-courses/new`,
+      listCourses: `${ROOTS.DASHBOARD}/universities-&-courses/list/courses`,
+      addUniversity: `${ROOTS.DASHBOARD}/universities-&-courses/add-university`,
       addCourse: `${ROOTS.DASHBOARD}/universities-&-courses/add-course`,
       editCourse: (id: string) => `${ROOTS.DASHBOARD}/universities-&-courses/edit-course/${id}`,
       universityCourses: (id: string) =>

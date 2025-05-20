@@ -146,6 +146,9 @@ export const endpoints = {
     signIn: '/api/auth/sign-in',
     signUp: '/api/auth/sign-up',
   },
+  associations: {
+    root: 'course-associations',
+  },
 };
 
 export default axiosInstance;

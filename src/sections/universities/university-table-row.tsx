@@ -35,6 +35,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
 import { UniversityQuickEditForm } from './university-quick-edit-form';
+import { UniversityQuickAddCourseForm } from './university-quick-add-courses-form';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +43,8 @@ import { UniversityQuickEditForm } from './university-quick-edit-form';
 const MOCK_COURSES: { [key: string]: ICourse[] } = {
   default: [
     {
+      cityName: 'bhopal',
+      countryName: 'india',
       id: 'course-1',
       name: 'Bachelor of Computer Science',
       code: 'CS-BSC-01',
@@ -57,6 +60,8 @@ const MOCK_COURSES: { [key: string]: ICourse[] } = {
       updatedAt: new Date('2023-03-20'),
     },
     {
+      cityName: 'bhopal',
+      countryName: 'india',
       id: 'course-2',
       name: 'Master of Data Science',
       code: 'CS-MDS-01',
@@ -74,6 +79,8 @@ const MOCK_COURSES: { [key: string]: ICourse[] } = {
   ],
   'uni-2': [
     {
+      cityName: 'bhopal',
+      countryName: 'india',
       id: 'course-3',
       name: 'Bachelor of Business Administration',
       code: 'BUS-BBA-01',
@@ -115,6 +122,8 @@ export function UniversityTableRow({
   const courseMenuActions = usePopover(); // For course row actions
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
+  const quickAddCourse = useBoolean();
+
   const collapseRow = useBoolean();
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [loading, setLoading] = useState(false);
@@ -173,6 +182,14 @@ export function UniversityTableRow({
     />
   );
 
+  const renderQuickAddCourseForm = () => (
+    <UniversityQuickAddCourseForm
+      universityId={row.id}
+      open={quickAddCourse.value}
+      onClose={quickAddCourse.onFalse}
+    />
+  );
+
   const renderMenuActions = () => (
     <CustomPopover
       open={menuActions.open}
@@ -185,6 +202,12 @@ export function UniversityTableRow({
           <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
             <Iconify icon="solar:pen-bold" />
             Edit
+          </MenuItem>
+        </li>
+        <li>
+          <MenuItem href={editHref} onClick={quickAddCourse.onTrue}>
+            <Iconify icon="tabler:school" />
+            Add Course
           </MenuItem>
         </li>
 
@@ -626,6 +649,8 @@ export function UniversityTableRow({
       {renderPrimaryRow()}
       {renderCoursesRow()}
       {renderQuickEditForm()}
+      {renderQuickAddCourseForm()}
+
       {renderMenuActions()}
       {renderConfirmDialog()}
       {renderCourseDeleteDialog()}

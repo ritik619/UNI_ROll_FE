@@ -211,7 +211,7 @@ export function UniversityListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.universitiesAndCourses.new}
+              href={paths.dashboard.universitiesAndCourses.addUniversity}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
