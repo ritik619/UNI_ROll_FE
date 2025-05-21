@@ -18,8 +18,6 @@ export const STUDENTS_STATUS_OPTIONS = [
 export const COURSES_STATUS_OPTIONS = [
   { value: 'active', label: 'Active' },
   { value: 'inactive', label: 'Inactive' },
-  { value: 'upcoming', label: 'Upcoming' },
-  { value: 'completed', label: 'Completed' },
 ];
 
 export const _userAbout = {

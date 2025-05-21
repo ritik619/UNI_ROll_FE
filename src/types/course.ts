@@ -5,10 +5,15 @@ import type { IDateValue } from './common';
 export type ICourseTableFilters = {
   name: string;
   status: 'all' | 'active' | 'inactive';
+  cityId: string;
+  countryCode: string;
   universityId: string;
+  role: string[];
 };
 
 export type ICourse = {
+  cityName: string;
+  countryName: string;
   id: string;
   name: string;
   code: string;
