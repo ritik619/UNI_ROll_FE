@@ -46,7 +46,7 @@ type Props = {
   universityId: string;
 };
 
-export function UniversityQuickAddCourseForm({ open, onClose, universityId }: Props) {
+export function UniversityQuickAddCourseAssociationForm({ open, onClose, universityId }: Props) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -96,9 +96,9 @@ export function UniversityQuickAddCourseForm({ open, onClose, universityId }: Pr
   const fetchPaginatedCourses = useCallback(async () => {
     try {
       setLoading(true);
-      const { courses, total } = await fetchCourses('active');
-      console.log(courses);
-      setCourses(courses);
+      const { courses:c, total } = await fetchCourses('active');
+      console.log(c);
+      setCourses(c);
     } catch (err) {
       console.error(err);
     } finally {

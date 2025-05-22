@@ -1,4 +1,4 @@
-import type { IUniversity } from 'src/types/university';
+import type { ICourse } from 'src/types/course';
 import type { ICourseAssociation } from 'src/types/courseAssociation';
 
 import { useState, useEffect } from 'react';
@@ -25,7 +25,6 @@ import { RouterLink } from 'src/routes/components';
 import { fCurrency } from 'src/utils/format-number';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
-import { fetchAssociations } from 'src/services/associations/fetchAssociations';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -33,15 +32,13 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
-import { UniversityQuickEditForm } from './university-quick-edit-form';
-import { UniversityQuickAddCourseAssociationForm } from './university-quick-add-course-association-form';
-
-// ----------------------------------------------------------------------
+import { UniversityQuickAddCourseAssociationForm } from '../universities/university-quick-add-course-association-form';
+import { fetchAssociations } from 'src/services/associations/fetchAssociations';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IUniversity;
+  row: ICourse;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -49,7 +46,7 @@ type Props = {
   onToggleStatus?: (id: string, status: string) => void;
 };
 
-export function UniversityTableRow({
+export function CoursesTableRow({
   row,
   selected,
   editHref,
@@ -61,39 +58,38 @@ export function UniversityTableRow({
   const courseMenuActions = usePopover(); // For course row actions
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
-  const quickAddCourse = useBoolean();
-
+  const quickEditAssociationForm = useBoolean();
   const collapseRow = useBoolean();
-  const [courses, setCourses] = useState<ICourseAssociation[]>([]);
+  const [university, setUniversity] = useState<ICourseAssociation[]>([]);
   const [loading, setLoading] = useState(false);
 
   // State to track course being deleted
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
   const courseDeleteDialog = useBoolean();
 
-  // Fetch courses when row is expanded - using mock data for now
+  // Fetch university when row is expanded - using mock data for now
   useEffect(() => {
     if (collapseRow.value) {
-      const fetchCoursesById = async () => {
+      const fetchCoursesByUniversityId = async () => {
         setLoading(true);
         try {
           const { courseAssociations: c = [] } = await fetchAssociations(
             'all',
-            undefined,
             row.id,
+            undefined,
             1,
             100,
             undefined
           );
-          setCourses(c);
+          setUniversity(c);
         } catch (error) {
-          console.error('Failed to fetch courses:', error);
+          console.error('Failed to fetch university:', error);
         } finally {
           setLoading(false);
         }
       };
 
-      fetchCoursesById();
+      fetchCoursesByUniversityId();
     }
   }, [collapseRow.value, row.id]);
 
@@ -106,7 +102,7 @@ export function UniversityTableRow({
       await authAxiosInstance.delete(`${endpoints.courses.details(courseToDelete)}`);
 
       // Remove the deleted course from the local state
-      setCourses((prevCourses) => prevCourses.filter((course) => course.id !== courseToDelete));
+      setUniversity((prevCourses) => prevCourses.filter((course) => course.id !== courseToDelete));
 
       // Show success message
       toast.success('Course deleted successfully');
@@ -121,18 +117,10 @@ export function UniversityTableRow({
   };
 
   const renderQuickEditForm = () => (
-    <UniversityQuickEditForm
-      currentUniversity={row}
-      open={quickEditForm.value}
-      onClose={quickEditForm.onFalse}
-    />
-  );
-
-  const renderQuickAddCourseForm = () => (
     <UniversityQuickAddCourseAssociationForm
       universityId={row.id}
-      open={quickAddCourse.value}
-      onClose={quickAddCourse.onFalse}
+      open={quickEditAssociationForm.value}
+      onClose={quickEditAssociationForm.onFalse}
     />
   );
 
@@ -148,12 +136,6 @@ export function UniversityTableRow({
           <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
             <Iconify icon="solar:pen-bold" />
             Edit
-          </MenuItem>
-        </li>
-        <li>
-          <MenuItem href={editHref} onClick={quickAddCourse.onTrue}>
-            <Iconify icon="tabler:school" />
-            Add Course
           </MenuItem>
         </li>
 
@@ -229,26 +211,63 @@ export function UniversityTableRow({
             >
               {row.name}
             </Link>
-            <Box component="span" sx={{ color: 'text.disabled' }}>
-              {row.description
-                ? row.description.length > 50
-                  ? `${row.description.substring(0, 50)}...`
-                  : row.description
-                : 'No description'}
-            </Box>
           </Stack>
         </Box>
       </TableCell>
+      <TableCell>
+        <Box component="span" sx={{ color: 'text.disabled' }}>
+          {row.description
+            ? row.description.length > 50
+              ? `${row.description.substring(0, 50)}...`
+              : row.description
+            : 'No description'}
+        </Box>
+      </TableCell>
+      <TableCell>
+        {/* Duration - 17% width */}
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Iconify
+            icon="solar:clock-circle-linear"
+            width={16}
+            sx={{ mr: 1, color: 'text.disabled' }}
+          />
+          <Typography variant="body2">
+            {(() => {
+              // Convert total months to years and months for display
+              const totalMonths = row.durationMonths || 0;
+              const years = Math.floor(totalMonths / 12);
+              const months = totalMonths % 12;
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.cityName}</TableCell>
+              let durationText = '';
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.countryName}</TableCell>
+              if (years > 0) {
+                durationText += `${years} ${years === 1 ? 'yr' : 'yrs'}`;
+              }
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+              if (months > 0) {
+                if (durationText) durationText += ', ';
+                durationText += `${months} ${months === 1 ? 'mo' : 'mos'}`;
+              }
+
+              if (!durationText) {
+                durationText = '0 months';
+              }
+
+              return durationText;
+            })()}
+          </Typography>
+        </Box>
+      </TableCell>
+
+      {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.cityName}</TableCell>
+
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.countryName}</TableCell> */}
+
+      {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>
         <Link href={row.website} target="_blank" rel="noopener" sx={{ color: 'primary.main' }}>
           {row.website}
         </Link>
-      </TableCell>
+      </TableCell> */}
 
       <TableCell>
         <Label
@@ -295,7 +314,7 @@ export function UniversityTableRow({
               sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
               <Typography variant="subtitle1">
-                University {!loading && `(${courses.length})`}
+                University {!loading && `(${university.length})`}
               </Typography>
 
               <Button
@@ -313,9 +332,9 @@ export function UniversityTableRow({
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
                 <CircularProgress />
               </Box>
-            ) : courses.length > 0 ? (
+            ) : university.length > 0 ? (
               <Stack spacing={1}>
-                {courses.map((course) => (
+                {university.map((course) => (
                   <Box
                     key={course.id}
                     sx={(theme) => ({
@@ -457,7 +476,7 @@ export function UniversityTableRow({
                                 const newStatus =
                                   course.status === 'active' ? 'inactive' : 'active';
                                 // await authAxiosInstance.patch(
-                                //   `${endpoints.courses.status(course.id)}`,
+                                //   `${endpoints.university.status(course.id)}`,
                                 //   { status: newStatus }
                                 // );
 
@@ -469,9 +488,9 @@ export function UniversityTableRow({
                                   `Course ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`
                                 );
 
-                                // Force re-render by updating courses state
-                                const updatedCourses = [...courses];
-                                setCourses(updatedCourses);
+                                // Force re-render by updating university state
+                                const updatedCourses = [...university];
+                                setUniversity(updatedCourses);
 
                                 // Close the menu
                                 courseMenuActions.onClose();
@@ -518,7 +537,7 @@ export function UniversityTableRow({
             ) : (
               <Box sx={{ py: 3, textAlign: 'center' }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
-                  No courses found for this university
+                  No university found for this university
                 </Typography>
 
                 <Button
@@ -560,8 +579,6 @@ export function UniversityTableRow({
       {renderPrimaryRow()}
       {renderAssociationRow()}
       {renderQuickEditForm()}
-      {renderQuickAddCourseForm()}
-
       {renderMenuActions()}
       {renderConfirmDialog()}
       {renderCourseDeleteDialog()}
