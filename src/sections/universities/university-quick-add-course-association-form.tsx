@@ -33,8 +33,8 @@ const CourseAssociationSchema = zod.object({
   currency: zod.string().min(1),
   requirementsDescription: zod.string(),
   languageOfInstruction: zod.string(),
-  maxStudents: zod.number().int().nonnegative(),
-  availableSeats: zod.number().int().nonnegative(),
+  // maxStudents: zod.number().int().nonnegative(),
+  // availableSeats: zod.number().int().nonnegative(),
   status: zod.enum(['upcoming', 'ongoing', 'completed', 'cancelled']),
 });
 
@@ -61,8 +61,8 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
     currency: 'USD',
     requirementsDescription: '',
     languageOfInstruction: 'English',
-    maxStudents: 30,
-    availableSeats: 30,
+    // maxStudents: 30,
+    // availableSeats: 30,
     status: 'upcoming',
   };
 
@@ -96,7 +96,7 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
   const fetchPaginatedCourses = useCallback(async () => {
     try {
       setLoading(true);
-      const { courses:c, total } = await fetchCourses('active');
+      const { courses: c, total } = await fetchCourses('active');
       console.log(c);
       setCourses(c);
     } catch (err) {
@@ -112,7 +112,7 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
 
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>
-      <DialogTitle>Associate a Course</DialogTitle>
+      <DialogTitle>Associate a Course with University</DialogTitle>
 
       <Form methods={methods} onSubmit={onSubmit}>
         <DialogContent>
@@ -139,8 +139,8 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
             <Field.DatePicker name="applicationDeadline" label="Application Deadline (ISO)" />
             <Field.Text name="languageOfInstruction" label="Language" />
             <Field.Text name="requirementsDescription" label="Requirements" multiline rows={2} />
-            <Field.Text name="maxStudents" label="Max Students" type="number" />
-            <Field.Text name="availableSeats" label="Available Seats" type="number" />
+            {/* <Field.Text name="maxStudents" label="Max Students" type="number" /> */}
+            {/* <Field.Text name="availableSeats" label="Available Seats" type="number" /> */}
             <Field.Select name="status" label="Status">
               <MenuItem value="upcoming">Upcoming</MenuItem>
               <MenuItem value="ongoing">Ongoing</MenuItem>
