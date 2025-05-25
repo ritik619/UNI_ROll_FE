@@ -22,54 +22,6 @@ import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import { ICourse } from 'src/types/course';
 import { DashboardContent } from 'src/layouts/dashboard';
 
-// Mock data - will use real API in production
-const MOCK_COURSES: { [key: string]: ICourse } = {
-  'course-1': {
-    id: 'course-1',
-    name: 'Bachelor of Computer Science',
-    code: 'CS-BSC-01',
-    universityId: 'uni-1',
-    universityName: 'Oxford University',
-    description:
-      'A comprehensive program covering fundamentals of computer science, algorithms, and software development.',
-    durationMonths: 36, // 3 years * 12 months
-    tuitionFee: 9250,
-    startDates: ['2023-09-01', '2024-01-15'],
-    status: 'active',
-    createdAt: new Date('2023-01-15'),
-    updatedAt: new Date('2023-03-20'),
-  },
-  'course-2': {
-    id: 'course-2',
-    name: 'Master of Data Science',
-    code: 'CS-MDS-01',
-    universityId: 'uni-1',
-    universityName: 'Oxford University',
-    description:
-      'Advanced program focusing on statistical analysis, machine learning, and big data technologies.',
-    durationMonths: 18, // 1.5 years = 18 months
-    tuitionFee: 12500,
-    startDates: ['2023-09-15', '2024-02-01'],
-    status: 'active',
-    createdAt: new Date('2023-02-10'),
-    updatedAt: new Date('2023-04-05'),
-  },
-  'course-3': {
-    id: 'course-3',
-    name: 'Bachelor of Business Administration',
-    code: 'BUS-BBA-01',
-    universityId: 'uni-2',
-    universityName: 'Cambridge University',
-    description:
-      'A program designed to develop skills in business management, finance, and marketing.',
-    durationMonths: 36, // 3 years * 12 months
-    tuitionFee: 8750,
-    startDates: ['2023-09-01'],
-    status: 'active',
-    createdAt: new Date('2023-01-20'),
-    updatedAt: new Date('2023-03-15'),
-  },
-};
 
 // ----------------------------------------------------------------------
 

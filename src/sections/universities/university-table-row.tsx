@@ -294,18 +294,17 @@ export function UniversityTableRow({
             <Box
               sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <Typography variant="subtitle1">
-                University {!loading && `(${courses.length})`}
+              <Typography variant="subtitle1" aria-description="description">
+                Course {!loading && `(${courses.length})`}
               </Typography>
 
               <Button
-                component={RouterLink}
-                href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
+                variant="contained"
                 size="small"
-                startIcon={<Iconify icon="mingcute:add-line" />}
-                sx={{ ml: 2 }}
+                onClick={quickAddCourse.onTrue}
+                startIcon={<Iconify icon="mingcute:add-line" sx={{ ml: 2 }} />}
               >
-                Add to University
+                Add Course to University
               </Button>
             </Box>
 
@@ -338,7 +337,7 @@ export function UniversityTableRow({
                           '&:hover': { textDecoration: 'underline' },
                         }}
                       >
-                        {course.universityName}
+                        {course.courseName}
                       </Link>
                       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                         {course.courseCode}
@@ -347,30 +346,6 @@ export function UniversityTableRow({
 
                     {/* Duration - 17% width */}
                     <Box sx={{ width: '17%', display: 'flex', alignItems: 'center' }}>
-                      <Iconify
-                        icon="solar:clock-circle-linear"
-                        width={16}
-                        sx={{ mr: 1, color: 'text.disabled' }}
-                      />
-                      <Typography variant="body2">
-                        {course.startDate} - {course.endDate}
-                      </Typography>
-                    </Box>
-
-                    {/* Tuition Fee - 18% width */}
-                    <Box sx={{ width: '18%', display: 'flex', alignItems: 'center' }}>
-                      <Iconify
-                        icon="solar:tag-price-linear"
-                        width={16}
-                        sx={{ mr: 1, color: 'text.disabled' }}
-                      />
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {course.price ? fCurrency(course.price) : '—'}
-                      </Typography>
-                    </Box>
-
-                    {/* Start Dates - 35% width */}
-                    <Box sx={{ width: '35%' }}>
                       <Box
                         sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, alignItems: 'center' }}
                       >
@@ -398,6 +373,75 @@ export function UniversityTableRow({
                         </Typography>
                       </Box>
                     </Box>
+                    {/* Duration - 17% width */}
+                    <Box sx={{ width: '17%', display: 'flex', alignItems: 'center' }}>
+                      <Box
+                        sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, alignItems: 'center' }}
+                      >
+                        <Iconify
+                          icon="solar:calendar-line-duotone"
+                          width={16}
+                          sx={{ color: 'text.disabled' }}
+                        />
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.primary',
+                            bgcolor: 'action.selected',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {new Date(course.endDate).toLocaleDateString('en-GB', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    {/* Tuition Fee - 18% width */}
+                    <Box sx={{ width: '18%', display: 'flex', alignItems: 'center' }}>
+                      <Iconify
+                        icon="solar:tag-price-linear"
+                        width={16}
+                        sx={{ mr: 1, color: 'text.disabled' }}
+                      />
+                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                        {course.price ? fCurrency(course.price) : '—'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ width: '17%', display: 'flex', alignItems: 'center' }}>
+                      <Box
+                        sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, alignItems: 'center' }}
+                      >
+                        <Iconify
+                          icon="solar:calendar-line-duotone"
+                          width={16}
+                          sx={{ color: 'text.disabled' }}
+                        />
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.primary',
+                            bgcolor: 'action.selected',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {new Date(course.applicationDeadline).toLocaleDateString('en-GB', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </Typography>
+                      </Box>
+                    </Box>
 
                     {/* Status and Actions - remainder width */}
                     <Box
@@ -415,11 +459,10 @@ export function UniversityTableRow({
                           (course.status === 'inactive' && 'warning') ||
                           'default'
                         }
-                        sx={{ mr: 1 }}
+                        sx={{ p: 2, mr: 2 }}
                       >
                         {course.status}
                       </Label>
-                      Course Actions Menu
                       <IconButton
                         size="small"
                         color="default"
@@ -441,7 +484,6 @@ export function UniversityTableRow({
                         id={courseMenuActions.id}
                       >
                         <MenuList>
-                          Edit Option
                           <MenuItem
                             component={RouterLink}
                             href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
@@ -450,7 +492,6 @@ export function UniversityTableRow({
                             <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
                             Edit Course
                           </MenuItem>
-                          Activate/Deactivate Option
                           <MenuItem
                             onClick={async () => {
                               try {

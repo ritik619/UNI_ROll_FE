@@ -21,6 +21,7 @@ import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import { createCourseAssociation } from 'src/services/courses/attachCourses';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchCourses } from 'src/services/courses/fetchCourses';
+import { ICourse } from 'src/types/course';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +36,7 @@ const CourseAssociationSchema = zod.object({
   languageOfInstruction: zod.string(),
   // maxStudents: zod.number().int().nonnegative(),
   // availableSeats: zod.number().int().nonnegative(),
-  status: zod.enum(['upcoming', 'ongoing', 'completed', 'cancelled']),
+  status: zod.enum(['active', 'inactive', 'upcoming', 'completed']),
 });
 
 type CourseAssociationFormType = zod.infer<typeof CourseAssociationSchema>;
@@ -50,7 +51,7 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [courses, setCourses] = useState<string[]>([]);
+  const [courses, setCourses] = useState<ICourse[]>([]);
 
   const defaultValues: CourseAssociationFormType = {
     courseId: '',
@@ -142,10 +143,10 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
             {/* <Field.Text name="maxStudents" label="Max Students" type="number" /> */}
             {/* <Field.Text name="availableSeats" label="Available Seats" type="number" /> */}
             <Field.Select name="status" label="Status">
-              <MenuItem value="upcoming">Upcoming</MenuItem>
-              <MenuItem value="ongoing">Ongoing</MenuItem>
-              <MenuItem value="completed">Completed</MenuItem>
-              <MenuItem value="cancelled">Cancelled</MenuItem>
+              <MenuItem value="active">Active</MenuItem>
+              <MenuItem value="inactive">Inactive</MenuItem>
+              <MenuItem value="upcoming">Completed</MenuItem>
+              <MenuItem value="completed">Upcoming</MenuItem>
             </Field.Select>
           </Box>
         </DialogContent>

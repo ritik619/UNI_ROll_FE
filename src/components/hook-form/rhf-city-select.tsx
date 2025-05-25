@@ -1,9 +1,9 @@
 
-import type { CitySelectProps} from 'src/components/country-select';
+import type { CitySelectProps } from 'src/components/select';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { CitySelect } from 'src/components/country-select';
+import { CitySelect } from 'src/components/select';
 // ----------------------------------------------------------------------
 
 export type RHFCitySelectProps = CitySelectProps & {

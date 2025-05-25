@@ -109,7 +109,7 @@ export default function IntakeEditView({ intakeId }: Props) {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <IntakeNewEditForm currentIntake={intake} />
+      <IntakeNewEditForm currentIntake={{ ...intake, id: intakeId }} initialIntakeId={intakeId} />
     </DashboardContent>
   );
 }

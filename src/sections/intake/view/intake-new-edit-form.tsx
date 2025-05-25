@@ -47,7 +47,7 @@ type Props = {
 
 export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
   const router = useRouter();
-
+  console.log('IntakeNewEditForm', currentIntake, initialIntakeId);
   const defaultValues: NewIntakeSchemaType = {
     name: '',
     startDate: new Date().toDateString(),
@@ -81,7 +81,7 @@ export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
     // Create a direct payload object instead of using formData
     const payload = {
       name: data.name.trim(),
-      startDate:new Date(data.startDate).toISOString(),
+      startDate: new Date(data.startDate).toISOString(),
       description: data.description?.trim(),
       endDate: new Date(data.endDate).toISOString(),
       status: data.status,
@@ -93,9 +93,8 @@ export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
   };
 
   const updateIntake = async (data: ICreateIntake) => {
-    if (!currentIntake?.id) return {};
+    if (!initialIntakeId) return {};
 
-    console.log('Updating Intake with data:', data);
     const payload = {
       name: data.name.trim(),
       startDate: data.startDate,
@@ -104,7 +103,7 @@ export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
       status: data.status,
     };
     const response = await authAxiosInstance.patch<{ id: string }>(
-      `${endpoints.intakes.details(currentIntake.id)}`,
+      `${endpoints.intakes.details(initialIntakeId)}`,
       payload
     );
     return response;

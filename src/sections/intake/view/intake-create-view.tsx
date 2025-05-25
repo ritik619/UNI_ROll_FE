@@ -27,7 +27,7 @@ export default function CourseCreateView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <IntakeNewEditForm initialIntakeId={universityId} />
+      <IntakeNewEditForm />
     </DashboardContent>
   );
 }

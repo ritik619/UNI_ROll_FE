@@ -1,6 +1,7 @@
 'use client';
 
 import type { TableHeadCellProps } from 'src/components/table';
+import type { IIntake, IIntakeTableFilters } from 'src/types/intake';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useState, useEffect, useCallback } from 'react';
@@ -30,7 +31,6 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-import { CitySelect, CountrySelect } from 'src/components/country-select';
 import {
   useTable,
   emptyRows,
@@ -45,7 +45,7 @@ import {
 } from 'src/components/table';
 
 import { IntakeTableRow } from '../intake-table-row';
-import { IntakeTableFiltersResult } from '../intake-table-filters-result';
+import { IntakesTableFiltersResult } from '../intake-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'name', label: 'Intake Name' },
   { id: 'startDate', label: 'Start Date', width: 180 },
   { id: 'endDate', label: 'End Date', width: 180 },
-  { id: 'description', label: 'Website', width: 220 },
+  // { id: 'description', label: 'Website', width: 220 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
@@ -74,8 +74,8 @@ export function IntakeListView() {
     name: '',
     role: [],
     status: 'all',
-    countryCode: '',
-    cityId: '',
+    // countryCode: '',
+    // cityId: '',
   });
   const { state: currentFilters, setState: updateFilters } = filters;
 
@@ -145,7 +145,6 @@ export function IntakeListView() {
     },
     [updateFilters, table]
   );
-  console.log(filters);
   const renderConfirmDialog = () => (
     <ConfirmDialog
       open={confirmDialog.value}
@@ -173,13 +172,13 @@ export function IntakeListView() {
   const fetchPaginatedIntakes = useCallback(async () => {
     try {
       setLoading(true);
-      const { Intakes, total } = await fetchIntakes(
+      const { intakes, total } = await fetchIntakes(
         filters.state.status,
         table.page,
-        table.rowsPerPage,
+        table.rowsPerPage
       );
-      console.log(Intakes);
-      setTableData(Intakes);
+      console.log(intakes);
+      setTableData(intakes);
       setTotalCount(total);
     } catch (err) {
       console.error(err);
@@ -263,7 +262,7 @@ export function IntakeListView() {
               gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
             }}
           >
-            <CountrySelect
+            {/* <CountrySelect
               id="country-id"
               label="Country"
               getValue="code"
@@ -286,10 +285,10 @@ export function IntakeListView() {
                 }}
                 countryCode={filters.state.countryCode}
               />
-            )}
+            )} */}
           </Box>
           {canReset && (
-            <IntakeTableFiltersResult
+            <IntakesTableFiltersResult
               filters={filters}
               totalResults={dataFiltered.length}
               onResetPage={table.onResetPage}
@@ -415,7 +414,11 @@ type ApplyFilterProps = {
 };
 
 function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
-  const { name, status, role } = filters;
+  const {
+    name,
+    status,
+    //  role
+  } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -437,11 +440,11 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
     inputData = inputData.filter((university) => university.status === status);
   }
 
-  if (role.length) {
-    // Intakes don't have roles, but keeping this for compatibility with the filter interface
-    // This can be updated later when the filter interface is properly adjusted for Intakes
-    inputData = inputData;
-  }
+  // if (role.length) {
+  //   // Intakes don't have roles, but keeping this for compatibility with the filter interface
+  //   // This can be updated later when the filter interface is properly adjusted for Intakes
+  //   inputData = inputData;
+  // }
 
   return inputData;
 }

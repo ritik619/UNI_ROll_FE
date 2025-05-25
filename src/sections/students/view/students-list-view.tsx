@@ -1,7 +1,9 @@
 'use client';
 
+import type { IIntake } from 'src/types/intake';
 import type { TableHeadCellProps } from 'src/components/table';
-import type { IStudentsItem, IStudentsTableFilters } from 'src/types/students';
+import type { ICourseAssociation } from 'src/types/courseAssociation';
+import type { IStudentsItem, IStudentStatus, IStudentsTableFilters } from 'src/types/students';
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useState, useEffect, useCallback } from 'react';
@@ -20,10 +22,11 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import { STUDENTS_STATUS_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { fetchIntakes } from 'src/services/Intakes/fetchIntakes';
 import { fetchStudents } from 'src/services/students/fetchStudents';
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
+import { fetchAssociations } from 'src/services/associations/fetchAssociations';
 
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
@@ -31,6 +34,8 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import { UniversitySelect } from 'src/components/select/university-select';
+import { CitySelect, CourseSelect, CountrySelect } from 'src/components/select';
 import {
   useTable,
   emptyRows,
@@ -48,15 +53,24 @@ import { StudentsTableRow } from '../students-table-row';
 import { StudentsTableFiltersResult } from '../students-table-filters-result';
 
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...STUDENTS_STATUS_OPTIONS];
+const STATUS_OPTIONS = [
+  { value: 'All', label: 'All' },
+  { value: 'Enrolled', label: 'Enrolled' },
+  { value: 'Withdrawn', label: 'Withdrawn' },
+  { value: 'Deferred', label: 'Deferred' },
+  { value: 'UnEnrolled', label: 'Un-Enrolled' },
+  { value: 'Unaffiliated', label: 'Un-Affiliated' },
+];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'name', label: 'Name' },
-  { id: 'id', label: 'ID' },
+  // { id: 'email', label: 'Email' },
+  { id: 'sex', label: 'Gender', width: 180 },
+  { id: 'country', label: 'Country', width: 180 },
+  { id: 'phoneNumber', label: 'Phone Number' },
   { id: 'University', label: 'University', width: 220 },
+  { id: 'Course', label: 'Course', width: 220 },
   { id: 'status', label: 'Status', width: 100 },
-  // { id: 'role', label: 'Role', width: 180 },
   { id: '', width: 88 },
 ];
 
@@ -69,8 +83,19 @@ export function StudentsListView() {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<IStudentsItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [associations, setAssociations] = useState<ICourseAssociation[]>([]);
+  const [intakes, setIntakes] = useState<IIntake[]>([]);
 
-  const filters = useSetState<IStudentsTableFilters>({ name: '', role: [], status: 'all' });
+  const filters = useSetState<IStudentsTableFilters>({
+    name: '',
+    role: [],
+    status: 'All',
+    countryCode: '',
+    cityId: '',
+    intakeId: '',
+    universityId: '',
+    courseId: '',
+  });
   const { state: currentFilters, setState: updateFilters } = filters;
 
   const dataFiltered = applyFilter({
@@ -82,7 +107,7 @@ export function StudentsListView() {
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
 
   const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
+    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'All';
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
@@ -134,10 +159,7 @@ export function StudentsListView() {
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleFilterStatus = useCallback(
-    (
-      event: React.SyntheticEvent,
-      newValue: 'all' | 'free' | 'interested' | 'enrolled' | 'unenrolled'
-    ) => {
+    (event: React.SyntheticEvent, newValue: IStudentStatus) => {
       table.onResetPage();
       updateFilters({ status: newValue });
     },
@@ -174,7 +196,11 @@ export function StudentsListView() {
       const { students, total } = await fetchStudents(
         currentFilters.status,
         table.page,
-        table.rowsPerPage
+        table.rowsPerPage,
+        currentFilters.universityId,
+        currentFilters.courseId,
+        currentFilters.countryCode,
+        currentFilters.cityId
       );
       setTableData(students);
       setTotalCount(total);
@@ -183,12 +209,30 @@ export function StudentsListView() {
     } finally {
       setLoading(false);
     }
-  }, [currentFilters.status, table.page, table.rowsPerPage]);
+  }, [
+    currentFilters.status,
+    table.page,
+    table.rowsPerPage,
+    currentFilters.universityId,
+    currentFilters.courseId,
+    currentFilters.countryCode,
+    currentFilters.cityId,
+  ]);
 
   useEffect(() => {
     // table.setRowsPerPage(2);
     fetchPaginatedStudents();
   }, [fetchPaginatedStudents]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const { courseAssociations: c = [] } = await fetchAssociations('active');
+      setAssociations(c);
+      const { intakes: i } = await fetchIntakes('active');
+      setIntakes(i);
+    };
+    getData();
+  }, []);
 
   return (
     <>
@@ -224,27 +268,33 @@ export function StudentsListView() {
               }),
             ]}
           >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
-                      'soft'
-                    }
-                    color={(tab.value === 'enrolled' && 'success') || 'default'}
-                  >
-                    {['enrolled', 'unenrolled'].includes(tab.value)
-                      ? tableData.filter((students) => students.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
+            {STATUS_OPTIONS.map((tab) => {
+              const statusCount =
+                tab.value === 'All'
+                  ? tableData.length
+                  : tableData.filter((student) => student.status === tab.value).length;
+
+              return (
+                <Tab
+                  key={tab.value}
+                  iconPosition="end"
+                  value={tab.value}
+                  label={tab.label}
+                  icon={
+                    <Label
+                      variant={
+                        tab.value === 'All' || tab.value === currentFilters.status
+                          ? 'filled'
+                          : 'soft'
+                      }
+                      color={tab.value === 'Enrolled' ? 'success' : 'default'}
+                    >
+                      {statusCount}
+                    </Label>
+                  }
+                />
+              );
+            })}
           </Tabs>
 
           {/* <StudentsTableToolbar
@@ -252,6 +302,60 @@ export function StudentsListView() {
             onResetPage={table.onResetPage}
             options={{ roles: _roles }}
           /> */}
+          <Box
+            sx={{
+              rowGap: 3,
+              columnGap: 2,
+              display: 'grid',
+              m: 3,
+              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+            }}
+          >
+            <UniversitySelect
+              id="university-id"
+              label="University"
+              getValue="universityId"
+              onChange={(event, newValue) => {
+                // Handle value change
+                console.log(newValue);
+                filters.setState({ universityId: newValue });
+              }}
+            />
+            <CourseSelect
+              id="course-id"
+              label="Course"
+              getValue="courseId"
+              onChange={(event, newValue) => {
+                // Handle value change
+                console.log(newValue);
+                filters.setState({ courseId: newValue });
+              }}
+            />
+            <CountrySelect
+              id="country-id"
+              label="Country"
+              getValue="name"
+              placeholder="Choose a country"
+              onChange={(event, newValue) => {
+                // Handle value change
+                console.log(newValue);
+                filters.setState({ countryCode: newValue });
+              }}
+            />
+            {filters.state.countryCode && (
+              <CitySelect
+                id="city-id"
+                label="City"
+                getValue="cityId"
+                onChange={(event, newValue) => {
+                  // Handle value change
+                  console.log(newValue);
+                  filters.setState({ cityId: newValue });
+                }}
+                countryCode={filters.state.countryCode}
+              />
+            )}
+          </Box>
 
           {canReset && (
             <StudentsTableFiltersResult
@@ -318,6 +422,8 @@ export function StudentsListView() {
                             onDeleteRow={() => handleDeleteRow(row.id)}
                             onToggleStatus={handleToggleStatus}
                             editHref={paths.dashboard.students.edit(row.id)}
+                            associations={associations}
+                            intakes={intakes}
                           />
                         ))}
 
@@ -330,27 +436,6 @@ export function StudentsListView() {
                     </>
                   )}
                 </TableBody>
-                {/* <TableFooter style={{backgroundColor:'yellow',flex:1,}}>
-                  <TableRow >
-                    <TablePagination
-                      rowsPerPageOptions={[1, 5, 10, 25, { label: 'All', value: -1 }]}
-                      colSpan={6}
-                      count={tableData.length}
-                      rowsPerPage={table.rowsPerPage}
-                      page={table.page}
-                      slotProps={{
-                        select: {
-                          inputProps: {
-                            'aria-label': 'Rows per page',
-                          },
-                          native: true,
-                        },
-                      }}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                  </TableRow>
-                </TableFooter> */}
               </Table>
             </Scrollbar>
           </Box>
@@ -400,7 +485,7 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
     );
   }
 
-  if (status !== 'all') {
+  if (status !== 'All') {
     inputData = inputData.filter((students) => students.status === status);
   }
 

@@ -1,94 +1,126 @@
-import type { IDateValue, ISocialLink } from './common';
+// students.types.ts
 
-// ----------------------------------------------------------------------
+export type ISex = 'Male' | 'Female' | 'Other';
+export type IStudentStatus =
+  | 'Enrolled'
+  | 'UnEnrolled'
+  | 'Withdrawn'
+  | 'Deferred'
+  | 'Unaffiliated'
+  | 'All';
+export type IFinanceStatus = 'Applied' | 'Approved';
 
+export interface IDocuments {
+  passport?: string;
+  shareCode?: string;
+  proofOfAddress?: string;
+  diploma?: string;
+  personalStatement?: string;
+  cv?: string;
+  otherDocuments?: string[];
+}
 export type IStudentsTableFilters = {
   name: string;
   role: string[];
-  status: 'all' | 'free' | 'interested' | 'enrolled' | 'unenrolled';
+  status: IStudentStatus;
+  countryCode: string;
+  universityId: string;
+  courseId: string;
+  cityId: string;
+  intakeId: string;
 };
 
-export type IStudentsProfileCover = {
-  name: string;
-  role: string;
-  coverUrl: string;
-  avatarUrl: string;
-};
+export interface IFinance {
+  status: IFinanceStatus;
+}
 
-export type IStudentsProfile = {
+export interface IBooking {
+  examDate?: Date;
+  examTime?: string;
+  examRoom?: string;
+}
+
+export interface IConsent {
+  sent: boolean;
+  sentTime?: Date;
+  signed: boolean;
+}
+
+export interface IStudentsItem {
   id: string;
-  role: string;
-  quote: string;
-  email: string;
-  university: string;
-  country: string;
-  totalFollowers: number;
-  totalFollowing: number;
-  socialLinks: ISocialLink;
-};
-
-export type IStudentsProfileFollower = {
-  id: string;
-  name: string;
-  country: string;
-  avatarUrl: string;
-};
-
-export type IStudentsProfileGallery = {
-  id: string;
-  title: string;
-  imageUrl: string;
-  postedAt: IDateValue;
-};
-
-export type IStudentsProfileFriend = {
-  id: string;
-  name: string;
-  role: string;
-  avatarUrl: string;
-};
-
-export type IStudentsProfilePost = {
-  id: string;
-  media: string;
-  message: string;
-  createdAt: IDateValue;
-  personLikes: { name: string; avatarUrl: string }[];
-  comments: {
-    id: string;
-    message: string;
-    createdAt: IDateValue;
-    author: { id: string; name: string; avatarUrl: string };
-  }[];
-};
-
-export type IStudentsCard = {
-  id: string;
-  name: string;
-  role: string;
-  coverUrl: string;
-  avatarUrl: string;
-  totalPosts: number;
-  totalFollowers: number;
-  totalFollowing: number;
-};
-
-export type IStudentsItem = {
-  id: string;
-  avatarUrl: string | File | null;
+  leadNumber: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
   email: string;
+  phonePrefix: string;
+  phoneNumber: string;
+  nationality: string;
+  coverPhoto: string;
+  sex: ISex;
   address: string;
-  university: string;
-  courses: string;
-  status: 'free' | 'interested' | 'enrolled' | 'unenrolled';
-};
+  postCode: string;
+  agentId: string;
+  universityId?: string;
+  universityName?: string;
+  courseName?: string;
+  courseId?: string;
+  intakeId?: string;
+  status: IStudentStatus;
+  documents?: IDocuments;
+  finance?: IFinance;
+  booking?: IBooking;
+  consent?: IConsent;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-// export type IStudentsAccountBillingHistory = {
-//   id: string;
-//   price: number;
-//   invoiceNumber: string;
-//   createdAt: IDateValue;
-// };
+export interface ICreateStudent {
+  leadNumber?: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string; // DD/MM/YYYY
+  age?: number;
+  email: string;
+  phonePrefix: string;
+  phoneNumber: string;
+  nationality: string;
+  sex: ISex;
+  address: string;
+  postCode?: string;
+  agentId: string;
+}
+
+export interface IUpdateStudent {
+  leadNumber?: string;
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  email?: string;
+  phonePrefix?: string;
+  phoneNumber?: string;
+  nationality?: string;
+  sex?: ISex;
+  address?: string;
+  postCode?: string;
+  agentId?: string;
+  status?: IStudentStatus;
+}
+
+export interface IUpdateStudentStatus {
+  status: IStudentStatus;
+}
+
+export interface IUpdateConsent {
+  sent: boolean;
+}
+
+export interface IEnrollStudent {
+  intakeId: string;
+  universityId: string;
+  courseId: string;
+}
+
+export interface IRemoveIntakeLink {
+  studentId: string;
+}

@@ -32,7 +32,7 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-import { CitySelect, CountrySelect } from 'src/components/country-select';
+import { CitySelect, CountrySelect } from 'src/components/select';
 import {
   useTable,
   emptyRows,

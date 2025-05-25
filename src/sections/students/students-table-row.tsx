@@ -1,4 +1,6 @@
+import type { IIntake } from 'src/types/intake';
 import type { IStudentsItem } from 'src/types/students';
+import type { ICourseAssociation } from 'src/types/courseAssociation';
 
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
 
@@ -22,6 +24,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
 import { StudentsQuickEditForm } from './students-quick-edit-form';
+import { StudentQuickEnrollForm } from './students-quick-enroll-form';
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +35,8 @@ type Props = {
   onSelectRow: () => void;
   onDeleteRow: () => void;
   onToggleStatus?: (id: string, status: string) => void;
+  associations?: ICourseAssociation[];
+  intakes?: IIntake[];
 };
 
 export function StudentsTableRow({
@@ -41,16 +46,28 @@ export function StudentsTableRow({
   onSelectRow,
   onDeleteRow,
   onToggleStatus,
+  associations = [],
+  intakes = [],
 }: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
+  const quickEnrollForm = useBoolean();
 
   const renderQuickEditForm = () => (
     <StudentsQuickEditForm
       currentStudents={row}
       open={quickEditForm.value}
       onClose={quickEditForm.onFalse}
+    />
+  );
+  const renderQuickEnrollForm = () => (
+    <StudentQuickEnrollForm
+      open={quickEnrollForm.value}
+      onClose={quickEnrollForm.onFalse}
+      studentId={row.id}
+      associations={associations}
+      intakes={intakes}
     />
   );
 
@@ -62,31 +79,33 @@ export function StudentsTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        <li>
-          <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
-            <Iconify icon="solar:pen-bold" />
-            Edit
-          </MenuItem>
-        </li>
+        <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
+          <Iconify icon="solar:pen-bold" />
+          Edit
+        </MenuItem>
+        <MenuItem href={editHref} onClick={quickEnrollForm.onTrue}>
+          <Iconify icon="solar:check-circle-bold" />
+          Enroll
+        </MenuItem>
 
         <MenuItem
           onClick={() => {
             if (onToggleStatus) {
-              const newStatus = row.status === 'enrolled' ? 'unenrolled' : 'enrolled';
+              const newStatus = row.status;
               onToggleStatus(row.id, newStatus);
             }
             menuActions.onClose();
           }}
-          sx={{ color: row.status === 'enrolled' ? 'warning.main' : 'success.main' }}
+          sx={{ color: row.status === 'Enrolled' ? 'warning.main' : 'success.main' }}
         >
           <Iconify
             icon={
-              row.status === 'enrolled'
+              row.status === 'Enrolled'
                 ? 'material-symbols:toggle-off'
                 : 'material-symbols:toggle-on'
             }
           />
-          {row.status === 'enrolled' ? 'Deactivate' : 'Activate'}
+          {row.status === 'Enrolled' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
         <MenuItem
@@ -134,7 +153,7 @@ export function StudentsTableRow({
         <TableCell>
           <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
             {/* TODO Add avatar URL */}
-            <Avatar alt={row.firstName} src={row?.avatarUrl} />
+            <Avatar alt={row.firstName} src={row?.coverPhoto} />
 
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
               <Link
@@ -151,21 +170,22 @@ export function StudentsTableRow({
             </Stack>
           </Box>
         </TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.sex}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.nationality}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.utrNumber}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.postCode}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.universityName}</TableCell>
 
-        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell> */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.courseName}</TableCell>
 
         <TableCell>
           <Label
             variant="soft"
             color={
-              (row.status === 'free' && 'default') || // maybe gray/default for free
-              (row.status === 'interested' && 'info') || // blue-ish for interested
-              (row.status === 'enrolled' && 'success') || // green for enrolled (like active)
-              (row.status === 'unenrolled' && 'warning') || // orange/yellow for unrolled (like inactive)
+              (row.status === 'Deferred' && 'default') || // maybe gray/default for free
+              (row.status === 'Enrolled' && 'success') || // green for enrolled (like active)
+              (row.status === 'Withdrawn' && 'warning') || // orange/yellow for unrolled (like inactive)
               'default' // fallback
             }
           >
@@ -196,6 +216,7 @@ export function StudentsTableRow({
       </TableRow>
 
       {renderQuickEditForm()}
+      {renderQuickEnrollForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}
     </>

@@ -48,7 +48,7 @@ import { UniversityTableRow } from '../university-table-row';
 import { UniversityTableFiltersResult } from '../university-table-filters-result';
 import { UniversityTableToolbar } from '../university-table-toolbar';
 import { Field } from 'src/components/hook-form';
-import { CitySelect, CountrySelect } from 'src/components/country-select';
+import { CitySelect, CountrySelect } from 'src/components/select';
 
 // ----------------------------------------------------------------------
 

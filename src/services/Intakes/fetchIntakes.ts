@@ -6,13 +6,19 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 export const fetchIntakes = async (
   status: 'active' | 'inactive' | 'all',
-  page: number,
-  limit: number
+  page?: number,
+  limit?: number
 ) => {
   try {
     const params: Record<string, any> = { page, limit };
     if (status !== 'all') {
       params.status = status;
+    }
+    if (page) {
+      params.page = page;
+    }
+    if (limit) {
+      params.limit = limit;
     }
 
     const response = await authAxiosInstance.get(endpoints.intakes.list, { params });

@@ -121,7 +121,8 @@ export async function uploadFileAndGetURL(file: File, pathInBucket: string): Pro
     // Upload the file
     const snapshot = await uploadBytes(fileRef, file);
     // Manually construct the public URL
-
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
     return `gs://${snapshot.ref.bucket}/${snapshot.ref.fullPath}`;
   } catch (error) {
     console.error('Error uploading file:', error);

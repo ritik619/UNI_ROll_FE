@@ -16,9 +16,8 @@ type Props = {
 export default function Page({ params }: Props) {
   const { id } = params;
 
-  const currentStudents = _userList.find((students) => students.id === id);
 
-  return <StudentsEditView students={currentStudents} />;
+  return <StudentsEditView studentId={id} />;
 }
 
 // ----------------------------------------------------------------------
