@@ -16,6 +16,7 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 
+import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { Label } from 'src/components/label';
@@ -79,11 +80,18 @@ export function StudentsTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
-          <Iconify icon="solar:pen-bold" />
-          Edit
-        </MenuItem>
-        <MenuItem href={editHref} onClick={quickEnrollForm.onTrue}>
+        <Link
+          component={RouterLink}
+          href={paths.dashboard.students.edit(row.id)}
+          color="inherit"
+          sx={{ cursor: 'pointer' }}
+        >
+          <MenuItem href={paths.dashboard.students.details(row.id)}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </MenuItem>
+        </Link>
+        <MenuItem href={paths.dashboard.students.details(row.id)} onClick={quickEnrollForm.onTrue}>
           <Iconify icon="solar:check-circle-bold" />
           Enroll
         </MenuItem>
@@ -158,7 +166,7 @@ export function StudentsTableRow({
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
               <Link
                 component={RouterLink}
-                href={editHref}
+                href={paths.dashboard.students.details(row.id)}
                 color="inherit"
                 sx={{ cursor: 'pointer' }}
               >

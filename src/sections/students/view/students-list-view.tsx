@@ -334,7 +334,7 @@ export function StudentsListView() {
             <CountrySelect
               id="country-id"
               label="Country"
-              getValue="name"
+              getValue="code"
               placeholder="Choose a country"
               onChange={(event, newValue) => {
                 // Handle value change

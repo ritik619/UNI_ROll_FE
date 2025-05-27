@@ -66,6 +66,7 @@ export const paths = {
       profile: `${ROOTS.DASHBOARD}/students/profile`,
       // account: `${ROOTS.DASHBOARD}/students/account`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/students/${id}/edit`,
+      details: (id: string) => `${ROOTS.DASHBOARD}/students/${id}`,
     },
 
     universitiesAndCourses: {
