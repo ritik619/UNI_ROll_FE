@@ -112,7 +112,6 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       postCode: data.postCode.trim(),
       // university: data.university.trim(),
       // courses: data.courses.trim(),
-      agentId: '56cvuSccZKSfJk30kjQdkRQsAKk1'.trim(),
       // status: data.status || 'free',
     };
 
@@ -142,7 +141,6 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       postCode: data.postCode.trim(),
       // university: data.university.trim(),
       // courses: data.courses.trim(),
-      agentId: '56cvuSccZKSfJk30kjQdkRQsAKk1'.trim(),
       // status: data.status || 'free',
     };
 
