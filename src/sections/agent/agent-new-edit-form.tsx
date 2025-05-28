@@ -36,7 +36,7 @@ export const NewAgentSchema = zod.object({
   accountNumber: zod
     .string()
     .min(1, { message: 'Account Number is required!' })
-    .regex(/^\d{8}$/, { message: 'Account number should be 10 digits' }),
+    .regex(/^\d{10}$/, { message: 'Account number should be 10 digits' }),
   sortCode: zod
     .string()
     .min(1, { message: 'Sort code is required!' })
@@ -151,13 +151,26 @@ export function AgentNewEditForm({ currentAgent }: Props) {
                       gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
                     }}
                   >
-                    <Field.Text name="sortCode" label="Sort Code" />
-                    <Field.Text name="accountNumber" label="Account Number" />
+                    <Field.Text
+                      name="sortCode"
+                      label="Sort Code"
+                      helperText="Format: XX-XX-XX (e.g., 12-34-56)"
+                    />
+                    <Field.Text
+                      name="accountNumber"
+                      label="Account Number"
+                      helperText="Must be 10 digits (e.g., 1234567890)"
+                    />
                   </Box>
                 </Card>
               </Grid>
 
-              <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
+              <Field.Text
+                name="utrNumber"
+                label="UTR Number"
+                helperText="Must be 10 digits (e.g., 1234567890)"
+                sx={{ gridColumn: 'span 2' }}
+              />
               <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
             </Box>
 
