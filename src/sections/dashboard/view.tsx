@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { DashboardStats } from 'src/types/dashboard';
 import { fetchDashboardStats } from 'src/services/dashboard/fetch-stats';
 import { useAuthContext } from 'src/auth/hooks';
+import Skeleton from '@mui/material/Skeleton';
 
 // ----------------------------------------------------------------------
 
@@ -78,6 +79,7 @@ const CARD_CONFIGS = [
         icon: 'solar:user-id-bold',
         color: '#8E33FF',
         gradient: 'linear-gradient(135deg, #8E33FF 0%, #9C27B0 100%)',
+        roles: ['admin'],
     },
     {
         title: 'Total Earnings',
@@ -107,8 +109,12 @@ export function DashboardView() {
     const theme = useTheme();
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [loading, setLoading] = useState(true);
-    const user = useAuthContext();
-    console.log(user);
+    const { user } = useAuthContext();
+
+    // Filter cards based on user role
+    const filteredCards = CARD_CONFIGS.filter(card =>
+        !card.roles || card.roles.includes(user?.role ?? 'user')
+    );
 
     // Create animated values for each stat
     const animatedStudents = useCountAnimation(stats?.totalStudents ?? 0);
@@ -138,7 +144,72 @@ export function DashboardView() {
     if (loading) {
         return (
             <DashboardContent>
-                <Typography>Loading dashboard stats...</Typography>
+                <Stack spacing={3}>
+                    <Typography variant="h4" sx={{ mb: 2 }}>
+                        Dashboard Overview
+                    </Typography>
+
+                    <Card sx={{ p: 3 }}>
+                        <Grid
+                            container
+                            spacing={3}
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: {
+                                    xs: 'repeat(1, 1fr)',
+                                    sm: 'repeat(2, 1fr)',
+                                    md: 'repeat(3, 1fr)',
+                                    lg: 'repeat(3, 1fr)',
+                                },
+                                gap: 3,
+                            }}
+                        >
+                            {filteredCards.map((card) => (
+                                <Grid
+                                    key={card.title}
+                                    sx={{
+                                        width: '100%',
+                                    }}
+                                >
+                                    <Card
+                                        sx={{
+                                            p: 4,
+                                            height: '180px',
+                                            position: 'relative',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <Stack
+                                            direction="row"
+                                            alignItems="center"
+                                            justifyContent="space-between"
+                                            sx={{ height: '100%', px: 2 }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    width: 64,
+                                                    height: 64,
+                                                    borderRadius: 2,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    background: alpha(card.color, 0.1),
+                                                }}
+                                            >
+                                                <Skeleton variant="circular" width={40} height={40} />
+                                            </Box>
+
+                                            <Stack spacing={1} alignItems="flex-end">
+                                                <Skeleton variant="text" width={100} height={40} />
+                                                <Skeleton variant="text" width={120} height={24} />
+                                            </Stack>
+                                        </Stack>
+                                    </Card>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Card>
+                </Stack>
             </DashboardContent>
         );
     }
@@ -165,7 +236,7 @@ export function DashboardView() {
                             gap: 3,
                         }}
                     >
-                        {CARD_CONFIGS.map((card) => {
+                        {filteredCards.map((card) => {
                             let animatedValue: number;
                             switch (card.key) {
                                 case 'totalStudents':
