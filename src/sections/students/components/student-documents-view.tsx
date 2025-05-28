@@ -72,29 +72,64 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
   };
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>, documentType: string) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const error = validateFile(file);
-    if (error) {
-      toast.error(error);
-      return;
-    }
+    const files = event.target.files;
+    if (!files?.length) return;
 
     try {
       setIsUploading(true);
-      // TODO: Implement file upload
-      // const response = await uploadDocument(file, documentType);
-      const fileName = `${file.name}.${file.name.split('.').pop()}`;
-      const url = await uploadFileAndGetURL(file, `students/${student.id}/documents/${fileName}`);
-      await authAxiosInstance.patch(endpoints.students.details(student.id), {
-        documents: { [documentType]: url },
-      });
-      toast.success('Document uploaded successfully');
-      onRefresh();
+
+      if (documentType === 'otherDocuments') {
+        // Handle multiple files for other documents
+        const uploadPromises = Array.from(files).map(async (file) => {
+          const error = validateFile(file);
+          if (error) {
+            toast.error(error);
+            return null;
+          }
+
+          const fileName = `${file.name}.${file.name.split('.').pop()}`;
+          return uploadFileAndGetURL(file, `students/${student.id}/documents/other/${fileName}`);
+        });
+
+        const urls = (await Promise.all(uploadPromises)).filter(Boolean);
+
+        if (urls.length) {
+          // Get existing other documents or initialize empty array
+          const existingDocs = student.documents?.otherDocuments || [];
+
+          // Update the documents array with new URLs
+          await authAxiosInstance.patch(endpoints.students.details(student.id), {
+            documents: {
+              ...student.documents,
+              otherDocuments: [...existingDocs, ...urls]
+            },
+          });
+
+          toast.success(`${urls.length} document(s) uploaded successfully`);
+          onRefresh();
+        }
+      } else {
+        // Handle single file for specific document types
+        const file = files[0];
+        const error = validateFile(file);
+        if (error) {
+          toast.error(error);
+          return;
+        }
+
+        const fileName = `${file.name}.${file.name.split('.').pop()}`;
+        const url = await uploadFileAndGetURL(file, `students/${student.id}/documents/${fileName}`);
+
+        await authAxiosInstance.patch(endpoints.students.details(student.id), {
+          documents: { ...student.documents, [documentType]: url },
+        });
+
+        toast.success('Document uploaded successfully');
+        onRefresh();
+      }
     } catch (error) {
-      console.error('Error uploading document:', error);
-      toast.error('Failed to upload document');
+      console.error('Error uploading document(s):', error);
+      toast.error('Failed to upload document(s)');
     } finally {
       setIsUploading(false);
       // Reset the file input
@@ -224,16 +259,24 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
         <Card sx={{ p: 3 }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
             <Typography variant="h6">Other Documents</Typography>
-            <Button
-              variant="outlined"
-              startIcon={<Iconify icon="mdi:upload" />}
-              onClick={() => {
-                // TODO: Implement other documents upload
-                console.log('Upload other document clicked');
-              }}
-            >
-              Upload Document
-            </Button>
+            <Box component="label">
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp"
+                onChange={(e) => handleFileSelect(e, 'otherDocuments')}
+                style={{ display: 'none' }}
+                disabled={isUploading}
+                multiple
+              />
+              <Button
+                variant="outlined"
+                component="span"
+                startIcon={isUploading ? <CircularProgress size={20} /> : <Iconify icon="mdi:upload" />}
+                disabled={isUploading}
+              >
+                {isUploading ? 'Uploading...' : 'Upload Document'}
+              </Button>
+            </Box>
           </Stack>
 
           <Stack spacing={2}>
