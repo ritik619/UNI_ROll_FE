@@ -25,11 +25,13 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
+import { formatDateToDDMMYYYY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   row: IIntake;
+  index: number;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -39,6 +41,7 @@ type Props = {
 
 export function IntakeTableRow({
   row,
+  index,
   selected,
   editHref,
   onSelectRow,
@@ -180,16 +183,9 @@ export function IntakeTableRow({
 
   const renderPrimaryRow = () => (
     <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-      {/* <TableCell padding="checkbox">
-        <Checkbox
-          checked={selected}
-          onClick={onSelectRow}
-          inputProps={{
-            id: `${row.id}-checkbox`,
-            'aria-label': `${row.id} checkbox`,
-          }}
-        />
-      </TableCell> */}
+      <TableCell align="center">
+        {index}
+      </TableCell>
 
       <TableCell>
         <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
@@ -215,9 +211,9 @@ export function IntakeTableRow({
         </Box>
       </TableCell>
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.startDate}</TableCell>
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDateToDDMMYYYY(row.startDate)}</TableCell>
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.endDate}</TableCell>
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDateToDDMMYYYY(row.endDate)}</TableCell>
 
       {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>
         <Link href={row.website} target="_blank" rel="noopener" sx={{ color: 'primary.main' }}>

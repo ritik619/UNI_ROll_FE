@@ -52,6 +52,7 @@ import { IntakesTableFiltersResult } from '../intake-table-filters-result';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
+  { id: 'index', label: '#', width: 60 },
   { id: 'name', label: 'Intake Name' },
   { id: 'startDate', label: 'Start Date', width: 180 },
   { id: 'endDate', label: 'End Date', width: 180 },
@@ -342,15 +343,16 @@ export function IntakeListView() {
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage
                         )
-                        .map((row) => (
+                          .map((row, index) => (
                           <IntakeTableRow
                             key={row.id}
                             row={row}
+                              index={table.page * table.rowsPerPage + index + 1}
                             selected={table.selected.includes(row.id)}
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}
-                            onToggleStatus={handleToggleStatus as any}
-                            editHref={paths.dashboard.intakes.new}
+                              onToggleStatus={handleToggleStatus as any}
+                              editHref={paths.dashboard.intakes.new}
                           />
                         ))}
 

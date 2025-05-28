@@ -97,12 +97,12 @@ export const navData: NavSectionProps['data'] = [
         icon: ICONS.calendar,
         children: [
           {
-            title: 'list Intakes',
-            path: paths.dashboard.intakes.root,
-          },
-          {
             title: 'Add Intakes',
             path: paths.dashboard.intakes.new,
+          },
+          {
+            title: 'List Intakes',
+            path: paths.dashboard.intakes.root,
           },
         ],
       },

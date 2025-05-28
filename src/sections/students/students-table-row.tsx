@@ -34,6 +34,7 @@ import { StudentQuickEnrollForm } from './students-quick-enroll-form';
 
 type Props = {
   row: IStudentsItem;
+  index: number;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -45,6 +46,7 @@ type Props = {
 
 export function StudentsTableRow({
   row,
+  index,
   selected,
   editHref,
   onSelectRow,
@@ -193,16 +195,9 @@ export function StudentsTableRow({
   return (
     <>
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-        {/* <TableCell padding="checkbox">
-          <Checkbox
-            checked={selected}
-            onClick={onSelectRow}
-            inputProps={{
-              id: `${row.id}-checkbox`,
-              'aria-label': `${row.id} checkbox`,
-            }}
-          />
-        </TableCell> */}
+        <TableCell align="center">
+          {index}
+        </TableCell>
 
         <TableCell>
           <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>

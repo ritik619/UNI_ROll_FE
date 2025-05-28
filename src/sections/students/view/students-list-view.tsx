@@ -63,6 +63,7 @@ const STATUS_OPTIONS = [
 ];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
+  { id: 'index', label: '#', width: 60 },
   { id: 'name', label: 'Name' },
   // { id: 'email', label: 'Email' },
   { id: 'sex', label: 'Gender', width: 180 },
@@ -412,10 +413,11 @@ export function StudentsListView() {
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage
                         )
-                        .map((row) => (
+                          .map((row, index) => (
                           <StudentsTableRow
                             key={row.id}
                             row={row}
+                              index={table.page * table.rowsPerPage + index + 1}
                             selected={table.selected.includes(row.id)}
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}

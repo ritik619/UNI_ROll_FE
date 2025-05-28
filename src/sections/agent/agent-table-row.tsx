@@ -27,6 +27,7 @@ import { AgentQuickEditForm } from './agent-quick-edit-form';
 
 type Props = {
   row: IAgentItem;
+  index: number;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -34,7 +35,7 @@ type Props = {
   onToggleStatus?: (id: string, status: string) => void;
 };
 
-export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus }: Props) {
+export function AgentTableRow({ row, index, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus }: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
@@ -107,16 +108,9 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
   return (
     <>
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-        {/* <TableCell padding="checkbox">
-          <Checkbox
-            checked={selected}
-            onClick={onSelectRow}
-            inputProps={{
-              id: `${row.id}-checkbox`,
-              'aria-label': `${row.id} checkbox`,
-            }}
-          />
-        </TableCell> */}
+        <TableCell align="center">
+          {index}
+        </TableCell>
 
         <TableCell>
           <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>

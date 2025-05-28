@@ -55,6 +55,7 @@ import { CitySelect, CountrySelect } from 'src/components/select';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
+  { id: 'index', label: '#', width: 60 },
   { id: 'name', label: 'University Name' },
   { id: 'cityName', label: 'City', width: 180 },
   { id: 'countryName', label: 'Country', width: 180 },
@@ -348,10 +349,11 @@ export function UniversityListView() {
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage
                         )
-                        .map((row) => (
+                          .map((row, index) => (
                           <UniversityTableRow
                             key={row.id}
                             row={row}
+                              index={table.page * table.rowsPerPage + index + 1}
                             selected={table.selected.includes(row.id)}
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}

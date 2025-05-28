@@ -35,6 +35,7 @@ import { CustomPopover } from 'src/components/custom-popover';
 
 import { UniversityQuickEditForm } from './university-quick-edit-form';
 import { UniversityQuickAddCourseAssociationForm } from './university-quick-add-course-association-form';
+import { formatDateToDDMMYYYY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +43,7 @@ import { UniversityQuickAddCourseAssociationForm } from './university-quick-add-
 
 type Props = {
   row: IUniversity;
+  index: number;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -51,6 +53,7 @@ type Props = {
 
 export function UniversityTableRow({
   row,
+  index,
   selected,
   editHref,
   onSelectRow,
@@ -205,30 +208,23 @@ export function UniversityTableRow({
 
   const renderPrimaryRow = () => (
     <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-      {/* <TableCell padding="checkbox">
-        <Checkbox
-          checked={selected}
-          onClick={onSelectRow}
-          inputProps={{
-            id: `${row.id}-checkbox`,
-            'aria-label': `${row.id} checkbox`,
-          }}
-        />
-      </TableCell> */}
+      <TableCell align="center">
+        {index}
+      </TableCell>
 
       <TableCell>
         <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
           {/* <Avatar alt={row.name} src={row?.logoUrl} /> */}
 
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-            <Link
+            {/* <Link
               component={RouterLink}
               href={paths.dashboard.universitiesAndCourses.universityCourses(row.id)}
               color="inherit"
               sx={{ cursor: 'pointer' }}
-            >
+            > */}
               {row.name}
-            </Link>
+            {/* </Link> */}
             <Box component="span" sx={{ color: 'text.disabled' }}>
               {row.description
                 ? row.description.length > 50
@@ -327,7 +323,7 @@ export function UniversityTableRow({
                   >
                     {/* Course Name and Code - 30% width */}
                     <Box sx={{ width: '30%', pr: 2 }}>
-                      <Link
+                      {/* <Link
                         component={RouterLink}
                         href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
                         color="inherit"
@@ -336,9 +332,11 @@ export function UniversityTableRow({
                           display: 'block',
                           '&:hover': { textDecoration: 'underline' },
                         }}
-                      >
+                      > */}
+                      <Typography variant="subtitle2">
                         {course.courseName}
-                      </Link>
+                      </Typography>
+                      {/* </Link> */}
                       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                         {course.courseCode}
                       </Typography>
@@ -365,11 +363,7 @@ export function UniversityTableRow({
                             fontWeight: 500,
                           }}
                         >
-                          {new Date(course.startDate).toLocaleDateString('en-GB', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                          {formatDateToDDMMYYYY(course.startDate)}
                         </Typography>
                       </Box>
                     </Box>
@@ -394,11 +388,7 @@ export function UniversityTableRow({
                             fontWeight: 500,
                           }}
                         >
-                          {new Date(course.endDate).toLocaleDateString('en-GB', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                          {formatDateToDDMMYYYY(course.endDate)}
                         </Typography>
                       </Box>
                     </Box>
@@ -414,7 +404,7 @@ export function UniversityTableRow({
                         {course.price ? fCurrency(course.price) : '—'}
                       </Typography>
                     </Box>
-                    <Box sx={{ width: '17%', display: 'flex', alignItems: 'center' }}>
+                    {/* <Box sx={{ width: '17%', display: 'flex', alignItems: 'center' }}>
                       <Box
                         sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, alignItems: 'center' }}
                       >
@@ -434,14 +424,10 @@ export function UniversityTableRow({
                             fontWeight: 500,
                           }}
                         >
-                          {new Date(course.applicationDeadline).toLocaleDateString('en-GB', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                          {formatDateToDDMMYYYY(course.applicationDeadline)}
                         </Typography>
                       </Box>
-                    </Box>
+                    </Box> */}
 
                     {/* Status and Actions - remainder width */}
                     <Box

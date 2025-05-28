@@ -34,11 +34,13 @@ import { CustomPopover } from 'src/components/custom-popover';
 
 import { UniversityQuickAddCourseAssociationForm } from '../universities/university-quick-add-course-association-form';
 import { fetchAssociations } from 'src/services/associations/fetchAssociations';
+import { formatDateToDDMMYYYY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   row: ICourse;
+  index: number;
   selected: boolean;
   editHref: string;
   onSelectRow: () => void;
@@ -48,6 +50,7 @@ type Props = {
 
 export function CoursesTableRow({
   row,
+  index,
   selected,
   editHref,
   onSelectRow,
@@ -187,30 +190,24 @@ export function CoursesTableRow({
 
   const renderPrimaryRow = () => (
     <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-      {/* <TableCell padding="checkbox">
-        <Checkbox
-          checked={selected}
-          onClick={onSelectRow}
-          inputProps={{
-            id: `${row.id}-checkbox`,
-            'aria-label': `${row.id} checkbox`,
-          }}
-        />
-      </TableCell> */}
+      <TableCell align="center">
+        {index}
+      </TableCell>
 
       <TableCell>
         <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-          {/* <Avatar alt={row.name} src={row?.logoUrl} /> */}
-
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-            <Link
+            {/* <Link
               component={RouterLink}
               href={paths.dashboard.universitiesAndCourses.universityCourses(row.id)}
               color="inherit"
               sx={{ cursor: 'pointer' }}
-            >
+            > */}
               {row.name}
-            </Link>
+            {/* </Link> */}
+            <Box component="span" sx={{ color: 'text.disabled' }}>
+              {row.description}
+            </Box>
           </Stack>
         </Box>
       </TableCell>
@@ -347,7 +344,7 @@ export function CoursesTableRow({
                   >
                     {/* Course Name and Code - 30% width */}
                     <Box sx={{ width: '30%', pr: 2 }}>
-                      <Link
+                      {/* <Link
                         component={RouterLink}
                         href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
                         color="inherit"
@@ -356,9 +353,11 @@ export function CoursesTableRow({
                           display: 'block',
                           '&:hover': { textDecoration: 'underline' },
                         }}
-                      >
+                      > */}
+                      <Typography variant="subtitle2">
                         {course.universityName}
-                      </Link>
+                      </Typography>
+                      {/* </Link> */}
                       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                         {course.courseCode}
                       </Typography>
@@ -372,7 +371,7 @@ export function CoursesTableRow({
                         sx={{ mr: 1, color: 'text.disabled' }}
                       />
                       <Typography variant="body2">
-                        {course.startDate} - {course.endDate}
+                        {formatDateToDDMMYYYY(course.startDate)} - {formatDateToDDMMYYYY(course.endDate)}
                       </Typography>
                     </Box>
 
@@ -409,11 +408,7 @@ export function CoursesTableRow({
                             fontWeight: 500,
                           }}
                         >
-                          {new Date(course.startDate).toLocaleDateString('en-GB', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                          {formatDateToDDMMYYYY(course.startDate)}
                         </Typography>
                       </Box>
                     </Box>
@@ -434,12 +429,20 @@ export function CoursesTableRow({
                           (course.status === 'inactive' && 'warning') ||
                           'default'
                         }
-                        sx={{ mr: 1 }}
+                        sx={{
+                          px: 1.5,
+                          py: 0.5,
+                          borderRadius: 1,
+                          textTransform: 'capitalize',
+                          fontWeight: 500,
+                          minWidth: 80,
+                          textAlign: 'center'
+                        }}
                       >
                         {course.status}
                       </Label>
-                      Course Actions Menu
                       <IconButton
+                        sx={{ width: '50%' }}
                         size="small"
                         color="default"
                         onClick={(event) => {

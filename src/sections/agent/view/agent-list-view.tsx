@@ -52,6 +52,7 @@ import { AgentTableFiltersResult } from '../agent-table-filters-result';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
+  { id: 'index', label: '#', width: 60 },
   { id: 'name', label: 'Name', width: 150 },
   { id: 'utrNumber', label: 'UTR Number', width: 150 },
   { id: 'bankDetails', label: 'Bank Details', width: 220 },
@@ -299,10 +300,11 @@ export function AgentListView() {
                           table.page * table.rowsPerPage,
                           table.page * table.rowsPerPage + table.rowsPerPage
                         )
-                        .map((row) => (
+                          .map((row, index) => (
                           <AgentTableRow
                             key={row.id}
                             row={row}
+                              index={table.page * table.rowsPerPage + index + 1}
                             selected={table.selected.includes(row.id)}
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}
