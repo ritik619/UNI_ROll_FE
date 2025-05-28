@@ -6,13 +6,17 @@ import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { useBoolean } from 'minimal-shared/hooks';
 
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import { toast } from 'src/components/snackbar';
 
 import type { IStudentsItem } from 'src/types/students';
+import { uploadFileAndGetURL } from 'src/auth/context';
+import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 
 // ----------------------------------------------------------------------
 
@@ -21,8 +25,21 @@ type Props = {
   onRefresh: () => void;
 };
 
+const ALLOWED_FILE_TYPES = {
+  'application/pdf': ['.pdf'],
+  'application/msword': ['.doc'],
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+  'image/gif': ['.gif'],
+  'image/webp': ['.webp'],
+};
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 export function StudentDocumentsView({ student, onRefresh }: Props) {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const confirmDialog = useBoolean();
 
   const handleDeleteDocument = async () => {
@@ -33,8 +50,55 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
       // await deleteDocument(selectedDocument);
       onRefresh();
       confirmDialog.onFalse();
+      toast.success('Document deleted successfully');
     } catch (error) {
       console.error('Error deleting document:', error);
+      toast.error('Failed to delete document');
+    }
+  };
+
+  const validateFile = (file: File): string | null => {
+    if (!file) return 'No file selected';
+
+    if (!Object.keys(ALLOWED_FILE_TYPES).includes(file.type)) {
+      return 'Invalid file type. Please upload a PDF, Word document, or image (JPG, PNG, GIF, WEBP)';
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      return 'File size exceeds 5MB limit';
+    }
+
+    return null;
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>, documentType: string) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const error = validateFile(file);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      // TODO: Implement file upload
+      // const response = await uploadDocument(file, documentType);
+      const fileName = `${file.name}.${file.name.split('.').pop()}`;
+      const url = await uploadFileAndGetURL(file, `students/${student.id}/documents/${fileName}`);
+      await authAxiosInstance.patch(endpoints.students.details(student.id), {
+        documents: { [documentType]: url },
+      });
+      toast.success('Document uploaded successfully');
+      onRefresh();
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      toast.error('Failed to upload document');
+    } finally {
+      setIsUploading(false);
+      // Reset the file input
+      event.target.value = '';
     }
   };
 
@@ -47,16 +111,23 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
             <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
               {title}
             </Typography>
-            <Button
-              variant="outlined"
-              startIcon={<Iconify icon="mdi:upload" />}
-              onClick={() => {
-                // TODO: Implement document upload
-                console.log('Upload clicked for:', title);
-              }}
-            >
-              Upload
-            </Button>
+            <Box component="label">
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp"
+                onChange={(e) => handleFileSelect(e, title.toLowerCase())}
+                style={{ display: 'none' }}
+                disabled={isUploading}
+              />
+              <Button
+                variant="outlined"
+                component="span"
+                startIcon={isUploading ? <CircularProgress size={20} /> : <Iconify icon="mdi:upload" />}
+                disabled={isUploading}
+              >
+                {isUploading ? 'Uploading...' : 'Upload'}
+              </Button>
+            </Box>
           </Stack>
         </Card>
       );
