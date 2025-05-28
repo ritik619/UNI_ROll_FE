@@ -52,10 +52,10 @@ import { AgentTableFiltersResult } from '../agent-table-filters-result';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  // { id: 'role', label: 'Role', width: 180 },
+  { id: 'name', label: 'Name', width: 150 },
+  { id: 'utrNumber', label: 'UTR Number', width: 150 },
+  { id: 'bankDetails', label: 'Bank Details', width: 220 },
+  { id: 'postCode', label: 'Post Code', width: 120 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
@@ -281,12 +281,12 @@ export function AgentListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>

@@ -125,21 +125,20 @@ export function StudentsListView() {
   );
 
   const handleToggleStatus = useCallback(
-    (id: string, newStatus: string) => {
+    (id: string, newStatus: IStudentStatus) => {
       // Cast newStatus to the union if you want to be safe
-      const typedStatus = newStatus as 'free' | 'interested' | 'enrolled' | 'unenrolled';
 
       // Call async function but don't await it here (fire & forget)
       (async () => {
         try {
           await authAxiosInstance.patch(endpoints.students.status(id), {
-            status: typedStatus,
+            status: newStatus,
           });
           const updatedData = tableData.map((row) =>
-            row.id === id ? { ...row, status: typedStatus } : row
+            row.id === id ? { ...row, status: newStatus } : row
           );
           setTableData(updatedData);
-          toast.success(`Status updated to ${typedStatus}!`);
+          toast.success(`Status updated to ${newStatus}!`);
         } catch (error) {
           toast.error('Failed to update status');
         }
@@ -395,12 +394,12 @@ export function StudentsListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>

@@ -1,5 +1,5 @@
 import type { IIntake } from 'src/types/intake';
-import type { IStudentsItem } from 'src/types/students';
+import type { IStudentsItem, IStudentStatus } from 'src/types/students';
 import type { ICourseAssociation } from 'src/types/courseAssociation';
 
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
@@ -38,7 +38,7 @@ type Props = {
   editHref: string;
   onSelectRow: () => void;
   onDeleteRow: () => void;
-  onToggleStatus?: (id: string, status: string) => void;
+  onToggleStatus?: (id: string, status: IStudentStatus) => void;
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
 };
@@ -193,7 +193,7 @@ export function StudentsTableRow({
   return (
     <>
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox
             checked={selected}
             onClick={onSelectRow}
@@ -202,7 +202,7 @@ export function StudentsTableRow({
               'aria-label': `${row.id} checkbox`,
             }}
           />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell>
           <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>

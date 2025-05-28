@@ -107,7 +107,7 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
   return (
     <>
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox
             checked={selected}
             onClick={onSelectRow}
@@ -116,22 +116,14 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
               'aria-label': `${row.id} checkbox`,
             }}
           />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell>
           <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-            {/* TODO Add avatar URL */}
-            <Avatar alt={row.firstName} src={row?.avatarUrl} />
+            {/* <Avatar alt={row.firstName} src={row?.avatarUrl} /> */}
 
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-              {/* <Link
-                component={RouterLink}
-                href={editHref}
-                color="inherit"
-                sx={{ cursor: 'pointer' }}
-              > */}
-                {row.firstName} {row.lastName}
-              {/* </Link> */}
+              {row.firstName} {row.lastName}
               <Box component="span" sx={{ color: 'text.disabled' }}>
                 {row.email}
               </Box>
@@ -139,11 +131,22 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
           </Box>
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.utrNumber}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+          {row.utrNumber}
+        </TableCell>
+
+        <TableCell>
+          <Stack spacing={0.5}>
+            <Box component="span" sx={{ typography: 'body2' }}>
+              Sort Code: {row.bankDetails?.sortCode}
+            </Box>
+            <Box component="span" sx={{ typography: 'body2' }}>
+              Account: {row.bankDetails?.accountNumber}
+            </Box>
+          </Stack>
+        </TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.postCode}</TableCell>
-
-        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell> */}
 
         <TableCell>
           <Label
@@ -154,22 +157,12 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
               'default'
             }
           >
-            {/* TODO */}
             {row.status ?? 'active'}
           </Label>
         </TableCell>
 
         <TableCell>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {/* <Tooltip title="Quick Edit" placement="top" arrow>
-              <IconButton
-                color={quickEditForm.value ? 'inherit' : 'default'}
-                onClick={quickEditForm.onTrue}
-              >
-                <Iconify icon="solar:pen-bold" />
-              </IconButton>
-            </Tooltip> */}
-
             <IconButton
               color={menuActions.open ? 'inherit' : 'default'}
               onClick={menuActions.onOpen}

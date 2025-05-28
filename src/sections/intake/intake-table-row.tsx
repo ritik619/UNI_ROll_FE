@@ -180,7 +180,7 @@ export function IntakeTableRow({
 
   const renderPrimaryRow = () => (
     <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-      <TableCell padding="checkbox">
+      {/* <TableCell padding="checkbox">
         <Checkbox
           checked={selected}
           onClick={onSelectRow}
@@ -189,7 +189,7 @@ export function IntakeTableRow({
             'aria-label': `${row.id} checkbox`,
           }}
         />
-      </TableCell>
+      </TableCell> */}
 
       <TableCell>
         <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
