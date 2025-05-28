@@ -91,7 +91,7 @@ export function AgentNewEditForm({ currentAgent }: Props) {
     const payload = {
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
-      dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
+      dateOfBirth: new Date(data.dob),
       email: data.email.trim(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),

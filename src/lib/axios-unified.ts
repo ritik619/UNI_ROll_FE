@@ -122,6 +122,7 @@ export const endpoints = {
     enroll: (id: string) => `students/${id}/enroll`,
     profilePhoto: (id: string) => `students/${id}/profile-photo`,
     status: (id: string) => `students/${id}/status`,
+    removeIntakeLink: (id: string) => `students/${id}/remove-intake-link`,
   },
   universities: {
     list: 'universities',
@@ -151,6 +152,9 @@ export const endpoints = {
     root: 'course-associations',
     byUniversity: (id: string) => `course-associations/university/${id}`,
     byCourses: (id: string) => `course-associations/courses/${id}`,
+  },
+  dashboard: {
+    stats: 'dashboard/stats',
   },
 };
 

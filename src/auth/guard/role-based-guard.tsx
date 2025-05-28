@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'src/routes/hooks';
+
 import type { Theme, SxProps } from '@mui/material/styles';
 
 import { m } from 'framer-motion';
@@ -28,6 +31,14 @@ export function RoleBasedGuard({
   currentRole,
   acceptRoles,
 }: RoleBasedGuardProp) {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof acceptRoles !== 'undefined' && !acceptRoles.includes(currentRole)) {
+      router.replace('/404');
+    }
+  }, [acceptRoles, currentRole, router]);
+
   if (typeof acceptRoles !== 'undefined' && !acceptRoles.includes(currentRole)) {
     return hasContent ? (
       <Container
@@ -53,5 +64,5 @@ export function RoleBasedGuard({
     ) : null;
   }
 
-  return <> {children} </>;
+  return <>{children}</>;
 }

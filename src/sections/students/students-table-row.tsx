@@ -23,6 +23,9 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
+import { toast } from 'src/components/snackbar';
+
+import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 import { StudentsQuickEditForm } from './students-quick-edit-form';
 import { StudentQuickEnrollForm } from './students-quick-enroll-form';
@@ -52,6 +55,7 @@ export function StudentsTableRow({
 }: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
+  const unenrollDialog = useBoolean();
   const quickEditForm = useBoolean();
   const quickEnrollForm = useBoolean();
 
@@ -72,6 +76,20 @@ export function StudentsTableRow({
     />
   );
 
+  const handleUnenroll = async () => {
+    try {
+      // Call the remove-intake-link API
+      await authAxiosInstance.patch(endpoints.students.removeIntakeLink(row.id));
+
+      toast.success('Student unenrolled successfully');
+      unenrollDialog.onFalse();
+      menuActions.onClose();
+    } catch (error) {
+      console.error('Error unenrolling student:', error);
+      toast.error('Failed to unenroll student');
+    }
+  };
+
   const renderMenuActions = () => (
     <CustomPopover
       open={menuActions.open}
@@ -91,10 +109,24 @@ export function StudentsTableRow({
             Edit
           </MenuItem>
         </Link>
-        <MenuItem href={paths.dashboard.students.details(row.id)} onClick={quickEnrollForm.onTrue}>
-          <Iconify icon="solar:check-circle-bold" />
-          Enroll
-        </MenuItem>
+
+        {row.status !== 'Enrolled' ? (
+          <MenuItem href={paths.dashboard.students.details(row.id)} onClick={quickEnrollForm.onTrue}>
+            <Iconify icon="solar:check-circle-bold" />
+            Enroll
+          </MenuItem>
+        ) : (
+          <MenuItem
+            onClick={() => {
+              unenrollDialog.onTrue();
+              menuActions.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:close-circle-bold" />
+            Unenroll
+          </MenuItem>
+        )}
 
         <MenuItem
           onClick={() => {
@@ -139,6 +171,20 @@ export function StudentsTableRow({
       action={
         <Button variant="contained" color="error" onClick={onDeleteRow}>
           Delete
+        </Button>
+      }
+    />
+  );
+
+  const renderUnenrollDialog = () => (
+    <ConfirmDialog
+      open={unenrollDialog.value}
+      onClose={unenrollDialog.onFalse}
+      title="Unenroll Student"
+      content="Are you sure you want to unenroll this student? This action cannot be undone."
+      action={
+        <Button variant="contained" color="error" onClick={handleUnenroll}>
+          Unenroll
         </Button>
       }
     />
@@ -227,6 +273,7 @@ export function StudentsTableRow({
       {renderQuickEnrollForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}
+      {renderUnenrollDialog()}
     </>
   );
 }

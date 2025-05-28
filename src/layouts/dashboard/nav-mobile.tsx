@@ -1,3 +1,5 @@
+'use client';
+
 import type { NavSectionProps } from 'src/components/nav-section';
 
 import { useEffect } from 'react';
@@ -25,7 +27,7 @@ type NavMobileProps = NavSectionProps & {
   };
 };
 
-export function NavMobile({ data, open, onClose, slots, sx, className, ...other }: NavMobileProps) {
+export function NavMobile({ data, open, onClose, slots, sx, className, currentRole, ...other }: NavMobileProps) {
   const pathname = usePathname();
 
   useEffect(() => {
@@ -58,7 +60,12 @@ export function NavMobile({ data, open, onClose, slots, sx, className, ...other 
       )}
 
       <Scrollbar fillContent>
-        <NavSectionVertical data={data} sx={{ px: 2, flex: '1 1 auto' }} {...other} />
+        <NavSectionVertical
+          data={data}
+          sx={{ px: 2, flex: '1 1 auto' }}
+          currentRole={currentRole}
+          {...other}
+        />
       </Scrollbar>
 
       {slots?.bottomArea}

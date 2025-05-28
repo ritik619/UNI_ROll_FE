@@ -49,9 +49,15 @@ export const navData: NavSectionProps['data'] = [
     subheader: 'Management',
     items: [
       {
+        title: 'Dashboard',
+        path: paths.dashboard.root,
+        icon: ICONS.dashboard,
+      },
+      {
         title: 'Agent',
         path: paths.dashboard.agent.list,
         icon: ICONS.agent,
+        roles: ['admin'],
         children: [
           // { title: 'Profile', path: paths.dashboard.agent.root },
           { title: 'Add', path: paths.dashboard.agent.new },

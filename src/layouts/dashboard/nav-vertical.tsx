@@ -22,6 +22,7 @@ export type NavVerticalProps = React.ComponentProps<'div'> & {
   layoutQuery?: Breakpoint;
   onToggleNav: () => void;
   data: NavSectionProps['data'];
+  currentRole?: string;
   slots?: {
     topArea?: React.ReactNode;
     bottomArea?: React.ReactNode;
@@ -36,6 +37,7 @@ export function NavVertical({
   className,
   isNavMini,
   onToggleNav,
+  currentRole,
   layoutQuery = 'md',
   ...other
 }: NavVerticalProps) {
@@ -48,7 +50,13 @@ export function NavVertical({
       )}
 
       <Scrollbar fillContent>
-        <NavSectionVertical data={data} cssVars={cssVars} sx={{ px: 2, flex: '1 1 auto' }} />
+        <NavSectionVertical
+          data={data}
+          cssVars={cssVars}
+          sx={{ px: 2, flex: '1 1 auto' }}
+          currentRole={currentRole}
+          {...other}
+        />
       </Scrollbar>
     </>
   );
@@ -64,6 +72,7 @@ export function NavVertical({
       <NavSectionMini
         data={data}
         cssVars={cssVars}
+        currentRole={currentRole}
         sx={[
           (theme) => ({
             ...theme.mixins.hideScrollY,
@@ -73,6 +82,7 @@ export function NavVertical({
             overflowY: 'auto',
           }),
         ]}
+        {...other}
       />
 
       {slots?.bottomArea}

@@ -15,6 +15,7 @@ import { _contacts, _notifications } from 'src/_mock';
 
 import { Logo } from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
+import { useAuthContext } from 'src/auth/hooks';
 
 import { NavMobile } from './nav-mobile';
 import { VerticalDivider } from './content';
@@ -63,14 +64,16 @@ export function DashboardLayout({
   layoutQuery = 'lg',
 }: DashboardLayoutProps) {
   const theme = useTheme();
-
+  const { user } = useAuthContext();
   const settings = useSettingsContext();
 
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
-  const navData = slotProps?.nav?.data ?? dashboardNavData;
+  const navData = (slotProps?.nav?.data ?? dashboardNavData).filter(
+    (item) => item?.roles ? item?.roles?.includes(user?.role) : true
+  );
 
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
@@ -98,7 +101,12 @@ export function DashboardLayout({
         </Alert>
       ),
       bottomArea: isNavHorizontal ? (
-        <NavHorizontal data={navData} layoutQuery={layoutQuery} cssVars={navVars.section} />
+        <NavHorizontal
+          data={navData}
+          layoutQuery={layoutQuery}
+          cssVars={navVars.section}
+          currentRole={user?.role ?? 'user'}
+        />
       ) : null,
       leftArea: (
         <>
@@ -107,7 +115,13 @@ export function DashboardLayout({
             onClick={onOpen}
             sx={{ mr: 1, ml: -1, [theme.breakpoints.up(layoutQuery)]: { display: 'none' } }}
           />
-          <NavMobile data={navData} open={open} onClose={onClose} cssVars={navVars.section} />
+          <NavMobile
+            data={navData}
+            open={open}
+            onClose={onClose}
+            cssVars={navVars.section}
+            currentRole={user?.role ?? 'user'}
+          />
 
           {/** @slot Logo */}
           {isNavHorizontal && (
@@ -151,6 +165,7 @@ export function DashboardLayout({
       isNavMini={isNavMini}
       layoutQuery={layoutQuery}
       cssVars={navVars.section}
+      currentRole={user?.role ?? 'user'}
       onToggleNav={() =>
         settings.setField(
           'navLayout',

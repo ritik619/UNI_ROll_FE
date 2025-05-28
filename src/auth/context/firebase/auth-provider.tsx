@@ -60,21 +60,37 @@ export function AuthProvider({ children }: Props) {
   const checkUserSession = useCallback(async () => {
     try {
       onAuthStateChanged(AUTH, async (user: AuthState['user']) => {
-        // TODO
-        if (user && !user.emailVerified) {
-          /*
-           * (1) If skip emailVerified
-           * Remove the condition (if/else) : user.emailVerified
-           */
-          const userProfile = doc(FIRESTORE, 'Admins', user.uid);
+        if (user) {
+          // Check if user is in Admins collection
+          const adminProfile = doc(FIRESTORE, 'Admins', user.uid);
+          const adminDoc = await getDoc(adminProfile);
 
-          const docSnap = await getDoc(userProfile);
+          // Check if user is in Agents collection
+          const agentProfile = doc(FIRESTORE, 'Agents', user.uid);
+          const agentDoc = await getDoc(agentProfile);
 
-          const profileData = docSnap.data();
+          let userData = {};
+          let role = 'user'; // Default role
+
+          if (adminDoc.exists()) {
+            userData = adminDoc.data();
+            role = 'admin';
+          } else if (agentDoc.exists()) {
+            userData = agentDoc.data();
+            role = 'agent';
+          }
 
           const { accessToken } = user;
 
-          setState({ user: { ...user, ...profileData }, loading: false });
+          setState({
+            user: {
+              ...user,
+              ...userData,
+              role,
+            },
+            loading: false
+          });
+
           axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
         } else {
           setState({ user: null, loading: false });
@@ -107,7 +123,7 @@ export function AuthProvider({ children }: Props) {
             accessToken: state.user?.accessToken,
             displayName: state.user?.displayName,
             photoURL: state.user?.photoURL,
-            role: state.user?.role ?? 'admin',
+          role: state.user?.role,
           }
         : null,
       checkUserSession,
