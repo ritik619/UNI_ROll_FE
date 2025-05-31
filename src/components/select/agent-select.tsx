@@ -11,7 +11,7 @@ import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import { fetchUniversities } from 'src/services/universities/fetchUniversities';
+import { fetchAgents } from 'src/services/agents/fetchAgents';
 
 import type { AutocompleteBaseProps } from './city-select';
 
@@ -19,22 +19,23 @@ import type { AutocompleteBaseProps } from './city-select';
 
 type Value = string;
 
-export type UniversitySelectProps = AutocompleteBaseProps & {
+export type AgentSelectProps = AutocompleteBaseProps & {
   label?: string;
   error?: boolean;
   placeholder?: string;
   hiddenLabel?: boolean;
-  getValue?: 'universityName' | 'universityId';
+  getValue?: 'agentName' | 'agentId';
   helperText?: React.ReactNode;
   variant?: TextFieldProps['variant'];
 };
 
-type University = {
+type Agent = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
 };
 
-export function UniversitySelect({
+export function AgentSelect({
   id,
   label,
   error,
@@ -43,52 +44,59 @@ export function UniversitySelect({
   helperText,
   hiddenLabel,
   placeholder,
-  getValue = 'universityName',
+  getValue = 'agentName',
   ...other
-}: UniversitySelectProps) {
-  const [universities, setUniversities] = useState<University[]>([]);
+}: AgentSelectProps) {
+  const [agents, setAgents] = useState<Agent[]>([]);
 
-  const getUniversities = async () => {
+  const getAgents = async () => {
     try {
-      const { universities: u } = await fetchUniversities('active'); // Update this as per your service
-      setUniversities(u);
+      const { agents: a } = await fetchAgents('active'); // Update this as per your service
+      setAgents(a);
     } catch (e) {
-      console.error('Failed to fetch universities', e);
-      toast.error('Failed to fetch universities');
-      setUniversities([]);
+      console.error('Failed to fetch agents', e);
+      toast.error('Failed to fetch agents');
+      setAgents([]);
     }
   };
 
   useEffect(() => {
-    getUniversities();
+    getAgents();
   }, []);
 
   const options = useMemo(
-    () => universities.map((univ) => (getValue === 'universityName' ? univ.name : univ.id)),
-    [getValue, universities]
+    () =>
+      agents.map((agt) =>
+        getValue === 'agentName' ? ` ${agt?.firstName} ${agt?.lastName}` : agt.id
+      ),
+    [getValue, agents]
   );
 
-  const getUniversity = useCallback(
+  const getAgent = useCallback(
     (inputValue: string) => {
-      const univ = universities.find((u) => u.name === inputValue || u.id === inputValue);
+      const agt = agents.find(
+        (a) => `${a?.firstName} ${a?.lastName}` === inputValue || a.id === inputValue
+      );
+      console.log(agt);
       return {
-        universityId: univ?.id || '',
-        universityName: univ?.name || '',
+        agentId: agt?.id || '',
+        agentName: `${agt?.firstName} ${agt?.lastName}` || '',
       };
     },
-    [universities]
+    [agents]
   );
 
   const renderOption = useCallback(
     (props: React.HTMLAttributes<HTMLLIElement>, option: Value) => {
-      const university = getUniversity(option);
+      const agent = getAgent(option);
+      console.log(agent);
       return (
-        <li {...props} key={university.universityId}>
-          {university.universityName})
+        <li {...props} key={agent.agentId}>
+          {agent.agentName})
         </li>
       );
     },
-    [getUniversity]
+    [getAgent]
   );
 
   const renderInput = useCallback(
@@ -112,35 +120,35 @@ export function UniversitySelect({
   const renderTags = useCallback(
     (selected: Value[], getTagProps: AutocompleteRenderGetTagProps) =>
       selected.map((option, index) => {
-        const university = getUniversity(option);
+        const agent = getAgent(option);
 
         return (
           <Chip
             {...getTagProps({ index })}
-            key={university.universityId}
-            label={university.universityName}
+            key={agent.agentId}
+            label={agent.agentName}
             size="small"
             variant="soft"
           />
         );
       }),
-    [getUniversity]
+    [getAgent]
   );
 
   const getOptionLabel = useCallback(
     (option: Value) => {
-      if (getValue === 'universityId') {
-        const university = universities.find((u) => u.id === option);
-        return university?.name ?? '';
+      if (getValue === 'agentId') {
+        const agent = agents.find((a) => a.id === option);
+        return `${agent?.firstName ?? ''} ${agent?.lastName ?? ''}`;
       }
       return option;
     },
-    [getValue, universities]
+    [getValue, agents]
   );
 
   return (
     <Autocomplete
-      id={`${id}-university-select`}
+      id={`${id}-agent-select`}
       multiple={multiple}
       options={options}
       autoHighlight={!multiple}

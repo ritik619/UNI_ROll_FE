@@ -27,6 +27,7 @@ export type IStudentsTableFilters = {
   universityId: string;
   courseId: string;
   cityId: string;
+  agentId: string;
   intakeId: string;
 };
 

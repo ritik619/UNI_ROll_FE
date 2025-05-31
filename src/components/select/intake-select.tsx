@@ -11,7 +11,7 @@ import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import { fetchUniversities } from 'src/services/universities/fetchUniversities';
+import { fetchIntakes } from 'src/services/Intakes/fetchIntakes';
 
 import type { AutocompleteBaseProps } from './city-select';
 
@@ -19,22 +19,22 @@ import type { AutocompleteBaseProps } from './city-select';
 
 type Value = string;
 
-export type UniversitySelectProps = AutocompleteBaseProps & {
+export type IntakeSelectProps = AutocompleteBaseProps & {
   label?: string;
   error?: boolean;
   placeholder?: string;
   hiddenLabel?: boolean;
-  getValue?: 'universityName' | 'universityId';
+  getValue?: 'intakeId' | 'intakeName';
   helperText?: React.ReactNode;
   variant?: TextFieldProps['variant'];
 };
 
-type University = {
+type Intake = {
   id: string;
   name: string;
 };
 
-export function UniversitySelect({
+export function IntakeSelect({
   id,
   label,
   error,
@@ -43,52 +43,52 @@ export function UniversitySelect({
   helperText,
   hiddenLabel,
   placeholder,
-  getValue = 'universityName',
+  getValue = 'intakeName',
   ...other
-}: UniversitySelectProps) {
-  const [universities, setUniversities] = useState<University[]>([]);
+}: IntakeSelectProps) {
+  const [intakes, setIntakes] = useState<Intake[]>([]);
 
-  const getUniversities = async () => {
+  const getIntakes = async () => {
     try {
-      const { universities: u } = await fetchUniversities('active'); // Update this as per your service
-      setUniversities(u);
+      const { intakes: u } = await fetchIntakes('active'); // Update this as per your service
+      setIntakes(u);
     } catch (e) {
-      console.error('Failed to fetch universities', e);
-      toast.error('Failed to fetch universities');
-      setUniversities([]);
+      console.error('Failed to fetch intakes', e);
+      toast.error('Failed to fetch intakes');
+      setIntakes([]);
     }
   };
 
   useEffect(() => {
-    getUniversities();
+    getIntakes();
   }, []);
 
   const options = useMemo(
-    () => universities.map((univ) => (getValue === 'universityName' ? univ.name : univ.id)),
-    [getValue, universities]
+    () => intakes.map((univ) => (getValue === 'intakeName' ? univ.name : univ.id)),
+    [getValue, intakes]
   );
 
-  const getUniversity = useCallback(
+  const getIntake = useCallback(
     (inputValue: string) => {
-      const univ = universities.find((u) => u.name === inputValue || u.id === inputValue);
+      const univ = intakes.find((u) => u.name === inputValue || u.id === inputValue);
       return {
-        universityId: univ?.id || '',
-        universityName: univ?.name || '',
+        intakeId: univ?.id || '',
+        intakeName: univ?.name || '',
       };
     },
-    [universities]
+    [intakes]
   );
 
   const renderOption = useCallback(
     (props: React.HTMLAttributes<HTMLLIElement>, option: Value) => {
-      const university = getUniversity(option);
+      const intake = getIntake(option);
       return (
-        <li {...props} key={university.universityId}>
-          {university.universityName})
+        <li {...props} key={intake.intakeId}>
+          {intake.intakeName})
         </li>
       );
     },
-    [getUniversity]
+    [getIntake]
   );
 
   const renderInput = useCallback(
@@ -112,35 +112,35 @@ export function UniversitySelect({
   const renderTags = useCallback(
     (selected: Value[], getTagProps: AutocompleteRenderGetTagProps) =>
       selected.map((option, index) => {
-        const university = getUniversity(option);
+        const intake = getIntake(option);
 
         return (
           <Chip
             {...getTagProps({ index })}
-            key={university.universityId}
-            label={university.universityName}
+            key={intake.intakeId}
+            label={intake.intakeName}
             size="small"
             variant="soft"
           />
         );
       }),
-    [getUniversity]
+    [getIntake]
   );
 
   const getOptionLabel = useCallback(
     (option: Value) => {
-      if (getValue === 'universityId') {
-        const university = universities.find((u) => u.id === option);
-        return university?.name ?? '';
+      if (getValue === 'intakeId') {
+        const intake = intakes.find((u) => u.id === option);
+        return intake?.name ?? '';
       }
       return option;
     },
-    [getValue, universities]
+    [getValue, intakes]
   );
 
   return (
     <Autocomplete
-      id={`${id}-university-select`}
+      id={`${id}-intake-select`}
       multiple={multiple}
       options={options}
       autoHighlight={!multiple}

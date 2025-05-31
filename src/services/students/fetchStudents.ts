@@ -9,6 +9,8 @@ export const fetchStudents = async (
   limit: number,
   universityId?: string,
   courseId?: string,
+  agentId?: string,
+  intakeId?: string,
   countryCode?: string,
   cityId?: string
 ) => {
@@ -28,6 +30,12 @@ export const fetchStudents = async (
     }
     if (universityId) {
       params.universityId = universityId;
+    }
+    if (agentId) {
+      params.agentId = agentId;
+    }
+    if (intakeId) {
+      params.intakeId = intakeId;
     }
     if (courseId) {
       params.courseId = courseId;

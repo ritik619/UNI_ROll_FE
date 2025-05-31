@@ -53,10 +53,9 @@ export function CourseSelect({
 
   const getCourses = async () => {
     try {
-        const {courses:c} = await fetchCourses("active"); // update this endpoint
-        console.log('Courses response:', c);
-        setCourses(c);
-
+      const { courses: c } = await fetchCourses('active'); // update this endpoint
+      console.log('Courses response:', c);
+      setCourses(c);
     } catch (e) {
       console.error('Failed to fetch courses', e);
       toast.error('Failed to fetch courses');
@@ -70,8 +69,7 @@ export function CourseSelect({
   }, []);
 
   const options = useMemo(
-    () =>
-      courses?.map((course) => (getValue === 'courseName' ? course.name : course.id)),
+    () => courses?.map((course) => (getValue === 'courseName' ? course.name : course.id)),
     [getValue, courses]
   );
 
@@ -91,7 +89,7 @@ export function CourseSelect({
       const course = getCourse(option);
       return (
         <li {...props} key={course.courseId}>
-          {course.courseName} ({course.courseId})
+          {course.courseName})
         </li>
       );
     },

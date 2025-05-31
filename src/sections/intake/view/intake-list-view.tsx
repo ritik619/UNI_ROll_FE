@@ -432,7 +432,7 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
 
   if (name) {
     inputData = inputData.filter((university) =>
-      university.name.toLowerCase().includes(name.toLowerCase())
+      university.name?.toLowerCase().includes(name.toLowerCase())
     );
   }
 

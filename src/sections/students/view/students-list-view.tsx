@@ -34,8 +34,14 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-import { UniversitySelect } from 'src/components/select/university-select';
-import { CitySelect, CourseSelect, CountrySelect } from 'src/components/select';
+import {
+  AgentSelect,
+  CitySelect,
+  CourseSelect,
+  CountrySelect,
+  UniversitySelect,
+  IntakeSelect,
+} from 'src/components/select';
 import {
   useTable,
   emptyRows,
@@ -92,6 +98,7 @@ export function StudentsListView() {
     status: 'All',
     countryCode: '',
     cityId: '',
+    agentId: '',
     intakeId: '',
     universityId: '',
     courseId: '',
@@ -198,6 +205,8 @@ export function StudentsListView() {
         table.rowsPerPage,
         currentFilters.universityId,
         currentFilters.courseId,
+        currentFilters.agentId,
+        currentFilters.intakeId,
         currentFilters.countryCode,
         currentFilters.cityId
       );
@@ -214,6 +223,8 @@ export function StudentsListView() {
     table.rowsPerPage,
     currentFilters.universityId,
     currentFilters.courseId,
+    currentFilters.agentId,
+    currentFilters.intakeId,
     currentFilters.countryCode,
     currentFilters.cityId,
   ]);
@@ -314,6 +325,7 @@ export function StudentsListView() {
               id="university-id"
               label="University"
               getValue="universityId"
+              placeholder="Choose a University"
               onChange={(event, newValue) => {
                 // Handle value change
                 console.log(newValue);
@@ -324,17 +336,40 @@ export function StudentsListView() {
               id="course-id"
               label="Course"
               getValue="courseId"
+              placeholder="Choose a Course"
               onChange={(event, newValue) => {
                 // Handle value change
                 console.log(newValue);
                 filters.setState({ courseId: newValue });
               }}
             />
+            <AgentSelect
+              id="agent-id"
+              label="Agent"
+              getValue="agentId"
+              placeholder="Choose a Agent"
+              onChange={(event, newValue) => {
+                // Handle value change
+                console.log(newValue);
+                filters.setState({ agentId: newValue });
+              }}
+            />
+            <IntakeSelect
+              id="intake-id"
+              label="Intake"
+              getValue="intakeName"
+              placeholder="Choose a Intake"
+              onChange={(event, newValue) => {
+                // Handle value change
+                console.log(newValue);
+                filters.setState({ intakeId: newValue });
+              }}
+            />
             <CountrySelect
               id="country-id"
               label="Country"
               getValue="code"
-              placeholder="Choose a country"
+              placeholder="Choose a Country"
               onChange={(event, newValue) => {
                 // Handle value change
                 console.log(newValue);
@@ -346,6 +381,7 @@ export function StudentsListView() {
                 id="city-id"
                 label="City"
                 getValue="cityId"
+                placeholder="Choose a City"
                 onChange={(event, newValue) => {
                   // Handle value change
                   console.log(newValue);

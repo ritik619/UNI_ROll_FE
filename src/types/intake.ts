@@ -3,12 +3,13 @@ import type { IDateValue } from './common';
 // ----------------------------------------------------------------------
 
 export type IIntakeTableFilters = {
+  role: string[];
   name: string;
   status: 'all' | 'active' | 'inactive';
 };
 
 export type IIntake = {
-  id:string;
+  id: string;
   name?: string;
   startDate: string;
   endDate: string;
@@ -28,8 +29,8 @@ export type ICreateIntake = {
 
 export type IUpdateIntake = {
   name?: string;
-  startDate:string;
-  endDate:string;
+  startDate: string;
+  endDate: string;
   description?: string;
   status?: 'active' | 'inactive';
 };

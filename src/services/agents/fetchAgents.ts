@@ -4,8 +4,8 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 export const fetchAgents = async (
   status: 'active' | 'inactive' | 'all',
-  page: number,
-  limit: number
+  page?: number,
+  limit?: number
 ) => {
   try {
     const params: Record<string, any> = { page, limit };
