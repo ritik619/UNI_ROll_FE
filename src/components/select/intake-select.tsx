@@ -84,7 +84,7 @@ export function IntakeSelect({
       const intake = getIntake(option);
       return (
         <li {...props} key={intake.intakeId}>
-          {intake.intakeName})
+          {intake.intakeName}
         </li>
       );
     },

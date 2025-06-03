@@ -89,7 +89,7 @@ export function CourseSelect({
       const course = getCourse(option);
       return (
         <li {...props} key={course.courseId}>
-          {course.courseName})
+          {course.courseName}
         </li>
       );
     },

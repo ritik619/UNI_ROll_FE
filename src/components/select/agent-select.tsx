@@ -92,7 +92,7 @@ export function AgentSelect({
       console.log(agent);
       return (
         <li {...props} key={agent.agentId}>
-          {agent.agentName})
+          {agent.agentName}
         </li>
       );
     },

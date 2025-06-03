@@ -84,7 +84,7 @@ export function UniversitySelect({
       const university = getUniversity(option);
       return (
         <li {...props} key={university.universityId}>
-          {university.universityName})
+          {university.universityName}
         </li>
       );
     },
