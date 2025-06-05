@@ -156,6 +156,10 @@ export const endpoints = {
   dashboard: {
     stats: 'dashboard/stats',
   },
+  earnings: {
+    root: 'earnings',
+    details: (id: string) => `earnings/${id}`,
+  },
 };
 
 export default axiosInstance;

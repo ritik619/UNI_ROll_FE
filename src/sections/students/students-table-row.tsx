@@ -2,11 +2,12 @@
 import type { IIntake } from 'src/types/intake';
 import type { IStudentsItem, IStudentStatus } from 'src/types/students';
 import type { ICourseAssociation } from 'src/types/courseAssociation';
-import type { IPaymentAssociation } from 'src/types/paymentAssociation';
+import type { IPaymentAssociation, IEarning, PaymentStatus } from 'src/types/paymentAssociation';
 
 // React and Hooks
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
+import { useTheme } from '@mui/material/styles';
 
 // MUI Components
 import {
@@ -25,6 +26,7 @@ import {
   Typography,
   Paper,
   CircularProgress,
+  Divider,
 } from '@mui/material';
 
 // Utilities and Constants
@@ -44,6 +46,7 @@ import { CustomPopover } from 'src/components/custom-popover';
 import { StudentsQuickEditForm } from './students-quick-edit-form';
 import { StudentQuickEnrollForm } from './students-quick-enroll-form';
 import { StudentQuickAddPaymentAssociationForm } from './student-quick-add-payment-association-form';
+import { fetchEarnings } from 'src/services/students/fetchPayments';
 
 // ----------------------------------------------------------------------
 
@@ -68,23 +71,49 @@ export function StudentsTableRow({
   associations = [],
   intakes = [],
 }: Props) {
+  const theme = useTheme();
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
   const unenrollDialog = useBoolean();
   const quickEditForm = useBoolean();
   const quickEnrollForm = useBoolean();
-  const paymentsMenuActions = usePopover(); // For course row actions
-
-  // State to track course being deleted
-
+  const paymentsMenuActions = usePopover();
   const [payments, setPayments] = useState<IPaymentAssociation[]>([]);
   const [loading, setLoading] = useState(false);
   const collapseRow = useBoolean();
+  const [earning, setEarning] = useState<IEarning>();
   const quickAddPayment = useBoolean();
-  const paymentMenuActions = usePopover(); // custom hook like `useBoolean`, or a similar popover hook
+  const paymentMenuActions = usePopover();
   const paymentDeleteDialog = useBoolean();
   const [paymentToDelete, setPaymentToDelete] = useState<string | null>(null);
   const [menuId, setMenuId] = useState<string | null>(null);
+
+  // Fetch earnings when component mounts
+  useEffect(() => {
+    const fetchEarningsData = async () => {
+      setLoading(true);
+      try {
+        const earningsData = await fetchEarnings({
+          agentId: row.agentId ?? '',
+          intakeId: row.intakeId ?? '',
+          universityId: row.universityId ?? '',
+          studentId: row.id,
+          courseId: row.courseId ?? '',
+        });
+        if (earningsData.earnings[0]) {
+          setEarning(earningsData.earnings[0]);
+          setPayments(earningsData.earnings[0]?.payments ?? []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch earnings:', error);
+        toast.error('Failed to fetch earnings data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEarningsData();
+  }, [row.id, row.agentId, row.intakeId, row.universityId, row.courseId]);
 
   const handleUnenroll = async () => {
     try {
@@ -99,22 +128,11 @@ export function StudentsTableRow({
       toast.error('Failed to unenroll student');
     }
   };
+
   const renderPrimaryRow = () => (
     <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
-      {/* <TableCell padding="checkbox">
-          <Checkbox
-            checked={selected}
-            onClick={onSelectRow}
-            inputProps={{
-              id: `${row.id}-checkbox`,
-              'aria-label': `${row.id} checkbox`,
-            }}
-          />
-        </TableCell> */}
-
       <TableCell>
         <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-          {/* TODO Add avatar URL */}
           <Avatar alt={row.firstName} src={row?.coverPhoto} />
 
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
@@ -132,33 +150,51 @@ export function StudentsTableRow({
           </Stack>
         </Box>
       </TableCell>
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.sex}</TableCell>
+
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.nationality}</TableCell>
-
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
-
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.universityName}</TableCell>
-
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.courseName}</TableCell>
 
       <TableCell>
         <Label
           variant="soft"
           color={
-            (row.status === 'Deferred' && 'default') || // maybe gray/default for free
-            (row.status === 'Enrolled' && 'success') || // green for enrolled (like active)
-            (row.status === 'Withdrawn' && 'warning') || // orange/yellow for unrolled (like inactive)
-            'default' // fallback
+            (row.status === 'Deferred' && 'default') ||
+            (row.status === 'Enrolled' && 'success') ||
+            (row.status === 'Withdrawn' && 'warning') ||
+            'default'
           }
         >
-          {/* TODO */}
           {row.status}
         </Label>
       </TableCell>
-
       <TableCell>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {earning && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    color: (() => {
+                      if (earning.paidAmount === 0) return 'text.secondary'; // gray for not paid
+                      if (earning.paidAmount < earning.totalCommission) return 'warning.main'; // yellow for in progress
+                      if (earning.paidAmount === earning.totalCommission) return 'success.main'; // green for fully paid
+                      return 'error.main'; // red for overpaid
+                    })(),
+                  }}
+                >
+                  {fCurrency(earning.paidAmount)}/{fCurrency(earning.totalCommission)}
+                </Typography>
+              </Box>
+            </Box>
+          )}</Box>
+      </TableCell>
+      <TableCell>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <IconButton
+            disabled={row.status !== 'Enrolled'}
             color={collapseRow.value ? 'primary' : 'default'}
             onClick={collapseRow.onToggle}
             sx={{ ...(collapseRow.value && { bgcolor: 'action.hover' }) }}
@@ -173,6 +209,7 @@ export function StudentsTableRow({
       </TableCell>
     </TableRow>
   );
+
   const renderAssociationRow = () => (
     <TableRow>
       <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
@@ -183,166 +220,226 @@ export function StudentsTableRow({
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Paper sx={{ m: 1.5, p: 2 }}>
-            <Box
-              sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-            >
-              <Typography variant="subtitle1">
-                Payments {!loading && `(${payments.length})`}
-              </Typography>
-              <Button
-                variant="contained"
-                size="small"
-                onClick={quickAddPayment.onTrue}
-                startIcon={<Iconify icon="mingcute:add-line" sx={{ ml: 2 }} />}
-              >
-                Add Payment
-              </Button>
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="subtitle1">
+                  Payments {!loading && `(${payments.length})`}
+                </Typography>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={quickAddPayment.onTrue}
+                  startIcon={<Iconify icon="mingcute:add-line" sx={{ ml: 2 }} />}
+                >
+                  Add Payment
+                </Button>
+              </Box>
             </Box>
+
+            <Divider sx={{ mb: 3 }} />
 
             {loading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
                 <CircularProgress />
               </Box>
             ) : payments.length > 0 ? (
-              <Stack spacing={1}>
-                {payments.map((payment) => (
+                <Box>
+                  {/* Table Header */}
                   <Box
-                    key={payment.id}
-                    sx={(theme) => ({
+                    sx={{
                       display: 'flex',
                       alignItems: 'center',
-                      p: theme.spacing(1.5, 2),
+                      p: theme.spacing(1.5, 2.5),
+                      mb: 1,
                       borderRadius: 1,
-                      bgcolor: 'background.paper',
-                    })}
+                      bgcolor: 'background.neutral',
+                    }}
                   >
-                    {/* Amount & Currency - 20% */}
+                    <Box sx={{ width: '15%' }}>
+                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                        Payment #
+                      </Typography>
+                    </Box>
+
                     <Box sx={{ width: '20%' }}>
-                      <Typography variant="subtitle2">
-                        {fCurrency(payment.amount)} {payment.currency}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        {payment.paymentMethod || '—'}
+                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                        Amount
                       </Typography>
                     </Box>
 
-                    {/* Payment Date - 20% */}
-                    <Box sx={{ width: '20%', display: 'flex', alignItems: 'center' }}>
-                      <Iconify
-                        icon="solar:calendar-line-duotone"
-                        width={16}
-                        sx={{ color: 'text.disabled', mr: 1 }}
-                      />
-                      <Typography variant="caption">
-                        {new Date(payment.paymentDate).toLocaleDateString('en-GB', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
+                    <Box sx={{ width: '25%' }}>
+                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                        Description
                       </Typography>
                     </Box>
 
-                    {/* Transaction ID - 30% */}
-                    <Box sx={{ width: '30%' }}>
-                      <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
-                        {payment.transactionId || '—'}
+                    <Box sx={{ width: '20%' }}>
+                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                        Date
                       </Typography>
                     </Box>
 
-                    {/* Status and Actions */}
-                    <Box
-                      sx={{
-                        flex: 1,
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Label
-                        variant="soft"
-                        color={
-                          (payment.status === 'completed' && 'success') ||
-                          (payment.status === 'pending' && 'warning') ||
-                          (payment.status === 'failed' && 'error') ||
-                          'default'
-                        }
-                        sx={{ p: 2, mr: 2 }}
-                      >
-                        {payment.status}
-                      </Label>
-
-                      <IconButton
-                        size="small"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setMenuId(`payment-menu-${payment.id}`); // ✅ set the ID separately
-                          paymentMenuActions.onOpen(event); // ✅ pass only 1 argument
-                        }}
-                      >
-                        <Iconify icon="eva:more-vertical-fill" width={18} />
-                      </IconButton>
-
-                      <CustomPopover
-                        open={paymentMenuActions.open}
-                        anchorEl={paymentMenuActions.anchorEl}
-                        onClose={paymentMenuActions.onClose}
-                        slotProps={{ arrow: { placement: 'right-top' } }}
-                        id={menuId ?? undefined} // use menuId here
-                      >
-                        <MenuList>
-                          <MenuItem
-                            onClick={async () => {
-                              try {
-                                const newStatus =
-                                  payment.status === 'refunded' ? 'completed' : 'refunded';
-                                // await authAxiosInstance.patch(`api/payments/${payment.id}/status`, { status: newStatus });
-
-                                payment.status = newStatus;
-                                toast.success(`Payment marked as ${newStatus}`);
-                                const updated = [...payments];
-                                setPayments(updated);
-                                paymentMenuActions.onClose();
-                              } catch (error) {
-                                console.error(error);
-                                toast.error('Failed to update payment status');
-                              }
-                            }}
-                            sx={{
-                              color: payment.status === 'refunded' ? 'success.main' : 'error.main',
-                            }}
-                          >
-                            <Iconify
-                              icon={
-                                payment.status === 'refunded'
-                                  ? 'material-symbols:toggle-on'
-                                  : 'material-symbols:toggle-off'
-                              }
-                              width={16}
-                              sx={{ mr: 1 }}
-                            />
-                            {payment.status === 'refunded' ? 'Mark Completed' : 'Refund Payment'}
-                          </MenuItem>
-
-                          <MenuItem
-                            onClick={() => {
-                              setPaymentToDelete(payment.id);
-                              paymentDeleteDialog.onTrue();
-                              paymentMenuActions.onClose();
-                            }}
-                            sx={{ color: 'error.main' }}
-                          >
-                            <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
-                            Delete Payment
-                          </MenuItem>
-                        </MenuList>
-                      </CustomPopover>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="subtitle2" sx={{ color: 'text.secondary', textAlign: 'right' }}>
+                        Status
+                      </Typography>
                     </Box>
                   </Box>
-                ))}
-              </Stack>
+
+                  <Stack spacing={2}>
+                    {payments.map((payment) => (
+                      <Box
+                        key={payment.id}
+                        sx={(theme) => ({
+                          display: 'flex',
+                          alignItems: 'center',
+                          p: theme.spacing(2, 2.5),
+                          borderRadius: 1,
+                          bgcolor: 'background.paper',
+                          boxShadow: theme.shadows[1],
+                        })}
+                      >
+                        {/* Payment Number - 15% */}
+                        <Box sx={{ width: '15%' }}>
+                          <Typography variant="subtitle2">
+                            Payment #{payment.paymentNumber}
+                          </Typography>
+                        </Box>
+
+                        {/* Amount - 20% */}
+                        <Box sx={{ width: '20%' }}>
+                          <Typography variant="subtitle2">
+                            {fCurrency(payment.amount)}
+                          </Typography>
+                        </Box>
+
+                        {/* Description - 25% */}
+                        <Box sx={{ width: '25%' }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            {payment.description || '—'}
+                          </Typography>
+                        </Box>
+
+                        {/* Payment Date - 20% */}
+                        <Box sx={{ width: '20%', display: 'flex', alignItems: 'center' }}>
+                          <Iconify
+                            icon="solar:calendar-line-duotone"
+                            width={16}
+                            sx={{ color: 'text.disabled', mr: 1 }}
+                          />
+                          <Typography variant="caption">
+                            {new Date(payment.paymentDate).toLocaleDateString('en-GB', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </Typography>
+                        </Box>
+
+                        {/* Status and Actions */}
+                        <Box
+                          sx={{
+                            flex: 1,
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Label
+                            variant="soft"
+                            color={
+                              (payment.status === 'Paid' && 'success') ||
+                              (payment.status === 'Pending' && 'warning') ||
+                              (payment.status === 'Failed' && 'error') ||
+                              'default'
+                            }
+                            sx={{ p: 2, mr: 2 }}
+                          >
+                            {payment.status}
+                          </Label>
+
+                          <IconButton
+                            size="small"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setMenuId(`payment-menu-${payment.id}`);
+                              paymentMenuActions.onOpen(event);
+                            }}
+                          >
+                            <Iconify icon="eva:more-vertical-fill" width={18} />
+                          </IconButton>
+
+                          <CustomPopover
+                            open={paymentMenuActions.open}
+                            anchorEl={paymentMenuActions.anchorEl}
+                            onClose={paymentMenuActions.onClose}
+                            slotProps={{ arrow: { placement: 'right-top' } }}
+                            id={menuId ?? undefined}
+                          >
+                            <MenuList>
+                              <MenuItem
+                                onClick={async () => {
+                                  try {
+                                  const newStatus: PaymentStatus = payment.status === 'Paid' ? 'Pending' : 'Paid';
+                                  await authAxiosInstance.patch(
+                                    `${endpoints.earnings.details(earning?.id)}/payments/${payment.id}`,
+                                    {
+                                      amount: payment.amount,
+                                      status: newStatus,
+                                      description: payment.description,
+                                    }
+                                  );
+
+                                  // Update local state
+                                  const updatedPayments = payments.map((p) =>
+                                    p.id === payment.id ? { ...p, status: newStatus } : p
+                                  );
+                                  setPayments(updatedPayments);
+
+                                  toast.success(`Payment marked as ${newStatus}`);
+                                    paymentMenuActions.onClose();
+                                  } catch (error) {
+                                    console.error(error);
+                                    toast.error('Failed to update payment status');
+                                  }
+                                }}
+                                sx={{
+                                  color: payment.status === 'Paid' ? 'warning.main' : 'success.main',
+                                }}
+                              >
+                                <Iconify
+                                  icon={
+                                    payment.status === 'Paid'
+                                      ? 'material-symbols:toggle-off'
+                                      : 'material-symbols:toggle-on'
+                                  }
+                                  width={16}
+                                  sx={{ mr: 1 }}
+                                />
+                                {payment.status === 'Paid' ? 'Mark Pending' : 'Mark Paid'}
+                              </MenuItem>
+
+                              <MenuItem
+                                onClick={() => {
+                                  setPaymentToDelete(payment.id);
+                                  paymentDeleteDialog.onTrue();
+                                  paymentMenuActions.onClose();
+                                }}
+                                sx={{ color: 'error.main' }}
+                              >
+                                <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
+                                Delete Payment
+                              </MenuItem>
+                            </MenuList>
+                          </CustomPopover>
+                        </Box>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
             ) : (
-              <Box sx={{ py: 3, textAlign: 'center' }}>
-                <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                  <Box sx={{ py: 4, textAlign: 'center' }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                   No payments found
                 </Typography>
                 <Button
@@ -361,13 +458,20 @@ export function StudentsTableRow({
     </TableRow>
   );
 
-  const renderQuickPaymentForm = () => (
-    <StudentQuickAddPaymentAssociationForm
-      studentId={row.id}
-      open={quickAddPayment.value}
-      onClose={quickAddPayment.onFalse}
-    />
-  );
+  const renderQuickPaymentForm = () => {
+    return (
+      <StudentQuickAddPaymentAssociationForm
+        studentId={row.id}
+        open={quickAddPayment.value}
+        onClose={quickAddPayment.onFalse}
+        universityId={row.universityId ?? ''}
+        agentId={row.agentId ?? ''}
+        courseId={row.courseId ?? ''}
+        intakeId={row.intakeId ?? ''}
+        earning={earning}
+      />
+    )
+  };
   const renderQuickEditForm = () => (
     <StudentsQuickEditForm
       currentStudents={row}

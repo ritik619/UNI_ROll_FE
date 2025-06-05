@@ -71,12 +71,12 @@ const STATUS_OPTIONS = [
 const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'name', label: 'Name' },
   // { id: 'email', label: 'Email' },
-  { id: 'sex', label: 'Gender', width: 180 },
   { id: 'country', label: 'Country', width: 180 },
   { id: 'phoneNumber', label: 'Phone Number' },
   { id: 'University', label: 'University', width: 220 },
-  { id: 'Course', label: 'Course', width: 220 },
-  { id: 'status', label: 'Status', width: 100 },
+  { id: 'Course', label: 'Course', width: 120 },
+  { id: 'status', label: 'Status', width: 120 },
+  { id: 'payment', label: 'Payment Status', width: 200 },
   { id: '', width: 88 },
 ];
 

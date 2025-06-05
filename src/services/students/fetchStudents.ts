@@ -22,6 +22,7 @@ export const fetchStudents = async (
     if (status !== 'All') {
       params.status = status;
     }
+    params.limit = 1;
     if (cityId) {
       params.cityId = cityId;
     }

@@ -1,42 +1,60 @@
 // types/paymentAssociation.ts
 
-export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded' | 'cancelled';
+export type PaymentStatus = 'Pending' | 'Paid' | 'Failed';
 
 export interface IPaymentAssociation {
   id: string;
-  courseAssociationId: string; // Link to the CourseAssociation (if payment is for a course)
-  studentId?: string; // Optional, if payment linked to a student
   amount: number;
-  currency: string;
-  paymentDate: Date;
-  paymentMethod?: string; // e.g., 'credit_card', 'bank_transfer', 'paypal'
-  transactionId?: string; // External payment gateway transaction reference
+  paymentNumber: number;
+  description: string;
+  paymentDate: string;
   status: PaymentStatus;
-  createdAt: Date;
-  updatedAt: Date;
-  notes?: string; // Any additional info or remarks
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IEarning {
+  id: string;
+  agentId: string;
+  agentName: string;
+  intakeId: string;
+  intakeName: string;
+  universityId: string;
+  universityName: string;
+  courseId: string;
+  courseName: string;
+  studentId: string;
+  studentName: string;
+  totalCommission: number;
+  commissionCurrency: string;
+  commissionPercentage: number;
+  remainingAmount: number;
+  paidAmount: number;
+  status: PaymentStatus;
+  payments: IPaymentAssociation[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ICreatePaymentAssociation {
-  courseAssociationId: string;
-  studentId?: string;
   amount: number;
-  currency: string;
-  paymentDate?: Date; // Could default to now
-  paymentMethod?: string;
-  transactionId?: string;
-  status?: PaymentStatus; // Default could be 'pending'
-  notes?: string;
+  paymentNumber: number;
+  description: string;
+  paymentDate: string;
+  status: PaymentStatus;
+  studentId: string;
+  universityId: string;
+  agentId: string;
+  courseId: string;
+  intakeId: string;
 }
 
 export interface IUpdatePaymentAssociation {
   amount?: number;
-  currency?: string;
-  paymentDate?: Date;
-  paymentMethod?: string;
-  transactionId?: string;
+  paymentNumber?: number;
+  description?: string;
+  paymentDate?: string;
   status?: PaymentStatus;
-  notes?: string;
 }
 
 export interface IUpdatePaymentStatus {
