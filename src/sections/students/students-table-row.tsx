@@ -43,6 +43,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 import { StudentsQuickEditForm } from './students-quick-edit-form';
 import { StudentQuickEnrollForm } from './students-quick-enroll-form';
+import { StudentQuickAddPaymentAssociationForm } from './student-quick-add-payment-association-form';
 
 // ----------------------------------------------------------------------
 
@@ -359,6 +360,14 @@ export function StudentsTableRow({
       </TableCell>
     </TableRow>
   );
+
+  const renderQuickPaymentForm = () => (
+    <StudentQuickAddPaymentAssociationForm
+      studentId={row.id}
+      open={quickAddPayment.value}
+      onClose={quickAddPayment.onFalse}
+    />
+  );
   const renderQuickEditForm = () => (
     <StudentsQuickEditForm
       currentStudents={row}
@@ -481,6 +490,7 @@ export function StudentsTableRow({
       {renderPrimaryRow()}
       {renderAssociationRow()}
       {renderQuickEditForm()}
+      {renderQuickPaymentForm()}
       {renderQuickEnrollForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}

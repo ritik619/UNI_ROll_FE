@@ -49,7 +49,6 @@ export function StudentQuickEnrollForm({
   studentId,
   associations = [],
   intakes = [],
-  
 }: Props) {
   const defaultValues: StudentQuickEnrollSchemaType = {
     universityId: '',
@@ -80,8 +79,6 @@ export function StudentQuickEnrollForm({
       toast.error('Enrollment failed!');
     }
   });
-
-
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
