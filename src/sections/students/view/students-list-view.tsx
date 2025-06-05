@@ -57,6 +57,7 @@ import {
 
 import { StudentsTableRow } from '../students-table-row';
 import { StudentsTableFiltersResult } from '../students-table-filters-result';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 const STATUS_OPTIONS = [
@@ -92,13 +93,18 @@ export function StudentsListView() {
   const [associations, setAssociations] = useState<ICourseAssociation[]>([]);
   const [intakes, setIntakes] = useState<IIntake[]>([]);
 
+  const { user } = useAuthContext();
+  const userRole = user?.role;
+  const userId = user?.id;
+  console.log('user', user, 'userRole', userRole, 'userId', userId);
+
   const filters = useSetState<IStudentsTableFilters>({
     name: '',
     role: [],
     status: 'All',
     countryCode: '',
     cityId: '',
-    agentId: '',
+    agentId: userRole == 'agent' ? userId : '',
     intakeId: '',
     universityId: '',
     courseId: '',
@@ -343,17 +349,21 @@ export function StudentsListView() {
                 filters.setState({ courseId: newValue });
               }}
             />
-            <AgentSelect
-              id="agent-id"
-              label="Agent"
-              getValue="agentId"
-              placeholder="Choose a Agent"
-              onChange={(event, newValue) => {
-                // Handle value change
-                console.log(newValue);
-                filters.setState({ agentId: newValue });
-              }}
-            />
+            {userRole == 'admin' ? (
+              <AgentSelect
+                id="agent-id"
+                label="Agent"
+                getValue="agentId"
+                placeholder="Choose a Agent"
+                onChange={(event, newValue) => {
+                  // Handle value change
+                  console.log(newValue);
+                  filters.setState({ agentId: newValue });
+                }}
+              />
+            ) : (
+              <></>
+            )}
             <IntakeSelect
               id="intake-id"
               label="Intake"

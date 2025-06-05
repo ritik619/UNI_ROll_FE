@@ -47,6 +47,7 @@ import { StudentsQuickEditForm } from './students-quick-edit-form';
 import { StudentQuickEnrollForm } from './students-quick-enroll-form';
 import { StudentQuickAddPaymentAssociationForm } from './student-quick-add-payment-association-form';
 import { fetchEarnings } from 'src/services/students/fetchPayments';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -87,6 +88,7 @@ export function StudentsTableRow({
   const paymentDeleteDialog = useBoolean();
   const [paymentToDelete, setPaymentToDelete] = useState<string | null>(null);
   const [menuId, setMenuId] = useState<string | null>(null);
+  const { user } = useAuthContext();
 
   // Fetch earnings when component mounts
   useEffect(() => {
@@ -189,7 +191,8 @@ export function StudentsTableRow({
                 </Typography>
               </Box>
             </Box>
-          )}</Box>
+          )}
+        </Box>
       </TableCell>
       <TableCell>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -220,144 +223,156 @@ export function StudentsTableRow({
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Paper sx={{ m: 1.5, p: 2 }}>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="subtitle1">
-                  Payments {!loading && `(${payments.length})`}
-                </Typography>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={quickAddPayment.onTrue}
-                  startIcon={<Iconify icon="mingcute:add-line" sx={{ ml: 2 }} />}
-                >
-                  Add Payment
-                </Button>
-              </Box>
-            </Box>
-
-            <Divider sx={{ mb: 3 }} />
-
+            {user?.role == 'admin' ? (
+              <>
+                <Box sx={{ mb: 3 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      mb: 2,
+                    }}
+                  >
+                    <Typography variant="subtitle1">
+                      Payments {!loading && `(${payments.length})`}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={quickAddPayment.onTrue}
+                      startIcon={<Iconify icon="mingcute:add-line" sx={{ ml: 2 }} />}
+                    >
+                      Add Payment
+                    </Button>
+                  </Box>
+                </Box>
+                <Divider sx={{ mb: 3 }} />
+              </>
+            ) : (
+              <></>
+            )}
             {loading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
                 <CircularProgress />
               </Box>
             ) : payments.length > 0 ? (
-                <Box>
-                  {/* Table Header */}
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      p: theme.spacing(1.5, 2.5),
-                      mb: 1,
-                      borderRadius: 1,
-                      bgcolor: 'background.neutral',
-                    }}
-                  >
-                    <Box sx={{ width: '15%' }}>
-                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                        Payment #
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ width: '20%' }}>
-                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                        Amount
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ width: '25%' }}>
-                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                        Description
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ width: '20%' }}>
-                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                        Date
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" sx={{ color: 'text.secondary', textAlign: 'right' }}>
-                        Status
-                      </Typography>
-                    </Box>
+              <Box>
+                {/* Table Header */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    p: theme.spacing(1.5, 2.5),
+                    mb: 1,
+                    borderRadius: 1,
+                    bgcolor: 'background.neutral',
+                  }}
+                >
+                  <Box sx={{ width: '15%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      Payment #
+                    </Typography>
                   </Box>
 
-                  <Stack spacing={2}>
-                    {payments.map((payment) => (
+                  <Box sx={{ width: '20%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      Amount
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ width: '25%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      Description
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ width: '20%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      Date
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ flex: 1 }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'text.secondary', textAlign: 'right' }}
+                    >
+                      Status
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <Stack spacing={2}>
+                  {payments.map((payment) => (
+                    <Box
+                      key={payment.id}
+                      sx={(theme) => ({
+                        display: 'flex',
+                        alignItems: 'center',
+                        p: theme.spacing(2, 2.5),
+                        borderRadius: 1,
+                        bgcolor: 'background.paper',
+                        boxShadow: theme.shadows[1],
+                      })}
+                    >
+                      {/* Payment Number - 15% */}
+                      <Box sx={{ width: '15%' }}>
+                        <Typography variant="subtitle2">
+                          Payment #{payment.paymentNumber}
+                        </Typography>
+                      </Box>
+
+                      {/* Amount - 20% */}
+                      <Box sx={{ width: '20%' }}>
+                        <Typography variant="subtitle2">{fCurrency(payment.amount)}</Typography>
+                      </Box>
+
+                      {/* Description - 25% */}
+                      <Box sx={{ width: '25%' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                          {payment.description || '—'}
+                        </Typography>
+                      </Box>
+
+                      {/* Payment Date - 20% */}
+                      <Box sx={{ width: '20%', display: 'flex', alignItems: 'center' }}>
+                        <Iconify
+                          icon="solar:calendar-line-duotone"
+                          width={16}
+                          sx={{ color: 'text.disabled', mr: 1 }}
+                        />
+                        <Typography variant="caption">
+                          {new Date(payment.paymentDate).toLocaleDateString('en-GB', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </Typography>
+                      </Box>
+
+                      {/* Status and Actions */}
                       <Box
-                        key={payment.id}
-                        sx={(theme) => ({
+                        sx={{
+                          flex: 1,
                           display: 'flex',
+                          justifyContent: 'flex-end',
                           alignItems: 'center',
-                          p: theme.spacing(2, 2.5),
-                          borderRadius: 1,
-                          bgcolor: 'background.paper',
-                          boxShadow: theme.shadows[1],
-                        })}
+                        }}
                       >
-                        {/* Payment Number - 15% */}
-                        <Box sx={{ width: '15%' }}>
-                          <Typography variant="subtitle2">
-                            Payment #{payment.paymentNumber}
-                          </Typography>
-                        </Box>
-
-                        {/* Amount - 20% */}
-                        <Box sx={{ width: '20%' }}>
-                          <Typography variant="subtitle2">
-                            {fCurrency(payment.amount)}
-                          </Typography>
-                        </Box>
-
-                        {/* Description - 25% */}
-                        <Box sx={{ width: '25%' }}>
-                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            {payment.description || '—'}
-                          </Typography>
-                        </Box>
-
-                        {/* Payment Date - 20% */}
-                        <Box sx={{ width: '20%', display: 'flex', alignItems: 'center' }}>
-                          <Iconify
-                            icon="solar:calendar-line-duotone"
-                            width={16}
-                            sx={{ color: 'text.disabled', mr: 1 }}
-                          />
-                          <Typography variant="caption">
-                            {new Date(payment.paymentDate).toLocaleDateString('en-GB', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </Typography>
-                        </Box>
-
-                        {/* Status and Actions */}
-                        <Box
-                          sx={{
-                            flex: 1,
-                            display: 'flex',
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                          }}
+                        <Label
+                          variant="soft"
+                          color={
+                            (payment.status === 'Paid' && 'success') ||
+                            (payment.status === 'Pending' && 'warning') ||
+                            (payment.status === 'Failed' && 'error') ||
+                            'default'
+                          }
+                          sx={{ p: 2, mr: 2 }}
                         >
-                          <Label
-                            variant="soft"
-                            color={
-                              (payment.status === 'Paid' && 'success') ||
-                              (payment.status === 'Pending' && 'warning') ||
-                              (payment.status === 'Failed' && 'error') ||
-                              'default'
-                            }
-                            sx={{ p: 2, mr: 2 }}
-                          >
-                            {payment.status}
-                          </Label>
-
+                          {payment.status}
+                        </Label>
+                        {user?.role == 'admin' ? (
                           <IconButton
                             size="small"
                             onClick={(event) => {
@@ -367,79 +382,87 @@ export function StudentsTableRow({
                             }}
                           >
                             <Iconify icon="eva:more-vertical-fill" width={18} />
-                          </IconButton>
+                            <CustomPopover
+                              open={paymentMenuActions.open}
+                              anchorEl={paymentMenuActions.anchorEl}
+                              onClose={paymentMenuActions.onClose}
+                              slotProps={{ arrow: { placement: 'right-top' } }}
+                              id={menuId ?? undefined}
+                            >
+                              <MenuList>
+                                <MenuItem
+                                  onClick={async () => {
+                                    try {
+                                      const newStatus: PaymentStatus =
+                                        payment.status === 'Paid' ? 'Pending' : 'Paid';
+                                      await authAxiosInstance.patch(
+                                        `${endpoints.earnings.details(earning?.id)}/payments/${payment.id}`,
+                                        {
+                                          amount: payment.amount,
+                                          status: newStatus,
+                                          description: payment.description,
+                                        }
+                                      );
 
-                          <CustomPopover
-                            open={paymentMenuActions.open}
-                            anchorEl={paymentMenuActions.anchorEl}
-                            onClose={paymentMenuActions.onClose}
-                            slotProps={{ arrow: { placement: 'right-top' } }}
-                            id={menuId ?? undefined}
-                          >
-                            <MenuList>
-                              <MenuItem
-                                onClick={async () => {
-                                  try {
-                                  const newStatus: PaymentStatus = payment.status === 'Paid' ? 'Pending' : 'Paid';
-                                  await authAxiosInstance.patch(
-                                    `${endpoints.earnings.details(earning?.id)}/payments/${payment.id}`,
-                                    {
-                                      amount: payment.amount,
-                                      status: newStatus,
-                                      description: payment.description,
+                                      // Update local state
+                                      const updatedPayments = payments.map((p) =>
+                                        p.id === payment.id ? { ...p, status: newStatus } : p
+                                      );
+                                      setPayments(updatedPayments);
+
+                                      toast.success(`Payment marked as ${newStatus}`);
+                                      paymentMenuActions.onClose();
+                                    } catch (error) {
+                                      console.error(error);
+                                      toast.error('Failed to update payment status');
                                     }
-                                  );
+                                  }}
+                                  sx={{
+                                    color:
+                                      payment.status === 'Paid' ? 'warning.main' : 'success.main',
+                                  }}
+                                >
+                                  <Iconify
+                                    icon={
+                                      payment.status === 'Paid'
+                                        ? 'material-symbols:toggle-off'
+                                        : 'material-symbols:toggle-on'
+                                    }
+                                    width={16}
+                                    sx={{ mr: 1 }}
+                                  />
+                                  {payment.status === 'Paid' ? 'Mark Pending' : 'Mark Paid'}
+                                </MenuItem>
 
-                                  // Update local state
-                                  const updatedPayments = payments.map((p) =>
-                                    p.id === payment.id ? { ...p, status: newStatus } : p
-                                  );
-                                  setPayments(updatedPayments);
-
-                                  toast.success(`Payment marked as ${newStatus}`);
+                                <MenuItem
+                                  onClick={() => {
+                                    setPaymentToDelete(payment.id);
+                                    paymentDeleteDialog.onTrue();
                                     paymentMenuActions.onClose();
-                                  } catch (error) {
-                                    console.error(error);
-                                    toast.error('Failed to update payment status');
-                                  }
-                                }}
-                                sx={{
-                                  color: payment.status === 'Paid' ? 'warning.main' : 'success.main',
-                                }}
-                              >
-                                <Iconify
-                                  icon={
-                                    payment.status === 'Paid'
-                                      ? 'material-symbols:toggle-off'
-                                      : 'material-symbols:toggle-on'
-                                  }
-                                  width={16}
-                                  sx={{ mr: 1 }}
-                                />
-                                {payment.status === 'Paid' ? 'Mark Pending' : 'Mark Paid'}
-                              </MenuItem>
-
-                              <MenuItem
-                                onClick={() => {
-                                  setPaymentToDelete(payment.id);
-                                  paymentDeleteDialog.onTrue();
-                                  paymentMenuActions.onClose();
-                                }}
-                                sx={{ color: 'error.main' }}
-                              >
-                                <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
-                                Delete Payment
-                              </MenuItem>
-                            </MenuList>
-                          </CustomPopover>
-                        </Box>
+                                  }}
+                                  sx={{ color: 'error.main' }}
+                                >
+                                  <Iconify
+                                    icon="solar:trash-bin-trash-bold"
+                                    width={16}
+                                    sx={{ mr: 1 }}
+                                  />
+                                  Delete Payment
+                                </MenuItem>
+                              </MenuList>
+                            </CustomPopover>
+                          </IconButton>
+                        ) : (
+                          <></>
+                        )}
                       </Box>
-                    ))}
-                  </Stack>
-                </Box>
+                    </Box>
+                  ))}
+                </Stack>
+              </Box>
             ) : (
-                  <Box sx={{ py: 4, textAlign: 'center' }}>
-                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+              <Box sx={{ py: 4, textAlign: 'center' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                   No payments found
                 </Typography>
                 <Button
@@ -470,7 +493,7 @@ export function StudentsTableRow({
         intakeId={row.intakeId ?? ''}
         earning={earning}
       />
-    )
+    );
   };
   const renderQuickEditForm = () => (
     <StudentsQuickEditForm
