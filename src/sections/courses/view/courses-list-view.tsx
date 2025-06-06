@@ -28,7 +28,6 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 import { Label } from 'src/components/label';
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
-// import { CoursesTableToolbar } from './courses-table-toolbar';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -47,7 +46,7 @@ import {
 } from 'src/components/table';
 
 import { CoursesTableRow } from '../courses-table-row';
-import { CoursesTableToolbar } from '../courses-table-toolbar';
+// import { CoursesTableToolbar } from '../courses-table-toolbar';
 import { CoursesTableFiltersResult } from '../courses-table-filters-result';
 import { useAuthContext } from 'src/auth/hooks';
 
@@ -263,11 +262,11 @@ export function CoursesListView() {
               />
             ))}
           </Tabs>
-          <CoursesTableToolbar
+          {/* <CoursesTableToolbar
             filters={filters}
             onResetPage={table.onResetPage}
             options={{ roles: ['Linked', 'All'] }}
-          />
+          /> */}
           <Box
             sx={{
               rowGap: 3,
