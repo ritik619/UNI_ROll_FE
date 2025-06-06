@@ -76,6 +76,9 @@ export function UniversityTableRow({
   const courseDeleteDialog = useBoolean();
 
   const { user } = useAuthContext();
+  const userRole = user?.role;
+  const isAdmin = userRole == 'admin';
+  const isAgent = userRole == 'agent';
 
   // Fetch courses when row is expanded - using mock data for now
   useEffect(() => {
@@ -150,7 +153,7 @@ export function UniversityTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        {user?.role == 'admin' ? (
+        {isAdmin && (
           <>
             <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
               <Iconify icon="solar:pen-bold" />
@@ -162,8 +165,6 @@ export function UniversityTableRow({
               Add Course
             </MenuItem>
           </>
-        ) : (
-          <></>
         )}
 
         <MenuItem
@@ -184,7 +185,7 @@ export function UniversityTableRow({
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        {user?.role == 'admin' ? (
+        {isAdmin && (
           <MenuItem
             onClick={() => {
               confirmDialog.onTrue();
@@ -195,8 +196,6 @@ export function UniversityTableRow({
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
-        ) : (
-          <></>
         )}
       </MenuList>
     </CustomPopover>
@@ -311,7 +310,7 @@ export function UniversityTableRow({
                 Course {!loading && `(${courses.length})`}
               </Typography>
 
-              {user?.role == 'admin' ? (
+              {isAdmin && (
                 <Button
                   variant="contained"
                   size="small"
@@ -320,8 +319,6 @@ export function UniversityTableRow({
                 >
                   Add Course to University
                 </Button>
-              ) : (
-                <></>
               )}
             </Box>
 
@@ -510,7 +507,7 @@ export function UniversityTableRow({
                           id={courseMenuActions.id}
                         >
                           <MenuList>
-                            {user?.role == 'admin' ? (
+                            {isAdmin && (
                               <MenuItem
                                 component={RouterLink}
                                 href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
@@ -519,8 +516,6 @@ export function UniversityTableRow({
                                 <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
                                 Edit Course
                               </MenuItem>
-                            ) : (
-                              <></>
                             )}
                             <MenuItem
                               onClick={async () => {
@@ -561,7 +556,7 @@ export function UniversityTableRow({
                               {course.status === 'active' ? 'Deactivate Course' : 'Activate Course'}
                             </MenuItem>
                             {/* Delete Option */}
-                            {user?.role == 'admin' ? (
+                            {isAdmin && (
                               <MenuItem
                                 onClick={() => {
                                   // Set course for deletion and show confirmation dialog
@@ -579,8 +574,6 @@ export function UniversityTableRow({
                                 />
                                 Delete Course
                               </MenuItem>
-                            ) : (
-                              <></>
                             )}
                           </MenuList>
                         </CustomPopover>
@@ -595,7 +588,7 @@ export function UniversityTableRow({
                   No courses found for this university
                 </Typography>
 
-                {user?.role == 'admin' ? (
+                {isAdmin && (
                   <Button
                     component={RouterLink}
                     href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
@@ -605,8 +598,6 @@ export function UniversityTableRow({
                   >
                     Add First Course
                   </Button>
-                ) : (
-                  <></>
                 )}
               </Box>
             )}

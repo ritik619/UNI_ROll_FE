@@ -59,6 +59,9 @@ export function IntakeTableRow({
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
   const courseDeleteDialog = useBoolean();
   const { user } = useAuthContext();
+  const userRole = user?.role;
+  const isAdmin = userRole == 'admin';
+  const isAgent = userRole == 'agent';
 
   // Fetch courses when row is expanded - using mock data for now
   useEffect(() => {
@@ -118,7 +121,7 @@ export function IntakeTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        {user?.role == 'admin' ? (
+        {isAdmin && (
           <Link
             component={RouterLink}
             href={paths.dashboard.intakes.edit(row.id)}
@@ -133,8 +136,6 @@ export function IntakeTableRow({
               Edit
             </MenuItem>
           </Link>
-        ) : (
-          <></>
         )}
 
         <MenuItem
@@ -155,7 +156,7 @@ export function IntakeTableRow({
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        {user?.role == 'admin' ? (
+        {isAdmin && (
           <MenuItem
             onClick={() => {
               confirmDialog.onTrue();
@@ -166,8 +167,6 @@ export function IntakeTableRow({
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
-        ) : (
-          <></>
         )}
       </MenuList>
     </CustomPopover>

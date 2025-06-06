@@ -72,6 +72,9 @@ export function CoursesTableRow({
   const courseDeleteDialog = useBoolean();
 
   const { user } = useAuthContext();
+  const userRole = user?.role;
+  const isAdmin = userRole == 'admin';
+  const isAgent = userRole == 'agent';
 
   // Fetch university when row is expanded - using mock data for now
   useEffect(() => {
@@ -138,13 +141,11 @@ export function CoursesTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        {user?.role == 'admin' ? (
+        {isAdmin && (
           <MenuItem href={editHref} component={RouterLink}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
-        ) : (
-          <></>
         )}
 
         <MenuItem
@@ -165,7 +166,7 @@ export function CoursesTableRow({
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        {user?.role == 'admin' ? (
+        {isAdmin ? (
           <MenuItem
             onClick={() => {
               confirmDialog.onTrue();
@@ -329,7 +330,7 @@ export function CoursesTableRow({
                 University {!loading && `(${university.length})`}
               </Typography>
 
-              {user?.role == 'admin' ? (
+              {isAdmin && (
                 <Button
                   component={RouterLink}
                   href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
@@ -339,8 +340,6 @@ export function CoursesTableRow({
                 >
                   Add to University
                 </Button>
-              ) : (
-                <></>
               )}
             </Box>
 
@@ -527,7 +526,7 @@ export function CoursesTableRow({
                           id={courseMenuActions.id}
                         >
                           <MenuList>
-                            {user?.role == 'admin' ? (
+                            {isAdmin && (
                               <MenuItem
                                 component={RouterLink}
                                 href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
@@ -536,8 +535,6 @@ export function CoursesTableRow({
                                 <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
                                 Edit Course
                               </MenuItem>
-                            ) : (
-                              <></>
                             )}
                             {/* //Activate/Deactivate Option */}
                             <MenuItem
@@ -585,7 +582,7 @@ export function CoursesTableRow({
                               {course.status === 'active' ? 'Deactivate Course' : 'Activate Course'}
                             </MenuItem>
                             {/* Delete Option */}
-                            {user?.role == 'admin' ? (
+                            {isAdmin && (
                               <MenuItem
                                 onClick={() => {
                                   // Set course for deletion and show confirmation dialog
@@ -603,8 +600,6 @@ export function CoursesTableRow({
                                 />
                                 Delete Course
                               </MenuItem>
-                            ) : (
-                              <></>
                             )}
                           </MenuList>
                         </CustomPopover>
@@ -619,7 +614,7 @@ export function CoursesTableRow({
                   No university found for this university
                 </Typography>
 
-                {user?.role == 'admin' ? (
+                {isAdmin && (
                   <Button
                     component={RouterLink}
                     href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
@@ -629,8 +624,6 @@ export function CoursesTableRow({
                   >
                     Add First Course
                   </Button>
-                ) : (
-                  <></>
                 )}
               </Box>
             )}
