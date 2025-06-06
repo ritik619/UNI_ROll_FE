@@ -224,9 +224,21 @@ export function IntakeTableRow({
         </Box>
       </TableCell>
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.startDate}</TableCell>
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+        {new Date(row.startDate).toLocaleDateString('en-GB', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        })}
+      </TableCell>
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.endDate}</TableCell>
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+        {new Date(row.endDate).toLocaleDateString('en-GB', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        })}
+      </TableCell>
 
       {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>
         <Link href={row.website} target="_blank" rel="noopener" sx={{ color: 'primary.main' }}>
