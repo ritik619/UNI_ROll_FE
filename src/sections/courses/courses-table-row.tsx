@@ -136,7 +136,7 @@ export function CoursesTableRow({
     >
       <MenuList>
         {user?.role == 'admin' ? (
-          <MenuItem href={editHref} >
+          <MenuItem href={editHref} component={RouterLink} >
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
