@@ -76,8 +76,7 @@ export function UniversityListView() {
 
   const { user } = useAuthContext();
   const userRole = user?.role;
-  const userId = user?.id;
-  console.log('user', user, 'userRole', userRole, 'userId', userId);
+  const isAdmin = userRole == 'admin';
 
   const filters = useSetState<IUniversityTableFilters>({
     name: '',
@@ -201,7 +200,12 @@ export function UniversityListView() {
 
   useEffect(() => {
     fetchPaginatedUniversities();
-  }, [fetchPaginatedUniversities, filters.state.status, filters.state.cityId, filters.state.countryCode]);
+  }, [
+    fetchPaginatedUniversities,
+    filters.state.status,
+    filters.state.cityId,
+    filters.state.countryCode,
+  ]);
 
   return (
     <>
@@ -214,7 +218,7 @@ export function UniversityListView() {
             { name: 'List' },
           ]}
           action={
-            userRole == 'admin' ? (
+            isAdmin && (
               <Button
                 component={RouterLink}
                 href={paths.dashboard.universitiesAndCourses.addUniversity}
@@ -223,8 +227,6 @@ export function UniversityListView() {
               >
                 New University
               </Button>
-            ) : (
-              <></>
             )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -352,8 +354,8 @@ export function UniversityListView() {
                     <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
                   ) : (
                     <>
-                        {tableData.length > 0 ? (
-                          tableData.map((row) => (
+                      {tableData.length > 0 ? (
+                        tableData.map((row) => (
                           <UniversityTableRow
                             key={row.id}
                             row={row}
@@ -363,17 +365,17 @@ export function UniversityListView() {
                             onToggleStatus={handleToggleStatus as any}
                             editHref={paths.dashboard.universitiesAndCourses.list}
                           />
-                          ))
-                        ) : (
-                          <TableNoData notFound={notFound} />
-                        )}
+                        ))
+                      ) : (
+                        <TableNoData notFound={notFound} />
+                      )}
 
-                        {tableData.length > 0 && tableData.length < table.rowsPerPage && (
-                          <TableEmptyRows
-                            height={table.dense ? 56 : 56 + 20}
-                            emptyRows={table.rowsPerPage - tableData.length}
-                          />
-                        )}
+                      {tableData.length > 0 && tableData.length < table.rowsPerPage && (
+                        <TableEmptyRows
+                          height={table.dense ? 56 : 56 + 20}
+                          emptyRows={table.rowsPerPage - tableData.length}
+                        />
+                      )}
                     </>
                   )}
                 </TableBody>

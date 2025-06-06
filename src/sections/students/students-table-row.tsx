@@ -88,7 +88,11 @@ export function StudentsTableRow({
   const paymentDeleteDialog = useBoolean();
   const [paymentToDelete, setPaymentToDelete] = useState<string | null>(null);
   const [menuId, setMenuId] = useState<string | null>(null);
+
   const { user } = useAuthContext();
+  const userRole = user?.role;
+  const isAdmin = userRole == 'admin';
+  const isAgent = userRole == 'agent';
 
   // Fetch earnings when component mounts
   useEffect(() => {
@@ -116,7 +120,7 @@ export function StudentsTableRow({
     {
       row.status === 'Enrolled' && fetchEarningsData();
     }
-  }, [row.id, row.agentId, row.intakeId, row.universityId, row.courseId]);
+  }, [row.id, row.agentId, row.intakeId, row.universityId, row.courseId, row.status]);
 
   const handleUnenroll = async () => {
     try {
@@ -224,7 +228,7 @@ export function StudentsTableRow({
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Paper sx={{ m: 1.5, p: 2 }}>
-            {user?.role == 'admin' ? (
+            {isAdmin && (
               <>
                 <Box sx={{ mb: 3 }}>
                   <Box
@@ -250,8 +254,6 @@ export function StudentsTableRow({
                 </Box>
                 <Divider sx={{ mb: 3 }} />
               </>
-            ) : (
-              <></>
             )}
             {loading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
@@ -373,7 +375,7 @@ export function StudentsTableRow({
                         >
                           {payment.status}
                         </Label>
-                        {user?.role == 'admin' ? (
+                        {isAdmin && (
                           <IconButton
                             size="small"
                             onClick={(event) => {
@@ -453,8 +455,6 @@ export function StudentsTableRow({
                               </MenuList>
                             </CustomPopover>
                           </IconButton>
-                        ) : (
-                          <></>
                         )}
                       </Box>
                     </Box>
@@ -520,7 +520,7 @@ export function StudentsTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        {user?.role == 'agent' ? (
+        {isAgent && (
           <Link
             component={RouterLink}
             href={paths.dashboard.students.edit(row.id)}
@@ -532,8 +532,6 @@ export function StudentsTableRow({
               Edit
             </MenuItem>
           </Link>
-        ) : (
-          <></>
         )}
 
         {row.status !== 'Enrolled' ? (

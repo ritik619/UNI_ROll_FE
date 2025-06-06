@@ -95,8 +95,9 @@ export function StudentsListView() {
 
   const { user } = useAuthContext();
   const userRole = user?.role;
+  const isAdmin = userRole == 'admin';
+  const isAgent = userRole == 'agent';
   const userId = user?.id;
-  console.log('user', user, 'userRole', userRole, 'userId', userId);
 
   const filters = useSetState<IStudentsTableFilters>({
     name: '',
@@ -104,7 +105,7 @@ export function StudentsListView() {
     status: 'All',
     countryCode: '',
     cityId: '',
-    agentId: userRole == 'agent' ? userId : '',
+    agentId: isAgent ? userId : '',
     intakeId: '',
     universityId: '',
     courseId: '',
@@ -261,7 +262,7 @@ export function StudentsListView() {
             { name: 'List' },
           ]}
           action={
-            userRole == 'agent' ? (
+            isAgent && (
               <Button
                 component={RouterLink}
                 href={paths.dashboard.students.new}
@@ -270,8 +271,6 @@ export function StudentsListView() {
               >
                 New Student
               </Button>
-            ) : (
-              <></>
             )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -353,7 +352,7 @@ export function StudentsListView() {
                 filters.setState({ courseId: newValue });
               }}
             />
-            {userRole == 'admin' ? (
+            {isAdmin && (
               <AgentSelect
                 id="agent-id"
                 label="Agent"
@@ -365,8 +364,6 @@ export function StudentsListView() {
                   filters.setState({ agentId: newValue });
                 }}
               />
-            ) : (
-              <></>
             )}
             <IntakeSelect
               id="intake-id"
@@ -457,28 +454,28 @@ export function StudentsListView() {
                     <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
                   ) : (
                     <>
-                        {tableData.map((row) => (
-                          <StudentsTableRow
-                            key={row.id}
-                            row={row}
-                            selected={table.selected.includes(row.id)}
-                            onSelectRow={() => table.onSelectRow(row.id)}
-                            onDeleteRow={() => handleDeleteRow(row.id)}
-                            onToggleStatus={handleToggleStatus}
-                            editHref={paths.dashboard.students.edit(row.id)}
-                            associations={associations}
-                            intakes={intakes}
-                          />
-                        ))}
+                      {tableData.map((row) => (
+                        <StudentsTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id)}
+                          onSelectRow={() => table.onSelectRow(row.id)}
+                          onDeleteRow={() => handleDeleteRow(row.id)}
+                          onToggleStatus={handleToggleStatus}
+                          editHref={paths.dashboard.students.edit(row.id)}
+                          associations={associations}
+                          intakes={intakes}
+                        />
+                      ))}
 
-                        {!loading && tableData.length === 0 && <TableNoData notFound={notFound} />}
+                      {!loading && tableData.length === 0 && <TableNoData notFound={notFound} />}
 
-                        {!loading && tableData.length > 0 && tableData.length < table.rowsPerPage && (
-                          <TableEmptyRows
-                            height={table.dense ? 56 : 56 + 20}
-                            emptyRows={table.rowsPerPage - tableData.length}
-                          />
-                        )}
+                      {!loading && tableData.length > 0 && tableData.length < table.rowsPerPage && (
+                        <TableEmptyRows
+                          height={table.dense ? 56 : 56 + 20}
+                          emptyRows={table.rowsPerPage - tableData.length}
+                        />
+                      )}
                     </>
                   )}
                 </TableBody>

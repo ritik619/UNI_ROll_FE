@@ -75,8 +75,7 @@ export function CoursesListView() {
 
   const { user } = useAuthContext();
   const userRole = user?.role;
-  const userId = user?.id;
-  console.log('user', user, 'userRole', userRole, 'userId', userId);
+  const isAdmin = userRole == 'admin';
 
   const filters = useSetState<ICourseTableFilters>({
     name: '',
@@ -217,7 +216,7 @@ export function CoursesListView() {
             { name: 'List' },
           ]}
           action={
-            userRole == 'admin' ? (
+            isAdmin && (
               <Button
                 component={RouterLink}
                 href={paths.dashboard.universitiesAndCourses.addCourse}
@@ -226,8 +225,6 @@ export function CoursesListView() {
               >
                 New Courses
               </Button>
-            ) : (
-              <></>
             )
           }
           sx={{ mb: { xs: 3, md: 5 } }}

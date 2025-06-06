@@ -73,8 +73,7 @@ export function IntakeListView() {
 
   const { user } = useAuthContext();
   const userRole = user?.role;
-  const userId = user?.id;
-  console.log('user', user, 'userRole', userRole, 'userId', userId);
+  const isAdmin = userRole == 'admin';
 
   const filters = useSetState<IIntakeTableFilters>({
     name: '',
@@ -209,7 +208,7 @@ export function IntakeListView() {
             { name: 'List' },
           ]}
           action={
-            userRole == 'admin' ? (
+            isAdmin && (
               <Button
                 component={RouterLink}
                 href={paths.dashboard.intakes.new}
@@ -218,8 +217,6 @@ export function IntakeListView() {
               >
                 New Intake
               </Button>
-            ) : (
-              <></>
             )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
