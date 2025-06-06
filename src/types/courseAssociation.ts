@@ -13,7 +13,7 @@ export interface ICourseAssociation {
   // endDate: Date;
   price: number;
   currency?: string;
-  applicationDeadline?: Date;
+  applicationDeadline: Date;
   requirementsDescription?: string;
   languageOfInstruction?: string;
   maxStudents?: number;
