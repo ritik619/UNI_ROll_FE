@@ -47,6 +47,7 @@ const ICONS = {
 export const navData: NavSectionProps['data'] = [
   {
     subheader: 'Management',
+    roles: ['admin'],
     items: [
       {
         title: 'Dashboard',
@@ -54,14 +55,14 @@ export const navData: NavSectionProps['data'] = [
         icon: ICONS.dashboard,
       },
       {
-        title: 'Agent',
+        title: 'Agents',
         path: paths.dashboard.agent.list,
         icon: ICONS.agent,
         roles: ['admin'],
         children: [
           // { title: 'Profile', path: paths.dashboard.agent.root },
-          { title: 'Add', path: paths.dashboard.agent.new },
-          { title: 'List', path: paths.dashboard.agent.list },
+          { title: 'Add Agent', path: paths.dashboard.agent.new },
+          { title: 'Agents List', path: paths.dashboard.agent.list },
           // { title: 'Cards', path: paths.dashboard.agent.cards },
           // { title: 'Edit', path: paths.dashboard.agent.demo.edit },
           // { title: 'Account', path: paths.dashboard.agent.account },
@@ -73,8 +74,7 @@ export const navData: NavSectionProps['data'] = [
         icon: ICONS.booking,
         children: [
           // { title: 'Profile', path: paths.dashboard.students.root },
-          { title: 'Add', path: paths.dashboard.students.new },
-          { title: 'List', path: paths.dashboard.students.list },
+          { title: 'Students List', path: paths.dashboard.students.list },
           // { title: 'Cards', path: paths.dashboard.students.cards },
           // { title: 'Edit', path: paths.dashboard.students.demo.edit },
           // { title: 'Account', path: paths.dashboard.students.account },
@@ -84,12 +84,17 @@ export const navData: NavSectionProps['data'] = [
         title: 'Universities & Courses',
         path: paths.dashboard.universitiesAndCourses.list,
         icon: ICONS.course,
-        roles: ['admin'],
         children: [
-          { title: 'Add University', path: paths.dashboard.universitiesAndCourses.addUniversity },
-          { title: 'List Universities', path: paths.dashboard.universitiesAndCourses.list },
-          { title: 'Add Course', path: paths.dashboard.universitiesAndCourses.addCourse },
-          { title: 'List Courses', path: paths.dashboard.universitiesAndCourses.listCourses },
+          {
+            title: 'Add University',
+            path: paths.dashboard.universitiesAndCourses.addUniversity,
+          },
+          { title: 'Universities List', path: paths.dashboard.universitiesAndCourses.list },
+          {
+            title: 'Add Course',
+            path: paths.dashboard.universitiesAndCourses.addCourse,
+          },
+          { title: 'Courses List', path: paths.dashboard.universitiesAndCourses.listCourses },
         ],
       },
       {
@@ -98,12 +103,61 @@ export const navData: NavSectionProps['data'] = [
         icon: ICONS.calendar,
         children: [
           {
-            title: 'list Intakes',
-            path: paths.dashboard.intakes.root,
+            title: 'Add Intake',
+            path: paths.dashboard.intakes.new,
           },
           {
-            title: 'Add Intakes',
-            path: paths.dashboard.intakes.new,
+            title: 'Intakes List',
+            path: paths.dashboard.intakes.root,
+          },
+        ],
+      },
+      {
+        title: 'Earnings OverView',
+        path: paths.dashboard.earningsoverview,
+        icon: ICONS.banking,
+      },
+    ],
+  },
+  {
+    subheader: 'Agent',
+    roles: ['agent'],
+    items: [
+      {
+        title: 'Dashboard',
+        path: paths.dashboard.root,
+        icon: ICONS.dashboard,
+      },
+      {
+        title: 'Students',
+        path: paths.dashboard.students.root,
+        icon: ICONS.booking,
+        children: [
+          // { title: 'Profile', path: paths.dashboard.students.root },
+          { title: 'Add Student', path: paths.dashboard.students.new },
+          { title: 'Students List', path: paths.dashboard.students.list },
+          // { title: 'Cards', path: paths.dashboard.students.cards },
+          // { title: 'Edit', path: paths.dashboard.students.demo.edit },
+          // { title: 'Account', path: paths.dashboard.students.account },
+        ],
+      },
+      {
+        title: 'Universities & Courses',
+        path: paths.dashboard.universitiesAndCourses.list,
+        icon: ICONS.course,
+        children: [
+          { title: 'Universities List', path: paths.dashboard.universitiesAndCourses.list },
+          { title: 'Courses List', path: paths.dashboard.universitiesAndCourses.listCourses },
+        ],
+      },
+      {
+        title: 'Intakes',
+        path: paths.dashboard.intakes.root,
+        icon: ICONS.calendar,
+        children: [
+          {
+            title: 'Intakes List',
+            path: paths.dashboard.intakes.root,
           },
         ],
       },

@@ -46,6 +46,7 @@ import {
 
 import { IntakeTableRow } from '../intake-table-row';
 import { IntakesTableFiltersResult } from '../intake-table-filters-result';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -69,6 +70,11 @@ export function IntakeListView() {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<IIntake[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+
+  const { user } = useAuthContext();
+  const userRole = user?.role;
+  const userId = user?.id;
+  console.log('user', user, 'userRole', userRole, 'userId', userId);
 
   const filters = useSetState<IIntakeTableFilters>({
     name: '',
@@ -203,14 +209,18 @@ export function IntakeListView() {
             { name: 'List' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.intakes.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New Intake
-            </Button>
+            userRole == 'admin' ? (
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.intakes.new}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                New Intake
+              </Button>
+            ) : (
+              <></>
+            )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

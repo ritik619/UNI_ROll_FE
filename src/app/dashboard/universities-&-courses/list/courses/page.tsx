@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import { CONFIG } from 'src/global-config';
-import { CoursesListView } from 'src/sections/courses/courses-list-view';
+import { CoursesListView } from 'src/sections/courses/view/courses-list-view';
 
 // ----------------------------------------------------------------------
 

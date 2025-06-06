@@ -25,6 +25,8 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
+import { useAuthContext } from 'src/auth/hooks';
+import { ICourse } from 'src/types/course';
 
 // ----------------------------------------------------------------------
 
@@ -56,6 +58,7 @@ export function IntakeTableRow({
   // State to track course being deleted
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
   const courseDeleteDialog = useBoolean();
+  const { user } = useAuthContext();
 
   // Fetch courses when row is expanded - using mock data for now
   useEffect(() => {
@@ -115,7 +118,7 @@ export function IntakeTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        <li>
+        {user?.role == 'admin' ? (
           <Link
             component={RouterLink}
             href={paths.dashboard.intakes.edit(row.id)}
@@ -130,7 +133,9 @@ export function IntakeTableRow({
               Edit
             </MenuItem>
           </Link>
-        </li>
+        ) : (
+          <></>
+        )}
 
         <MenuItem
           onClick={() => {
@@ -150,16 +155,20 @@ export function IntakeTableRow({
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            confirmDialog.onTrue();
-            menuActions.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
+        {user?.role == 'admin' ? (
+          <MenuItem
+            onClick={() => {
+              confirmDialog.onTrue();
+              menuActions.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem>
+        ) : (
+          <></>
+        )}
       </MenuList>
     </CustomPopover>
   );

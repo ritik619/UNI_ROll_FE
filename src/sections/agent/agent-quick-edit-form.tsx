@@ -108,7 +108,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
       firstName: data.firstName.trim(),
       lastName: data.lastName.trim(),
       dateOfBirth: data.dateOfBirth,
-      email: data.email.trim(),
+      email: data.email.trim().toLowerCase(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
       bankDetails: {

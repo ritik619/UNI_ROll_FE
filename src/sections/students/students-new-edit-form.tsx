@@ -132,7 +132,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
       dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
-      email: data.email.trim(),
+      email: data.email.trim().toLowerCase(),
       // phonePrefix: data.phonePrefix.trim(),
       phoneNumber: data.phoneNumber.trim(),
       nationality: data.nationality.trim(),

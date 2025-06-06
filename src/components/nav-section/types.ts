@@ -87,6 +87,7 @@ export type NavSectionProps = React.ComponentProps<'nav'> &
     sx?: SxProps<Theme>;
     data: {
       subheader?: string;
+      roles?: string[];
       items: NavItemDataProps[];
     }[];
   };

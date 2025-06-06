@@ -106,14 +106,14 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
       firstName: data.firstName.trim(),
       lastName: data.lastName.trim(),
       dateOfBirth: data.dateOfBirth,
-      email: data.email.trim(),
+      email: data.email.trim().toLowerCase(),
       address: data.address.trim(),
       university: data.university.trim(),
       // bankDetails: {
       //   accountNumber: data.accountNumber.trim(),
       //   sortCode: data.sortCode.trim(),
       // },
-      courses: data.utrNcoursesumber.trim(),
+      courses: data.courses.trim(),
       status: data.status,
     };
 

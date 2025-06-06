@@ -92,7 +92,7 @@ export function AgentNewEditForm({ currentAgent }: Props) {
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
       dateOfBirth: new Date(data.dob),
-      email: data.email.trim(),
+      email: data.email.trim().toLowerCase(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
       bankDetails: {

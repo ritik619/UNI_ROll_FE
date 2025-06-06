@@ -46,9 +46,10 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { CoursesTableRow } from './courses-table-row';
-import { CoursesTableToolbar } from './courses-table-toolbar';
-import { CoursesTableFiltersResult } from './courses-table-filters-result';
+import { CoursesTableRow } from '../courses-table-row';
+import { CoursesTableToolbar } from '../courses-table-toolbar';
+import { CoursesTableFiltersResult } from '../courses-table-filters-result';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -71,6 +72,11 @@ export function CoursesListView() {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<ICourse[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+
+  const { user } = useAuthContext();
+  const userRole = user?.role;
+  const userId = user?.id;
+  console.log('user', user, 'userRole', userRole, 'userId', userId);
 
   const filters = useSetState<ICourseTableFilters>({
     name: '',
@@ -180,7 +186,7 @@ export function CoursesListView() {
         table.rowsPerPage,
         filters.state.universityId,
         filters.state.cityId,
-        filters.state.countryCode,
+        filters.state.countryCode
         // filters.state.role
       );
       console.log(courses);
@@ -210,14 +216,18 @@ export function CoursesListView() {
             { name: 'List' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.universitiesAndCourses.addCourse}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New Courses
-            </Button>
+            userRole == 'admin' ? (
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.universitiesAndCourses.addCourse}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                New Courses
+              </Button>
+            ) : (
+              <></>
+            )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

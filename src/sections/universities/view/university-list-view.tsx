@@ -49,6 +49,7 @@ import { UniversityTableFiltersResult } from '../university-table-filters-result
 import { UniversityTableToolbar } from '../university-table-toolbar';
 import { Field } from 'src/components/hook-form';
 import { CitySelect, CountrySelect } from 'src/components/select';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -72,6 +73,11 @@ export function UniversityListView() {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<IUniversity[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+
+  const { user } = useAuthContext();
+  const userRole = user?.role;
+  const userId = user?.id;
+  console.log('user', user, 'userRole', userRole, 'userId', userId);
 
   const filters = useSetState<IUniversityTableFilters>({
     name: '',
@@ -142,7 +148,7 @@ export function UniversityListView() {
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleFilterStatus = useCallback(
-    (event: React.SyntheticEvent, newValue: "all" | "active" | "inactive" | undefined) => {
+    (event: React.SyntheticEvent, newValue: 'all' | 'active' | 'inactive' | undefined) => {
       table.onResetPage();
       updateFilters({ status: newValue });
     },
@@ -209,14 +215,18 @@ export function UniversityListView() {
             { name: 'List' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.universitiesAndCourses.addUniversity}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New University
-            </Button>
+            userRole == 'admin' ? (
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.universitiesAndCourses.addUniversity}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                New University
+              </Button>
+            ) : (
+              <></>
+            )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

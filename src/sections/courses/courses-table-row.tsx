@@ -34,6 +34,7 @@ import { CustomPopover } from 'src/components/custom-popover';
 
 import { UniversityQuickAddCourseAssociationForm } from '../universities/university-quick-add-course-association-form';
 import { fetchAssociations } from 'src/services/associations/fetchAssociations';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -66,6 +67,8 @@ export function CoursesTableRow({
   // State to track course being deleted
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
   const courseDeleteDialog = useBoolean();
+
+  const { user } = useAuthContext();
 
   // Fetch university when row is expanded - using mock data for now
   useEffect(() => {
@@ -132,12 +135,14 @@ export function CoursesTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        <li>
+        {user?.role == 'admin' ? (
           <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
-        </li>
+        ) : (
+          <></>
+        )}
 
         <MenuItem
           onClick={() => {
@@ -157,16 +162,20 @@ export function CoursesTableRow({
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            confirmDialog.onTrue();
-            menuActions.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
+        {user?.role == 'admin' ? (
+          <MenuItem
+            onClick={() => {
+              confirmDialog.onTrue();
+              menuActions.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem>
+        ) : (
+          <></>
+        )}
       </MenuList>
     </CustomPopover>
   );
@@ -317,15 +326,19 @@ export function CoursesTableRow({
                 University {!loading && `(${university.length})`}
               </Typography>
 
-              <Button
-                component={RouterLink}
-                href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
-                size="small"
-                startIcon={<Iconify icon="mingcute:add-line" />}
-                sx={{ ml: 2 }}
-              >
-                Add to University
-              </Button>
+              {user?.role == 'admin' ? (
+                <Button
+                  component={RouterLink}
+                  href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
+                  size="small"
+                  startIcon={<Iconify icon="mingcute:add-line" />}
+                  sx={{ ml: 2 }}
+                >
+                  Add to University
+                </Button>
+              ) : (
+                <></>
+              )}
             </Box>
 
             {loading ? (
@@ -438,7 +451,7 @@ export function CoursesTableRow({
                       >
                         {course.status}
                       </Label>
-                      Course Actions Menu
+                      {/* Course Actions Menu */}
                       <IconButton
                         size="small"
                         color="default"
@@ -460,16 +473,19 @@ export function CoursesTableRow({
                         id={courseMenuActions.id}
                       >
                         <MenuList>
-                          Edit Option
-                          <MenuItem
-                            component={RouterLink}
-                            href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
-                            sx={{ color: 'text.primary' }}
-                          >
-                            <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
-                            Edit Course
-                          </MenuItem>
-                          Activate/Deactivate Option
+                          {user?.role == 'admin' ? (
+                            <MenuItem
+                              component={RouterLink}
+                              href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
+                              sx={{ color: 'text.primary' }}
+                            >
+                              <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
+                              Edit Course
+                            </MenuItem>
+                          ) : (
+                            <></>
+                          )}
+                          {/* //Activate/Deactivate Option */}
                           <MenuItem
                             onClick={async () => {
                               try {
@@ -515,19 +531,27 @@ export function CoursesTableRow({
                             {course.status === 'active' ? 'Deactivate Course' : 'Activate Course'}
                           </MenuItem>
                           {/* Delete Option */}
-                          <MenuItem
-                            onClick={() => {
-                              // Set course for deletion and show confirmation dialog
-                              setCourseToDelete(course.id);
-                              courseDeleteDialog.onTrue();
-                              // Close the menu
-                              courseMenuActions.onClose();
-                            }}
-                            sx={{ color: 'error.main' }}
-                          >
-                            <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
-                            Delete Course
-                          </MenuItem>
+                          {user?.role == 'admin' ? (
+                            <MenuItem
+                              onClick={() => {
+                                // Set course for deletion and show confirmation dialog
+                                setCourseToDelete(course.id);
+                                courseDeleteDialog.onTrue();
+                                // Close the menu
+                                courseMenuActions.onClose();
+                              }}
+                              sx={{ color: 'error.main' }}
+                            >
+                              <Iconify
+                                icon="solar:trash-bin-trash-bold"
+                                width={16}
+                                sx={{ mr: 1 }}
+                              />
+                              Delete Course
+                            </MenuItem>
+                          ) : (
+                            <></>
+                          )}
                         </MenuList>
                       </CustomPopover>
                     </Box>
@@ -540,15 +564,19 @@ export function CoursesTableRow({
                   No university found for this university
                 </Typography>
 
-                <Button
-                  component={RouterLink}
-                  href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
-                  variant="outlined"
-                  size="small"
-                  startIcon={<Iconify icon="mingcute:add-line" />}
-                >
-                  Add First Course
-                </Button>
+                {user?.role == 'admin' ? (
+                  <Button
+                    component={RouterLink}
+                    href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
+                    variant="outlined"
+                    size="small"
+                    startIcon={<Iconify icon="mingcute:add-line" />}
+                  >
+                    Add First Course
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Box>
             )}
           </Paper>

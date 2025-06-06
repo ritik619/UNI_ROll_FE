@@ -261,14 +261,18 @@ export function StudentsListView() {
             { name: 'List' },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.students.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New Student
-            </Button>
+            userRole == 'agent' ? (
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.students.new}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                New Student
+              </Button>
+            ) : (
+              <></>
+            )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
