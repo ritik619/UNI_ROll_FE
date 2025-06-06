@@ -355,7 +355,7 @@ export function UniversityTableRow({
                   </Box>
                   <Box sx={{ width: '20%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      Duration
+                      Start Date
                     </Typography>
                   </Box>
                   <Box sx={{ width: '20%' }}>
@@ -409,7 +409,7 @@ export function UniversityTableRow({
                         </Typography>
                       </Box>
 
-                      {/* Duration - 20% width */}
+                      {/* Start Date - 20% width */}
                       <Box sx={{ width: '20%' }}>
                         <Box
                           sx={{

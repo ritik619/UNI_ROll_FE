@@ -3,6 +3,7 @@ import type { ICourseAssociation } from 'src/types/courseAssociation';
 
 import { useState, useEffect } from 'react';
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
+import { useTheme } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -55,6 +56,8 @@ export function CoursesTableRow({
   onDeleteRow,
   onToggleStatus,
 }: Props) {
+  const theme = useTheme();
+
   const menuActions = usePopover(); // For university row actions
   const courseMenuActions = usePopover(); // For course row actions
   const confirmDialog = useBoolean();
@@ -136,7 +139,7 @@ export function CoursesTableRow({
     >
       <MenuList>
         {user?.role == 'admin' ? (
-          <MenuItem href={editHref} component={RouterLink} >
+          <MenuItem href={editHref} component={RouterLink}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
@@ -346,218 +349,270 @@ export function CoursesTableRow({
                 <CircularProgress />
               </Box>
             ) : university.length > 0 ? (
-              <Stack spacing={1}>
-                {university.map((course) => (
-                  <Box
-                    key={course.id}
-                    sx={(theme) => ({
-                      display: 'flex',
-                      alignItems: 'center',
-                      p: theme.spacing(1.5, 2),
-                      borderRadius: 1,
-                      bgcolor: 'background.paper',
-                    })}
-                  >
-                    {/* Course Name and Code - 30% width */}
-                    <Box sx={{ width: '30%', pr: 2 }}>
-                      <Link
-                        component={RouterLink}
-                        href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
-                        color="inherit"
-                        sx={{
-                          typography: 'subtitle2',
-                          display: 'block',
-                          '&:hover': { textDecoration: 'underline' },
-                        }}
-                      >
-                        {course.universityName}
-                      </Link>
-                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        {course.courseCode}
-                      </Typography>
-                    </Box>
+              <>
+                {/* Table Header */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    p: theme.spacing(1.5, 2.5),
+                    mb: 1,
+                    borderRadius: 1,
+                    bgcolor: 'background.neutral',
+                  }}
+                >
+                  <Box sx={{ width: '30%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      University
+                    </Typography>
+                  </Box>
 
-                    {/* Duration - 17% width */}
-                    <Box sx={{ width: '17%', display: 'flex', alignItems: 'center' }}>
-                      <Iconify
-                        icon="solar:clock-circle-linear"
-                        width={16}
-                        sx={{ mr: 1, color: 'text.disabled' }}
-                      />
-                      <Typography variant="body2">
-                        {course.startDate} - {course.endDate}
-                      </Typography>
-                    </Box>
+                  <Box sx={{ width: '20%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      Tuition Fee
+                    </Typography>
+                  </Box>
+                  <Box sx={{ width: '20%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      Start Date
+                    </Typography>
+                  </Box>
+                  <Box sx={{ width: '20%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      Deadline Date
+                    </Typography>
+                  </Box>
 
-                    {/* Tuition Fee - 18% width */}
-                    <Box sx={{ width: '18%', display: 'flex', alignItems: 'center' }}>
-                      <Iconify
-                        icon="solar:tag-price-linear"
-                        width={16}
-                        sx={{ mr: 1, color: 'text.disabled' }}
-                      />
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {course.price ? fCurrency(course.price) : '—'}
-                      </Typography>
-                    </Box>
-
-                    {/* Start Dates - 35% width */}
-                    <Box sx={{ width: '35%' }}>
-                      <Box
-                        sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, alignItems: 'center' }}
-                      >
-                        <Iconify
-                          icon="solar:calendar-line-duotone"
-                          width={16}
-                          sx={{ color: 'text.disabled' }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: 'text.primary',
-                            bgcolor: 'action.selected',
-                            px: 1,
-                            py: 0.5,
-                            borderRadius: 1,
-                            fontWeight: 500,
-                          }}
-                        >
-                          {new Date(course.startDate).toLocaleDateString('en-GB', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    {/* Status and Actions - remainder width */}
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      Status
+                    </Typography>
+                  </Box>
+                </Box>
+                <Stack spacing={2}>
+                  {university.map((course) => (
                     <Box
-                      sx={{
-                        flex: 1,
+                      key={course.id}
+                      sx={(theme) => ({
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'flex-end',
-                      }}
+                        p: theme.spacing(2, 2.5),
+                        borderRadius: 1,
+                        bgcolor: 'background.paper',
+                        boxShadow: theme.shadows[1],
+                      })}
                     >
-                      <Label
-                        variant="soft"
-                        color={
-                          (course.status === 'active' && 'success') ||
-                          (course.status === 'inactive' && 'warning') ||
-                          'default'
-                        }
-                        sx={{ mr: 1 }}
-                      >
-                        {course.status}
-                      </Label>
-                      {/* Course Actions Menu */}
-                      <IconButton
-                        size="small"
-                        color="default"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          // Create a unique popover ID for each course
-                          const courseMenuId = `course-menu-${course.id}`;
-                          courseMenuActions.onOpen(event, courseMenuId);
-                        }}
-                      >
-                        <Iconify icon="eva:more-vertical-fill" width={18} />
-                      </IconButton>
-                      {/* Course Actions Popover */}
-                      <CustomPopover
-                        open={courseMenuActions.open}
-                        anchorEl={courseMenuActions.anchorEl}
-                        onClose={() => courseMenuActions.onClose()}
-                        slotProps={{ arrow: { placement: 'right-top' } }}
-                        id={courseMenuActions.id}
-                      >
-                        <MenuList>
-                          {user?.role == 'admin' ? (
-                            <MenuItem
-                              component={RouterLink}
-                              href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
-                              sx={{ color: 'text.primary' }}
-                            >
-                              <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
-                              Edit Course
-                            </MenuItem>
-                          ) : (
-                            <></>
-                          )}
-                          {/* //Activate/Deactivate Option */}
-                          <MenuItem
-                            onClick={async () => {
-                              try {
-                                const newStatus =
-                                  course.status === 'active' ? 'inactive' : 'active';
-                                // await authAxiosInstance.patch(
-                                //   `${endpoints.university.status(course.id)}`,
-                                //   { status: newStatus }
-                                // );
-
-                                // Update the course status in the local state
-                                course.status = newStatus;
-
-                                // Show success message
-                                toast.success(
-                                  `Course ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`
-                                );
-
-                                // Force re-render by updating university state
-                                const updatedCourses = [...university];
-                                setUniversity(updatedCourses);
-
-                                // Close the menu
-                                courseMenuActions.onClose();
-                              } catch (error) {
-                                console.error('Failed to update course status:', error);
-                                toast.error('Failed to update course status');
-                              }
-                            }}
+                      {/* universityName Name and Code - 30% width */}
+                      <Box sx={{ width: '30%', pr: 2 }}>
+                        <Link
+                          component={RouterLink}
+                          href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
+                          color="inherit"
+                          sx={{
+                            typography: 'subtitle2',
+                            display: 'block',
+                            '&:hover': { textDecoration: 'underline' },
+                          }}
+                        >
+                          {course.universityName}
+                        </Link>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          {course.courseCode}
+                        </Typography>
+                      </Box>
+                      {/* Tuition Fee - 20% width */}
+                      <Box sx={{ width: '20%', display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                          {course.price ? fCurrency(course.price) : '—'}
+                        </Typography>
+                      </Box>
+                      {/* Start Date - 20% width */}
+                      <Box sx={{ width: '20%' }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 0.75,
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Typography
+                            variant="caption"
                             sx={{
-                              color: course.status === 'active' ? 'warning.main' : 'success.main',
+                              color: 'text.primary',
+                              bgcolor: 'action.selected',
+                              px: 1,
+                              py: 0.5,
+                              borderRadius: 1,
+                              fontWeight: 500,
                             }}
                           >
-                            <Iconify
-                              icon={
-                                course.status === 'active'
-                                  ? 'material-symbols:toggle-off'
-                                  : 'material-symbols:toggle-on'
-                              }
-                              width={16}
-                              sx={{ mr: 1 }}
-                            />
-                            {course.status === 'active' ? 'Deactivate Course' : 'Activate Course'}
-                          </MenuItem>
-                          {/* Delete Option */}
-                          {user?.role == 'admin' ? (
+                            {new Date(course.startDate).toLocaleDateString('en-GB', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      {/* Start applicationDeadline - 20% width */}
+                      <Box sx={{ width: '20%' }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 0.75,
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: 'text.primary',
+                              bgcolor: 'action.selected',
+                              px: 1,
+                              py: 0.5,
+                              borderRadius: 1,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {new Date(course.applicationDeadline).toLocaleDateString('en-GB', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </Typography>
+                        </Box>
+                      </Box>
+
+                      {/* Status and Actions - remainder width */}
+                      <Box
+                        sx={{
+                          flex: 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'flex-end',
+                        }}
+                      >
+                        <Label
+                          variant="soft"
+                          color={
+                            (course.status === 'active' && 'success') ||
+                            (course.status === 'inactive' && 'warning') ||
+                            'default'
+                          }
+                          sx={{ mr: 1 }}
+                        >
+                          {course.status}
+                        </Label>
+                        {/* Course Actions Menu */}
+                        <IconButton
+                          size="small"
+                          color="default"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            // Create a unique popover ID for each course
+                            const courseMenuId = `course-menu-${course.id}`;
+                            courseMenuActions.onOpen(event, courseMenuId);
+                          }}
+                        >
+                          <Iconify icon="eva:more-vertical-fill" width={18} />
+                        </IconButton>
+                        {/* Course Actions Popover */}
+                        <CustomPopover
+                          open={courseMenuActions.open}
+                          anchorEl={courseMenuActions.anchorEl}
+                          onClose={() => courseMenuActions.onClose()}
+                          slotProps={{ arrow: { placement: 'right-top' } }}
+                          id={courseMenuActions.id}
+                        >
+                          <MenuList>
+                            {user?.role == 'admin' ? (
+                              <MenuItem
+                                component={RouterLink}
+                                href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
+                                sx={{ color: 'text.primary' }}
+                              >
+                                <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
+                                Edit Course
+                              </MenuItem>
+                            ) : (
+                              <></>
+                            )}
+                            {/* //Activate/Deactivate Option */}
                             <MenuItem
-                              onClick={() => {
-                                // Set course for deletion and show confirmation dialog
-                                setCourseToDelete(course.id);
-                                courseDeleteDialog.onTrue();
-                                // Close the menu
-                                courseMenuActions.onClose();
+                              onClick={async () => {
+                                try {
+                                  const newStatus =
+                                    course.status === 'active' ? 'inactive' : 'active';
+                                  // await authAxiosInstance.patch(
+                                  //   `${endpoints.university.status(course.id)}`,
+                                  //   { status: newStatus }
+                                  // );
+
+                                  // Update the course status in the local state
+                                  course.status = newStatus;
+
+                                  // Show success message
+                                  toast.success(
+                                    `Course ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`
+                                  );
+
+                                  // Force re-render by updating university state
+                                  const updatedCourses = [...university];
+                                  setUniversity(updatedCourses);
+
+                                  // Close the menu
+                                  courseMenuActions.onClose();
+                                } catch (error) {
+                                  console.error('Failed to update course status:', error);
+                                  toast.error('Failed to update course status');
+                                }
                               }}
-                              sx={{ color: 'error.main' }}
+                              sx={{
+                                color: course.status === 'active' ? 'warning.main' : 'success.main',
+                              }}
                             >
                               <Iconify
-                                icon="solar:trash-bin-trash-bold"
+                                icon={
+                                  course.status === 'active'
+                                    ? 'material-symbols:toggle-off'
+                                    : 'material-symbols:toggle-on'
+                                }
                                 width={16}
                                 sx={{ mr: 1 }}
                               />
-                              Delete Course
+                              {course.status === 'active' ? 'Deactivate Course' : 'Activate Course'}
                             </MenuItem>
-                          ) : (
-                            <></>
-                          )}
-                        </MenuList>
-                      </CustomPopover>
+                            {/* Delete Option */}
+                            {user?.role == 'admin' ? (
+                              <MenuItem
+                                onClick={() => {
+                                  // Set course for deletion and show confirmation dialog
+                                  setCourseToDelete(course.id);
+                                  courseDeleteDialog.onTrue();
+                                  // Close the menu
+                                  courseMenuActions.onClose();
+                                }}
+                                sx={{ color: 'error.main' }}
+                              >
+                                <Iconify
+                                  icon="solar:trash-bin-trash-bold"
+                                  width={16}
+                                  sx={{ mr: 1 }}
+                                />
+                                Delete Course
+                              </MenuItem>
+                            ) : (
+                              <></>
+                            )}
+                          </MenuList>
+                        </CustomPopover>
+                      </Box>
                     </Box>
-                  </Box>
-                ))}
-              </Stack>
+                  ))}
+                </Stack>
+              </>
             ) : (
               <Box sx={{ py: 3, textAlign: 'center' }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
