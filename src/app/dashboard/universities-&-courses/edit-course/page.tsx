@@ -12,5 +12,5 @@ export const metadata: Metadata = { title: `Edit Course | Dashboard - ${CONFIG.a
 
 export default function Page() {
   // Redirect to the courses list if no ID is provided
-  redirect(paths.dashboard.universitiesAndCourses.list);
+  redirect(paths.dashboard.universitiesAndCourses.listCourses);
 }

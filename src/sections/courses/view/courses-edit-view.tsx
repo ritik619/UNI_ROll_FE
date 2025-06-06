@@ -14,14 +14,13 @@ import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
 import { toast } from 'src/components/snackbar';
-import { BasicBackButton, CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { CourseNewEditForm } from './course-new-edit-form';
 
 import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import { ICourse } from 'src/types/course';
 import { DashboardContent } from 'src/layouts/dashboard';
-
 
 // ----------------------------------------------------------------------
 
@@ -44,7 +43,7 @@ export default function CourseEditView({ courseId }: Props) {
     } catch (error) {
       console.error('Failed to fetch course:', error);
       toast.error('Failed to fetch course details');
-      router.push(paths.dashboard.universitiesAndCourses.list);
+      router.push(paths.dashboard.universitiesAndCourses.listCourses);
     } finally {
       setLoading(false);
     }

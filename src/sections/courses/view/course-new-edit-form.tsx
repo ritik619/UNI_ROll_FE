@@ -270,7 +270,7 @@ export function CourseNewEditForm({
         await createCourse(data);
       }
       toast.success(currentCourse ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.universitiesAndCourses.list);
+      router.push(paths.dashboard.universitiesAndCourses.listCourses);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || 'Something went wrong');
@@ -483,7 +483,7 @@ export function CourseNewEditForm({
               <LoadingButton
                 color="inherit"
                 variant="outlined"
-                onClick={() => router.push(paths.dashboard.universitiesAndCourses.list)}
+                onClick={() => router.push(paths.dashboard.universitiesAndCourses.listCourses)}
               >
                 Cancel
               </LoadingButton>
