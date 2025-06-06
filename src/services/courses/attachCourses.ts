@@ -7,7 +7,7 @@ export const courseAssociationSchema = z.object({
   courseId: z.string(),
   universityId: z.string(),
   startDate: z.string(), // ISO string format
-  endDate: z.string(),
+  // endDate: z.string(),
   price: z.number(),
   currency: z.string().min(1),
   applicationDeadline: z.string(),

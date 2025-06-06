@@ -10,7 +10,7 @@ export interface ICourseAssociation {
   universityId: string;
   universityName: string;
   startDate: Date;
-  endDate: Date;
+  // endDate: Date;
   price: number;
   currency?: string;
   applicationDeadline?: Date;
@@ -27,7 +27,7 @@ export interface ICreateCourseAssociation {
   courseId: string;
   universityId: string;
   startDate?: Date;
-  endDate?: Date;
+  // endDate?: Date;
   price?: number;
   currency?: string;
   applicationDeadline?: Date;
@@ -40,7 +40,7 @@ export interface ICreateCourseAssociation {
 
 export interface IUpdateCourseAssociation {
   startDate?: Date;
-  endDate?: Date;
+  // endDate?: Date;
   price?: number;
   currency?: string;
   applicationDeadline?: Date;

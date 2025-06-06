@@ -28,7 +28,7 @@ import { ICourse } from 'src/types/course';
 const CourseAssociationSchema = zod.object({
   courseId: zod.string().min(1, 'Course ID is required'),
   startDate: zod.string(),
-  endDate: zod.string(),
+  // endDate: zod.string(),
   applicationDeadline: zod.string(),
   price: zod.number().min(1),
   currency: zod.string().min(1),
@@ -56,7 +56,7 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
   const defaultValues: CourseAssociationFormType = {
     courseId: '',
     startDate: '',
-    endDate: '',
+    // endDate: '',
     applicationDeadline: '',
     price: 0,
     currency: 'USD',
@@ -136,7 +136,7 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
             <Field.Text name="price" label="Price (e.g. 9500)" type="number" />
             {/* <Field.Text name="currency" label="Currency (e.g. USD)" /> */}
             <Field.DatePicker name="startDate" label="Start Date" />
-            <Field.DatePicker name="endDate" label="End Date" />
+            {/* <Field.DatePicker name="endDate" label="End Date" /> */}
             <Field.DatePicker name="applicationDeadline" label="Application Deadline" />
             <Field.Text name="languageOfInstruction" label="Language" />
             <Field.Text name="requirementsDescription" label="Requirements" multiline rows={2} />

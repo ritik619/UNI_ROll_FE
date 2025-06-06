@@ -388,7 +388,7 @@ export function UniversityTableRow({
                       </Box>
                     </Box>
                     {/* Duration - 17% width */}
-                    <Box sx={{ width: '17%', display: 'flex', alignItems: 'center' }}>
+                    {/* <Box sx={{ width: '17%', display: 'flex', alignItems: 'center' }}>
                       <Box
                         sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, alignItems: 'center' }}
                       >
@@ -415,7 +415,7 @@ export function UniversityTableRow({
                           })}
                         </Typography>
                       </Box>
-                    </Box>
+                    </Box> */}
 
                     {/* Tuition Fee - 18% width */}
                     <Box sx={{ width: '18%', display: 'flex', alignItems: 'center' }}>
