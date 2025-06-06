@@ -6,14 +6,18 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 export const fetchCourses = async (
   status: 'active' | 'inactive' | 'all',
-  page?: number,
-  limit?: number,
+  page: number = 0,
+  limit: number = 5,
   universityId?: string,
   cityId?: string,
   countryCode?: string
 ) => {
+  console.log('fetchCourses', status, page, limit, universityId, cityId, countryCode);
   try {
-    const params: Record<string, any> = { page, limit };
+    const params: Record<string, any> = { 
+      page: page + 1, // Convert to 1-based indexing for the API
+      limit 
+    };
     if (status !== 'all') {
       params.status = status;
     }
@@ -26,18 +30,12 @@ export const fetchCourses = async (
     if (universityId) {
       params.universityId = universityId;
     }
-    if (page) {
-      params.page = page;
-    }
-    if (limit) {
-      params.limit = limit;
-    }
-
+    // Remove redundant page and limit assignments
     const response = await authAxiosInstance.get(endpoints.courses.list, { params });
     return response.data;
   } catch (err) {
-    console.error('Error fetching universities:', err);
-    toast.error('Error fetching universities!');
+    console.error('Error fetching courses:', err);
+    toast.error('Error fetching courses!');
     throw err;
   }
 };

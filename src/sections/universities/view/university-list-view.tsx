@@ -200,9 +200,8 @@ export function UniversityListView() {
   }, [table.page, table.rowsPerPage, filters.state]);
 
   useEffect(() => {
-    // table.setRowsPerPage(2);
     fetchPaginatedUniversities();
-  }, [fetchPaginatedUniversities]);
+  }, [fetchPaginatedUniversities, filters.state.status, filters.state.cityId, filters.state.countryCode]);
 
   return (
     <>
@@ -353,12 +352,8 @@ export function UniversityListView() {
                     <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
                   ) : (
                     <>
-                      {dataFiltered
-                        .slice(
-                          table.page * table.rowsPerPage,
-                          table.page * table.rowsPerPage + table.rowsPerPage
-                        )
-                        .map((row) => (
+                        {tableData.length > 0 ? (
+                          tableData.map((row) => (
                           <UniversityTableRow
                             key={row.id}
                             row={row}
@@ -368,14 +363,17 @@ export function UniversityListView() {
                             onToggleStatus={handleToggleStatus as any}
                             editHref={paths.dashboard.universitiesAndCourses.list}
                           />
-                        ))}
+                          ))
+                        ) : (
+                          <TableNoData notFound={notFound} />
+                        )}
 
-                      <TableEmptyRows
-                        height={table.dense ? 56 : 56 + 20}
-                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                      />
-
-                      <TableNoData notFound={notFound && !loading} />
+                        {tableData.length > 0 && tableData.length < table.rowsPerPage && (
+                          <TableEmptyRows
+                            height={table.dense ? 56 : 56 + 20}
+                            emptyRows={table.rowsPerPage - tableData.length}
+                          />
+                        )}
                     </>
                   )}
                 </TableBody>

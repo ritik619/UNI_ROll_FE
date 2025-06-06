@@ -73,18 +73,39 @@ export function AgentListView() {
   const filters = useSetState<IAgentTableFilters>({ name: '', role: [], status: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters: currentFilters,
-  });
+  const fetchPaginatedAgents = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { agents, total } = await fetchAgents(
+        filters.state.status,
+        table.page,
+        table.rowsPerPage
+      );
+      setTableData(agents);
+      setTotalCount(total);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [table.page, table.rowsPerPage, filters.state.status]);
 
-  const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
+  useEffect(() => {
+    fetchPaginatedAgents();
+  }, [fetchPaginatedAgents]);
 
-  const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
+  const handleChangePage = useCallback((event: unknown, newPage: number) => {
+    table.setPage(newPage);
+  }, [table]);
 
-  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+  const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    table.setRowsPerPage(newRowsPerPage);
+    table.setPage(0);
+  }, [table]);
+
+  const canReset = !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
+  const notFound = !tableData.length;
 
   const handleDeleteRow = useCallback(
     (id: string) => {
@@ -94,18 +115,16 @@ export function AgentListView() {
 
       setTableData(deleteRow);
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
+      table.onUpdatePageDeleteRow(tableData.length);
     },
-    [dataInPage.length, table, tableData]
+    [tableData, table]
   );
 
   const handleToggleStatus = useCallback(
     async (id: string, newStatus: 'active' | 'inactive') => {
-      // Here you would typically call an API to update the status
       await authAxiosInstance.patch(endpoints.agents.status(id), {
         status: newStatus,
       });
-      // For now, we'll just update it locally
       const updatedData = tableData.map((row) =>
         row.id === id ? { ...row, status: newStatus } : row
       );
@@ -123,11 +142,11 @@ export function AgentListView() {
 
     setTableData(deleteRows);
 
-    table.onUpdatePageDeleteRows(dataInPage.length, dataFiltered.length);
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+    table.onUpdatePageDeleteRows(tableData.length, tableData.length);
+  }, [tableData, table]);
 
   const handleFilterStatus = useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
+    (event: React.SyntheticEvent, newValue: 'all' | 'active' | 'inactive') => {
       table.onResetPage();
       updateFilters({ status: newValue });
     },
@@ -158,27 +177,6 @@ export function AgentListView() {
       }
     />
   );
-  const fetchPaginatedAgents = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { agents, total } = await fetchAgents(
-        filters.state.status,
-        table.page,
-        table.rowsPerPage
-      );
-      setTableData(agents);
-      setTotalCount(total);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [table.page, table.rowsPerPage]);
-
-  useEffect(() => {
-    // table.setRowsPerPage(2);
-    fetchPaginatedAgents();
-  }, [fetchPaginatedAgents]);
 
   return (
     <>
@@ -246,7 +244,7 @@ export function AgentListView() {
           {canReset && (
             <AgentTableFiltersResult
               filters={filters}
-              totalResults={dataFiltered.length}
+              totalResults={tableData.length}
               onResetPage={table.onResetPage}
               sx={{ p: 2.5, pt: 0 }}
             />
@@ -256,11 +254,11 @@ export function AgentListView() {
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={dataFiltered.length}
+              rowCount={tableData.length}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  dataFiltered.map((row) => row.id)
+                  tableData.map((row) => row.id)
                 )
               }
               action={
@@ -278,15 +276,9 @@ export function AgentListView() {
                   order={table.order}
                   orderBy={table.orderBy}
                   headCells={TABLE_HEAD}
-                  rowCount={dataFiltered.length}
+                  rowCount={tableData.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(
-                  //     checked,
-                  //     dataFiltered.map((row) => row.id)
-                  //   )
-                  // }
                 />
 
                 <TableBody>
@@ -294,12 +286,7 @@ export function AgentListView() {
                     <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
                   ) : (
                     <>
-                      {dataFiltered
-                        .slice(
-                          table.page * table.rowsPerPage,
-                          table.page * table.rowsPerPage + table.rowsPerPage
-                        )
-                        .map((row) => (
+                        {tableData.map((row) => (
                           <AgentTableRow
                             key={row.id}
                             row={row}
@@ -311,36 +298,17 @@ export function AgentListView() {
                           />
                         ))}
 
-                      <TableEmptyRows
-                        height={table.dense ? 56 : 56 + 20}
-                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                      />
+                        {!loading && tableData.length === 0 && <TableNoData notFound={notFound} />}
 
-                      <TableNoData notFound={notFound && !loading} />
+                        {!loading && tableData.length > 0 && tableData.length < table.rowsPerPage && (
+                          <TableEmptyRows
+                            height={table.dense ? 56 : 56 + 20}
+                            emptyRows={table.rowsPerPage - tableData.length}
+                          />
+                        )}
                     </>
                   )}
                 </TableBody>
-                {/* <TableFooter style={{backgroundColor:'yellow',flex:1,}}>
-                  <TableRow >
-                    <TablePagination
-                      rowsPerPageOptions={[1, 5, 10, 25, { label: 'All', value: -1 }]}
-                      colSpan={6}
-                      count={tableData.length}
-                      rowsPerPage={table.rowsPerPage}
-                      page={table.page}
-                      slotProps={{
-                        select: {
-                          inputProps: {
-                            'aria-label': 'Rows per page',
-                          },
-                          native: true,
-                        },
-                      }}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                  </TableRow>
-                </TableFooter> */}
               </Table>
             </Scrollbar>
           </Box>
@@ -350,9 +318,9 @@ export function AgentListView() {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={loading ? () => {} : table.onChangePage}
+            onPageChange={loading ? () => { } : handleChangePage}
             onChangeDense={loading ? () => {} : table.onChangeDense}
-            onRowsPerPageChange={loading ? () => {} : table.onChangeRowsPerPage}
+            onRowsPerPageChange={loading ? () => { } : handleChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>
@@ -385,7 +353,10 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
-    inputData = inputData.filter((agent) => agent.name.toLowerCase().includes(name.toLowerCase()));
+    inputData = inputData.filter((agent) =>
+      agent.name?.toLowerCase().includes(name.toLowerCase()) ||
+      `${agent.firstName} ${agent.lastName}`.toLowerCase().includes(name.toLowerCase())
+    );
   }
 
   if (status !== 'all') {

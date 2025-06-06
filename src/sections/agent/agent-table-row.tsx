@@ -31,7 +31,7 @@ type Props = {
   editHref: string;
   onSelectRow: () => void;
   onDeleteRow: () => void;
-  onToggleStatus?: (id: string, status: string) => void;
+  onToggleStatus?: (id: string, status: 'active' | 'inactive') => void;
 };
 
 export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus }: Props) {

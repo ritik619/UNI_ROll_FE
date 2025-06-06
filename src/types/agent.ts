@@ -76,20 +76,18 @@ export type IAgentCard = {
 
 export type IAgentItem = {
   id: string;
-  avatarUrl: string | File | null;
   firstName: string;
   lastName: string;
-  dateOfBirth: string;
-  bankDetails:{
+  email: string;
+  utrNumber: string;
+  postCode: string;
+  bankDetails?: {
     sortCode: string;
     accountNumber: string;
-  }
-  email: string;
-  address: string;
-  postCode: string;
-  utrNumber: string;
-  password: string;
+  };
   status: 'active' | 'inactive';
+  name?: string;
+  role?: string;
 };
 
 export type IAgentAccountBillingHistory = {

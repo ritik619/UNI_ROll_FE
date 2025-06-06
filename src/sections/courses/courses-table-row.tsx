@@ -44,7 +44,7 @@ type Props = {
   editHref: string;
   onSelectRow: () => void;
   onDeleteRow: () => void;
-  onToggleStatus?: (id: string, status: string) => void;
+  onToggleStatus?: (id: string, status: 'active' | 'inactive') => void;
 };
 
 export function CoursesTableRow({
@@ -136,7 +136,7 @@ export function CoursesTableRow({
     >
       <MenuList>
         {user?.role == 'admin' ? (
-          <MenuItem href={editHref} onClick={quickEditForm.onTrue}>
+          <MenuItem href={editHref} >
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>

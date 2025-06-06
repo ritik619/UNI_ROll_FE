@@ -6,13 +6,16 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 export const fetchUniversities = async (
   status: 'active' | 'inactive' | 'all',
-  page?: number,
-  limit?: number,
+  page: number = 0,
+  limit: number = 5,
   cityId?: string,
   countryCode?: string
 ) => {
   try {
-    const params: Record<string, any> = { page, limit };
+    const params: Record<string, any> = { 
+      page: page + 1, // Convert to 1-based indexing for the API
+      limit 
+    };
     if (status !== 'all') {
       params.status = status;
     }

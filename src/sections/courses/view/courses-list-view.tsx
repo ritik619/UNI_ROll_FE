@@ -147,7 +147,7 @@ export function CoursesListView() {
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleFilterStatus = useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
+    (event: React.SyntheticEvent, newValue: 'all' | 'active' | 'inactive') => {
       table.onResetPage();
       updateFilters({ status: newValue });
     },
@@ -179,6 +179,7 @@ export function CoursesListView() {
   );
   const fetchPaginatedCourses = useCallback(async () => {
     try {
+      console.log('fetchPaginatedCourses', filters.state);
       setLoading(true);
       const { courses, total } = await fetchCourses(
         filters.state.status,
@@ -203,7 +204,7 @@ export function CoursesListView() {
     console.log('called');
     // table.setRowsPerPage(2);
     fetchPaginatedCourses();
-  }, [fetchPaginatedCourses]);
+  }, []);
 
   return (
     <>
@@ -354,29 +355,26 @@ export function CoursesListView() {
                     <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
                   ) : (
                     <>
-                      {dataFiltered
-                        .slice(
-                          table.page * table.rowsPerPage,
-                          table.page * table.rowsPerPage + table.rowsPerPage
-                        )
-                        .map((row) => (
-                          <CoursesTableRow
-                            key={row.id}
-                            row={row}
-                            selected={table.selected.includes(row.id)}
-                            onSelectRow={() => table.onSelectRow(row.id)}
-                            onDeleteRow={() => handleDeleteRow(row.id)}
-                            onToggleStatus={handleToggleStatus as any}
-                            editHref={paths.dashboard.universitiesAndCourses.listCourses}
-                          />
-                        ))}
+                      {tableData.map((row) => (
+                        <CoursesTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id)}
+                          onSelectRow={() => table.onSelectRow(row.id)}
+                          onDeleteRow={() => handleDeleteRow(row.id)}
+                          onToggleStatus={handleToggleStatus}
+                          editHref={paths.dashboard.universitiesAndCourses.editCourse(row.id)}
+                        />
+                      ))}
 
-                      <TableEmptyRows
-                        height={table.dense ? 56 : 56 + 20}
-                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                      />
+                      {!loading && tableData.length === 0 && <TableNoData notFound={notFound} />}
 
-                      <TableNoData notFound={notFound && !loading} />
+                      {!loading && tableData.length > 0 && tableData.length < table.rowsPerPage && (
+                        <TableEmptyRows
+                          height={table.dense ? 56 : 56 + 20}
+                          emptyRows={table.rowsPerPage - tableData.length}
+                        />
+                      )}
                     </>
                   )}
                 </TableBody>

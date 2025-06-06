@@ -51,7 +51,7 @@ const PaymentAssociationSchema = zod.object({
   studentId: zod.string().min(1, 'Student ID is required'),
   totalCommission: zod.number().min(0, 'Total commission must be greater than or equal to 0'),
   commissionCurrency: zod.string().min(1, 'Commission currency is required'),
-  commissionPercentage: zod.number().min(0, 'Commission percentage must be greater than or equal to 0'),
+  // commissionPercentage: zod.number().min(0, 'Commission percentage must be greater than or equal to 0'),
   payments: zod.array(PaymentSchema).min(1, 'At least one payment is required'),
 });
 
@@ -149,17 +149,13 @@ export function StudentQuickAddPaymentAssociationForm({
 }: Props) {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(false);
-  const [courses, setCourses] = useState<ICourse[]>([]);
-  const [students, setStudents] = useState<IStudentsItem[]>([]);
-
   const defaultValues: PaymentAssociationFormType = {
     agentId,
     universityId,
     studentId,
     totalCommission: earning?.totalCommission ?? 0,
     commissionCurrency: earning?.commissionCurrency ?? 'USD',
-    commissionPercentage: earning?.commissionPercentage ?? 0,
+    // commissionPercentage: earning?.commissionPercentage ?? 0,
     payments: earning?.payments ?? [defaultPayment],
   };
   console.log('defaultValues', defaultValues);
@@ -209,40 +205,6 @@ export function StudentQuickAddPaymentAssociationForm({
     }
   });
 
-  const fetchPaginatedCourses = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { courses: c, total } = await fetchCourses('active');
-      setCourses(c);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchStudents = useCallback(async () => {
-    try {
-      setLoading(true);
-      // Fetch students - replace with your actual API call
-      const student = await authAxiosInstance.get(`${endpoints.students}/${studentId}`);
-      setStudents([student]);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [studentId]); // Add studentId to the dependencies
-
-  useEffect(() => {
-    fetchPaginatedCourses(); // No change here, you still need the courses
-    fetchStudents(); // This will fetch only the student based on studentId
-  }, [fetchPaginatedCourses, fetchStudents]);
-
-  useEffect(() => {
-    fetchPaginatedCourses();
-    fetchStudents();
-  }, [fetchPaginatedCourses, fetchStudents]);
 
   // Update form values when earning changes
   useEffect(() => {
@@ -251,7 +213,7 @@ export function StudentQuickAddPaymentAssociationForm({
         ...defaultValues,
         totalCommission: earning.totalCommission,
         commissionCurrency: earning.commissionCurrency,
-        commissionPercentage: earning.commissionPercentage,
+        // commissionPercentage: earning.commissionPercentage,
         payments: earning.payments
       });
     }

@@ -457,12 +457,7 @@ export function StudentsListView() {
                     <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
                   ) : (
                     <>
-                      {dataFiltered
-                        .slice(
-                          table.page * table.rowsPerPage,
-                          table.page * table.rowsPerPage + table.rowsPerPage
-                        )
-                        .map((row) => (
+                        {tableData.map((row) => (
                           <StudentsTableRow
                             key={row.id}
                             row={row}
@@ -476,12 +471,14 @@ export function StudentsListView() {
                           />
                         ))}
 
-                      <TableEmptyRows
-                        height={table.dense ? 56 : 56 + 20}
-                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                      />
+                        {!loading && tableData.length === 0 && <TableNoData notFound={notFound} />}
 
-                      <TableNoData notFound={notFound && !loading} />
+                        {!loading && tableData.length > 0 && tableData.length < table.rowsPerPage && (
+                          <TableEmptyRows
+                            height={table.dense ? 56 : 56 + 20}
+                            emptyRows={table.rowsPerPage - tableData.length}
+                          />
+                        )}
                     </>
                   )}
                 </TableBody>

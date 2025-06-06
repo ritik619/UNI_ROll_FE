@@ -5,8 +5,8 @@ import { IStudentStatus, IUpdateStudentStatus } from 'src/types/students';
 
 export const fetchStudents = async (
   status: IStudentStatus,
-  page: number,
-  limit: number,
+  page: number = 0,
+  limit: number = 5,
   universityId?: string,
   courseId?: string,
   agentId?: string,
@@ -16,13 +16,12 @@ export const fetchStudents = async (
 ) => {
   try {
     const params: Record<string, any> = {
-      page,
+      page: page + 1,
       limit,
     };
     if (status !== 'All') {
       params.status = status;
     }
-    params.limit = 1;
     if (cityId) {
       params.cityId = cityId;
     }
