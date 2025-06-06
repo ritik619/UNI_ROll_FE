@@ -46,7 +46,7 @@ const ICONS = {
 
 export const navData: NavSectionProps['data'] = [
   {
-    subheader: 'Management',
+    subheader: 'Management Portal',
     roles: ['admin'],
     items: [
       {
@@ -120,7 +120,7 @@ export const navData: NavSectionProps['data'] = [
     ],
   },
   {
-    subheader: 'Agent',
+    subheader: 'Agent Portal',
     roles: ['agent'],
     items: [
       {

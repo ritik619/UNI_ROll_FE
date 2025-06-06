@@ -113,8 +113,9 @@ export function StudentsTableRow({
         setLoading(false);
       }
     };
-
-    fetchEarningsData();
+    {
+      row.status === 'Enrolled' && fetchEarningsData();
+    }
   }, [row.id, row.agentId, row.intakeId, row.universityId, row.courseId]);
 
   const handleUnenroll = async () => {
