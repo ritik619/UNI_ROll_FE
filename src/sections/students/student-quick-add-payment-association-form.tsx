@@ -154,7 +154,7 @@ export function StudentQuickAddPaymentAssociationForm({
     universityId,
     studentId,
     totalCommission: earning?.totalCommission ?? 0,
-    commissionCurrency: earning?.commissionCurrency ?? 'USD',
+    commissionCurrency: earning?.commissionCurrency ?? 'EUR',
     // commissionPercentage: earning?.commissionPercentage ?? 0,
     payments: earning?.payments ?? [defaultPayment],
   };

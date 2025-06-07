@@ -7,3 +7,24 @@ export interface DashboardStats {
   totalUniversities: number;
   totalCourses: number;
 } 
+
+export type EarningsSummaryResponse = {
+  totalEarnings: number;
+  paidAmount: number;
+  pendingAmount: number;
+  currency: string;
+  earningsByIntake: {
+    intakeId: string;
+    intakeName: string;
+    totalAmount: number;
+    paidAmount: number;
+    pendingAmount: number;
+  }[];
+  earningsByUniversity: {
+    universityId: string;
+    universityName: string;
+    totalAmount: number;
+    paidAmount: number;
+    pendingAmount: number;
+  }[];
+};

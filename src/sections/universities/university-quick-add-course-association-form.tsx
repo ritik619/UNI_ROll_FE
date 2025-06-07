@@ -59,7 +59,7 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
     // endDate: '',
     applicationDeadline: '',
     price: 0,
-    currency: 'USD',
+    currency: 'EUR',
     requirementsDescription: '',
     languageOfInstruction: 'English',
     // maxStudents: 30,

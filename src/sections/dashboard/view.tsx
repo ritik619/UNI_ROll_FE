@@ -1,19 +1,26 @@
 'use client';
 
-import { CONFIG } from 'src/global-config';
-import Grid from '@mui/material/Grid2';
+import type { DashboardStats, EarningsSummaryResponse } from 'src/types/dashboard';
+
+import { useState, useEffect } from 'react';
+
+import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
+import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
+
 import { DashboardContent } from 'src/layouts/dashboard';
-import { Iconify } from 'src/components/iconify';
-import { Box } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { DashboardStats } from 'src/types/dashboard';
 import { fetchDashboardStats } from 'src/services/dashboard/fetch-stats';
+
+import { Iconify } from 'src/components/iconify';
+
 import { useAuthContext } from 'src/auth/hooks';
-import Skeleton from '@mui/material/Skeleton';
+
+import { AppRecentIntakeEarnings } from './recent-intakes';
+import { AppTopUniversityEarnings } from './top-earning-university';
 
 // ----------------------------------------------------------------------
 
@@ -108,9 +115,17 @@ const CARD_CONFIGS = [
 export function DashboardView() {
   const theme = useTheme();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [earningsByIntake, setEarningsByIntake] = useState<
+    EarningsSummaryResponse['earningsByIntake']
+  >([]);
+  const [earningsByUniversity, setEarningsByUniversity] = useState<
+    EarningsSummaryResponse['earningsByUniversity']
+  >([]);
+  const [currencyCode, setCurrencyCode] = useState<string>('EURO');
   const [loading, setLoading] = useState(true);
   const { user } = useAuthContext();
   const userRole = user?.role;
+
 
   // Filter cards based on user role
   const filteredCards = CARD_CONFIGS.filter(
@@ -130,7 +145,10 @@ export function DashboardView() {
     const loadStats = async () => {
       try {
         const data = await fetchDashboardStats();
-        setStats(data);
+        setStats(data[0]);
+        setEarningsByIntake(data[1]);
+        setEarningsByUniversity(data[2]);
+        setCurrencyCode(data[3]);
       } catch (error) {
         console.error('Failed to fetch dashboard stats:', error);
         // You might want to show an error message to the user here
@@ -355,7 +373,24 @@ export function DashboardView() {
             })}
           </Grid>
         </Card>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <AppRecentIntakeEarnings
+              title="Recent Intake Earnings"
+              list={earningsByIntake}
+              currencyCode="EUR"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 6 }}>
+            <AppTopUniversityEarnings
+              title="Top Earning Universities"
+              list={earningsByUniversity}
+              currencyCode={currencyCode}
+            />
+          </Grid>
+        </Grid>
       </Stack>
     </DashboardContent>
   );
-}
+} 

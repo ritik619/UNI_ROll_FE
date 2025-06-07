@@ -159,6 +159,7 @@ export const endpoints = {
   earnings: {
     root: 'earnings',
     details: (id: string) => `earnings/${id}`,
+    summary: 'earnings/summary',
   },
 };
 
