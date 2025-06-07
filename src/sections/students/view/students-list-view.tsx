@@ -7,7 +7,7 @@ import type { IStudentsItem, IStudentStatus, IStudentsTableFilters } from 'src/t
 
 import { varAlpha } from 'minimal-shared/utils';
 import { useState, useEffect, useCallback } from 'react';
-import { useBoolean, useSetState } from 'minimal-shared/hooks';
+import { usePopover, useBoolean, useSetState } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -18,6 +18,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
+import { MenuItem, MenuList } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
@@ -33,18 +34,18 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import { CustomPopover } from 'src/components/custom-popover';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import {
-  AgentSelect,
   CitySelect,
+  AgentSelect,
   CourseSelect,
+  IntakeSelect,
   CountrySelect,
   UniversitySelect,
-  IntakeSelect,
 } from 'src/components/select';
 import {
   useTable,
-  emptyRows,
   rowInPage,
   TableNoData,
   getComparator,
@@ -55,9 +56,10 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
+import { useAuthContext } from 'src/auth/hooks';
+
 import { StudentsTableRow } from '../students-table-row';
 import { StudentsTableFiltersResult } from '../students-table-filters-result';
-import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 const STATUS_OPTIONS = [
@@ -92,8 +94,10 @@ export function StudentsListView() {
   const [totalCount, setTotalCount] = useState(0);
   const [associations, setAssociations] = useState<ICourseAssociation[]>([]);
   const [intakes, setIntakes] = useState<IIntake[]>([]);
+  const menuActions = usePopover();
 
   const { user } = useAuthContext();
+  console.log(user);
   const userRole = user?.role;
   const isAdmin = userRole == 'admin';
   const isAgent = userRole == 'agent';
@@ -251,6 +255,77 @@ export function StudentsListView() {
     getData();
   }, []);
 
+  const handleExport = async () => {
+    const { students, total } = await fetchStudents(
+      currentFilters.status,
+      undefined,
+      undefined,
+      currentFilters.universityId,
+      currentFilters.courseId,
+      currentFilters.agentId,
+      currentFilters.intakeId,
+      currentFilters.countryCode,
+      currentFilters.cityId
+    );
+    console.log('export', students, total);
+    const flattenObject = (obj: any, prefix = '') =>
+      Object.entries(obj).reduce((acc, [k, v]) => {
+        const key = prefix ? `${prefix}_${k}` : k;
+        if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
+          Object.assign(acc, flattenObject(v, key));
+        } else if (Array.isArray(v)) {
+          acc[key] = v.join('; ');
+        } else {
+          acc[key] = v;
+        }
+        return acc;
+      }, {});
+
+    const flatData = students.map((row: any) => flattenObject(row));
+    const headers = Array.from(new Set(flatData.flatMap((obj: any) => Object.keys(obj))));
+    const csv = [
+      headers.join(','),
+      ...flatData.map((row: any) => headers.map((h) => JSON.stringify(row[h] ?? '')).join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'students.csv';
+    a.click();
+  };
+
+  const renderMenuActions = () => (
+    <CustomPopover
+      open={menuActions.open}
+      anchorEl={menuActions.anchorEl}
+      onClose={menuActions.onClose}
+      slotProps={{ arrow: { placement: 'right-top' } }}
+    >
+      <MenuList>
+        {/* <MenuItem onClick={() => menuActions.onClose()}>
+            <Iconify icon="solar:printer-minimalistic-bold" />
+            Print
+          </MenuItem>
+  
+          <MenuItem onClick={() => menuActions.onClose()}>
+            <Iconify icon="solar:import-bold" />
+            Import
+          </MenuItem> */}
+
+        <MenuItem
+          onClick={() => {
+            menuActions.onClose();
+            return handleExport();
+          }}
+        >
+          <Iconify icon="solar:export-bold" />
+          Export
+        </MenuItem>
+      </MenuList>
+    </CustomPopover>
+  );
+
   return (
     <>
       <DashboardContent>
@@ -277,50 +352,59 @@ export function StudentsListView() {
         />
 
         <Card>
-          <Tabs
-            value={currentFilters.status}
-            onChange={handleFilterStatus}
-            sx={[
-              (theme) => ({
-                px: 2.5,
-                boxShadow: `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-              }),
-            ]}
+          <div
+            style={{
+              justifyContent: 'space-between',
+              display: 'flex',
+              marginLeft: 8,
+              marginRight: 8,
+            }}
           >
-            {STATUS_OPTIONS.map((tab) => {
-              const statusCount =
-                tab.value === 'All'
-                  ? tableData.length
-                  : tableData.filter((student) => student.status === tab.value).length;
+            <Tabs
+              value={currentFilters.status}
+              onChange={handleFilterStatus}
+              style={{ justifyContent: 'space-between' }}
+              sx={[
+                (theme) => ({
+                  px: 2.5,
+                  boxShadow: `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+                }),
+              ]}
+            >
+              <>
+                {STATUS_OPTIONS.map((tab) => {
+                  const statusCount =
+                    tab.value === 'All'
+                      ? tableData.length
+                      : tableData.filter((student) => student.status === tab.value).length;
 
-              return (
-                <Tab
-                  key={tab.value}
-                  iconPosition="end"
-                  value={tab.value}
-                  label={tab.label}
-                  icon={
-                    <Label
-                      variant={
-                        tab.value === 'All' || tab.value === currentFilters.status
-                          ? 'filled'
-                          : 'soft'
+                  return (
+                    <Tab
+                      key={tab.value}
+                      iconPosition="end"
+                      value={tab.value}
+                      label={tab.label}
+                      icon={
+                        <Label
+                          variant={
+                            tab.value === 'All' || tab.value === currentFilters.status
+                              ? 'filled'
+                              : 'soft'
+                          }
+                          color={tab.value === 'Enrolled' ? 'success' : 'default'}
+                        >
+                          {statusCount}
+                        </Label>
                       }
-                      color={tab.value === 'Enrolled' ? 'success' : 'default'}
-                    >
-                      {statusCount}
-                    </Label>
-                  }
-                />
-              );
-            })}
-          </Tabs>
-
-          {/* <StudentsTableToolbar
-            filters={filters}
-            onResetPage={table.onResetPage}
-            options={{ roles: _roles }}
-          /> */}
+                    />
+                  );
+                })}
+              </>
+            </Tabs>
+            <IconButton onClick={menuActions.onOpen}>
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          </div>
           <Box
             sx={{
               rowGap: 3,
@@ -497,9 +581,11 @@ export function StudentsListView() {
       </DashboardContent>
 
       {renderConfirmDialog()}
+      {renderMenuActions()}
     </>
   );
 }
+
 
 // ----------------------------------------------------------------------
 

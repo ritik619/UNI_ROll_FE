@@ -1,12 +1,13 @@
+import type { IStudentStatus } from 'src/types/students';
+
 import { toast } from 'sonner';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
-import { IStudentStatus, IUpdateStudentStatus } from 'src/types/students';
 
 export const fetchStudents = async (
   status: IStudentStatus,
-  page: number = 0,
-  limit: number = 5,
+  page?: number,
+  limit?: number,
   universityId?: string,
   courseId?: string,
   agentId?: string,
@@ -15,10 +16,13 @@ export const fetchStudents = async (
   cityId?: string
 ) => {
   try {
-    const params: Record<string, any> = {
-      page: page + 1,
-      limit,
-    };
+    const params: Record<string, any> = {};
+    if (limit) {
+      params.limit = limit;
+    }
+    if (page) {
+      params.page = page + 1;
+    }
     if (status !== 'All') {
       params.status = status;
     }

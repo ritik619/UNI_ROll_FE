@@ -1,53 +1,55 @@
 // Types
 import type { IIntake } from 'src/types/intake';
-import type { IStudentsItem, IStudentStatus } from 'src/types/students';
 import type { ICourseAssociation } from 'src/types/courseAssociation';
-import type { IPaymentAssociation, IEarning, PaymentStatus } from 'src/types/paymentAssociation';
+import type { IStudentsItem, IStudentStatus } from 'src/types/students';
+import type { IEarning, PaymentStatus, IPaymentAssociation } from 'src/types/paymentAssociation';
 
 // React and Hooks
 import { useState, useEffect } from 'react';
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
-import { useTheme } from '@mui/material/styles';
 
+import { useTheme } from '@mui/material/styles';
 // MUI Components
 import {
   Box,
   Link,
   Stack,
+  Paper,
   Button,
   Avatar,
+  Divider,
   MenuList,
   MenuItem,
   TableRow,
+  Collapse,
   TableCell,
   IconButton,
-  Checkbox,
-  Collapse,
   Typography,
-  Paper,
   CircularProgress,
-  Divider,
 } from '@mui/material';
 
-// Utilities and Constants
-import { fCurrency } from 'src/utils/format-number';
 import { paths } from 'src/routes/paths';
-import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
-
 // Routes
 import { RouterLink } from 'src/routes/components';
 
+// Utilities and Constants
+import { fCurrency } from 'src/utils/format-number';
+
+import { fetchEarnings } from 'src/services/students/fetchPayments';
+import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
+
 // Custom Components
 import { Label } from 'src/components/label';
-import { Iconify } from 'src/components/iconify';
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
+
+import { useAuthContext } from 'src/auth/hooks';
+
 import { StudentsQuickEditForm } from './students-quick-edit-form';
 import { StudentQuickEnrollForm } from './students-quick-enroll-form';
 import { StudentQuickAddPaymentAssociationForm } from './student-quick-add-payment-association-form';
-import { fetchEarnings } from 'src/services/students/fetchPayments';
-import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -482,20 +484,18 @@ export function StudentsTableRow({
     </TableRow>
   );
 
-  const renderQuickPaymentForm = () => {
-    return (
-      <StudentQuickAddPaymentAssociationForm
-        studentId={row.id}
-        open={quickAddPayment.value}
-        onClose={quickAddPayment.onFalse}
-        universityId={row.universityId ?? ''}
-        agentId={row.agentId ?? ''}
-        courseId={row.courseId ?? ''}
-        intakeId={row.intakeId ?? ''}
-        earning={earning}
-      />
-    );
-  };
+  const renderQuickPaymentForm = () => (
+    <StudentQuickAddPaymentAssociationForm
+      studentId={row.id}
+      open={quickAddPayment.value}
+      onClose={quickAddPayment.onFalse}
+      universityId={row.universityId ?? ''}
+      agentId={row.agentId ?? ''}
+      courseId={row.courseId ?? ''}
+      intakeId={row.intakeId ?? ''}
+      earning={earning}
+    />
+  );
   const renderQuickEditForm = () => (
     <StudentsQuickEditForm
       currentStudents={row}
