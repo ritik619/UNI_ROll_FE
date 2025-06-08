@@ -25,7 +25,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { IStudentsItem } from 'src/types/students';
 import { StudentDocumentsView } from 'src/sections/students/components/student-documents-view';
 import { StudentFinanceView } from 'src/sections/students/components/student-finance-view';
-import { StudentBookingView } from 'src/sections/students/components/student-booking-view';
+import { StudentExamBookView } from 'src/sections/students/components/student-exam-booking-view';
 import { StudentConsentFormView } from 'src/sections/students/components/student-consent-form-view';
 import { StudentProgressView } from 'src/sections/students/components/student-progress-view';
 
@@ -183,15 +183,24 @@ export default function StudentDetailsPage({ params }: Props) {
           )}
 
           {currentTab === 'finance' && (
-            <StudentFinanceView student={student} onRefresh={fetchStudent} />
+            <StudentFinanceView
+              student={student}
+              finance={student.finance?.status || 'Applied'} // Default to 'Applied' if undefined
+              onRefresh={fetchStudent}
+            />
           )}
 
           {currentTab === 'booking' && (
-            <StudentBookingView student={student} onRefresh={fetchStudent} />
+            <StudentExamBookView student={student} onRefresh={fetchStudent} />
           )}
 
           {currentTab === 'progress' && (
-            <StudentProgressView student={student} onRefresh={fetchStudent} />
+            <StudentProgressView
+              key={student.id}
+              student={student}
+              status={student.status as 'Enrolled' | 'Withdrawn' | 'Deferred'} // Pass the current status
+              onRefresh={fetchStudent}
+            />
           )}
 
           {currentTab === 'consent' && (

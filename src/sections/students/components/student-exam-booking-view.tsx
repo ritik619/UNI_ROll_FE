@@ -16,7 +16,7 @@ type FormValues = {
   examTime: Date | null;
 };
 
-export function StudentBookingView({ student, onRefresh }: Props) {
+export function StudentExamBookView({ student, onRefresh }: Props) {
   const methods = useForm<FormValues>({
     defaultValues: {
       examDate: null,
