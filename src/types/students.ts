@@ -54,6 +54,7 @@ export interface IConsent {
   sent: boolean;
   sentTime?: Date;
   signed: boolean;
+  accepted: boolean;
 }
 
 export interface IStudentsItem {

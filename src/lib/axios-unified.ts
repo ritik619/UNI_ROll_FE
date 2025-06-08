@@ -119,6 +119,7 @@ export const endpoints = {
   students: {
     list: 'students',
     details: (id: string) => `students/${id}`,
+    sendConsentForm: (id: string) => `students/${id}/consent`,
     enroll: (id: string) => `students/${id}/enroll`,
     profilePhoto: (id: string) => `students/${id}/profile-photo`,
     status: (id: string) => `students/${id}/status`,

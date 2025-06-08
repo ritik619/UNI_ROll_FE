@@ -18,10 +18,6 @@ import { fetchDashboardStats } from 'src/services/dashboard/fetch-stats';
 import { Iconify } from 'src/components/iconify';
 
 import { useAuthContext } from 'src/auth/hooks';
-
-import { AppRecentIntakeEarnings } from './recent-intakes';
-import { AppTopUniversityEarnings } from './top-earning-university';
-
 // ----------------------------------------------------------------------
 
 // Custom hook for counting animation
@@ -146,9 +142,6 @@ export function DashboardView() {
       try {
         const data = await fetchDashboardStats();
         setStats(data[0]);
-        setEarningsByIntake(data[1]);
-        setEarningsByUniversity(data[2]);
-        setCurrencyCode(data[3]);
       } catch (error) {
         console.error('Failed to fetch dashboard stats:', error);
         // You might want to show an error message to the user here
@@ -373,23 +366,6 @@ export function DashboardView() {
             })}
           </Grid>
         </Card>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <AppRecentIntakeEarnings
-              title="Recent Intake Earnings"
-              list={earningsByIntake}
-              currencyCode="EUR"
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <AppTopUniversityEarnings
-              title="Top Earning Universities"
-              list={earningsByUniversity}
-              currencyCode={currencyCode}
-            />
-          </Grid>
-        </Grid>
       </Stack>
     </DashboardContent>
   );
