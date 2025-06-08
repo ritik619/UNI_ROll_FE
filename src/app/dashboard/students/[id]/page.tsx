@@ -191,7 +191,11 @@ export default function StudentDetailsPage({ params }: Props) {
           )}
 
           {currentTab === 'booking' && (
-            <StudentExamBookView student={student} onRefresh={fetchStudent} />
+            <StudentExamBookView
+              student={student}
+              booking={student.booking}
+              onRefresh={fetchStudent}
+            />
           )}
 
           {currentTab === 'progress' && (

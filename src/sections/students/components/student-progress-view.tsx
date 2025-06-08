@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import { toast } from 'src/components/snackbar';
 import { Box, Card, Typography, MenuItem, Select, FormControl, Button } from '@mui/material';
-import { IStudentsItem } from 'src/types/students';
+import { IStudentsItem, IStudentStatus } from 'src/types/students';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   student: IStudentsItem;
-  status: 'Enrolled' | 'Withdrawn' | 'Deferred' | 'UnEnrolled'; // Add status as a prop
+  status: IStudentStatus;
   onRefresh: () => void;
 };
 

@@ -8,7 +8,7 @@ import { IStudentsItem } from 'src/types/students';
 
 type Props = {
   student: IStudentsItem;
-  finance: 'Applied' | 'Approved'; // Finance status prop
+  finance: IFinanceStatus; // Finance status prop
   onRefresh: () => void;
 };
 
