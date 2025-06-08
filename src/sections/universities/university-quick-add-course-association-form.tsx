@@ -98,7 +98,6 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
     try {
       setLoading(true);
       const { courses: c, total } = await fetchCourses('active');
-      console.log(c);
       setCourses(c);
     } catch (err) {
       console.error(err);

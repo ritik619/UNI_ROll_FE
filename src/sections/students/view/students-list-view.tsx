@@ -97,7 +97,6 @@ export function StudentsListView() {
   const menuActions = usePopover();
 
   const { user } = useAuthContext();
-  console.log(user);
   const userRole = user?.role;
   const isAdmin = userRole == 'admin';
   const isAgent = userRole == 'agent';
@@ -267,7 +266,6 @@ export function StudentsListView() {
       currentFilters.countryCode,
       currentFilters.cityId
     );
-    console.log('export', students, total);
     const flattenObject = (obj: any, prefix = '') =>
       Object.entries(obj).reduce((acc, [k, v]) => {
         const key = prefix ? `${prefix}_${k}` : k;
@@ -307,7 +305,7 @@ export function StudentsListView() {
             <Iconify icon="solar:printer-minimalistic-bold" />
             Print
           </MenuItem>
-  
+
           <MenuItem onClick={() => menuActions.onClose()}>
             <Iconify icon="solar:import-bold" />
             Import
@@ -421,7 +419,7 @@ export function StudentsListView() {
               placeholder="Choose a University"
               onChange={(event, newValue) => {
                 // Handle value change
-                console.log(newValue);
+
                 filters.setState({ universityId: newValue });
               }}
             />
@@ -432,7 +430,7 @@ export function StudentsListView() {
               placeholder="Choose a Course"
               onChange={(event, newValue) => {
                 // Handle value change
-                console.log(newValue);
+
                 filters.setState({ courseId: newValue });
               }}
             />
@@ -444,7 +442,7 @@ export function StudentsListView() {
                 placeholder="Choose a Agent"
                 onChange={(event, newValue) => {
                   // Handle value change
-                  console.log(newValue);
+
                   filters.setState({ agentId: newValue });
                 }}
               />
@@ -456,7 +454,7 @@ export function StudentsListView() {
               placeholder="Choose a Intake"
               onChange={(event, newValue) => {
                 // Handle value change
-                console.log(newValue);
+
                 filters.setState({ intakeId: newValue });
               }}
             />
@@ -467,7 +465,7 @@ export function StudentsListView() {
               placeholder="Choose a Country"
               onChange={(event, newValue) => {
                 // Handle value change
-                console.log(newValue);
+
                 filters.setState({ countryCode: newValue });
               }}
             />
@@ -479,7 +477,7 @@ export function StudentsListView() {
                 placeholder="Choose a City"
                 onChange={(event, newValue) => {
                   // Handle value change
-                  console.log(newValue);
+
                   filters.setState({ cityId: newValue });
                 }}
                 countryCode={filters.state.countryCode}
@@ -585,7 +583,6 @@ export function StudentsListView() {
     </>
   );
 }
-
 
 // ----------------------------------------------------------------------
 

@@ -405,9 +405,9 @@ export function DashboardView() {
                   animatedValue = 0;
               }
 
-              const displayValue = card.isCurrency
-                ? `$${animatedValue.toLocaleString()}`
-                : animatedValue.toLocaleString();
+              // const displayValue = card.isCurrency
+              //   ? `$${animatedValue.toLocaleString()}`
+              //   : animatedValue.toLocaleString();
 
               return (
                 <Grid
@@ -476,7 +476,7 @@ export function DashboardView() {
                             lineHeight: 1.2,
                           }}
                         >
-                          {displayValue}
+                          {/* {displayValue} */}
                         </Typography>
                         <Typography
                           variant="body1"

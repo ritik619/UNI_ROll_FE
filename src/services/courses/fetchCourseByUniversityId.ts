@@ -6,7 +6,6 @@ const fetchCoursesByUniversityId = async (universityId: string) => {
   try {
     const response = await authAxiosInstance.get(endpoints.associations.byUniversity(universityId));
 
-    console.log('Response:', response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

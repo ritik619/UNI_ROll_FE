@@ -40,7 +40,6 @@ export const fetchAssociations = async (
     const response = await authAxiosInstance.get(endpoints.associations.root, {
       params,
     });
-    console.log('Response:', response);
     return response.data;
   } catch (err) {
     console.error('Error fetching universities:', err);

@@ -12,11 +12,10 @@ export const fetchCourses = async (
   cityId?: string,
   countryCode?: string
 ) => {
-  console.log('fetchCourses', status, page, limit, universityId, cityId, countryCode);
   try {
-    const params: Record<string, any> = { 
+    const params: Record<string, any> = {
       page: page + 1, // Convert to 1-based indexing for the API
-      limit 
+      limit,
     };
     if (status !== 'all') {
       params.status = status;

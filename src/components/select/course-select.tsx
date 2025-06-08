@@ -54,7 +54,6 @@ export function CourseSelect({
   const getCourses = async () => {
     try {
       const { courses: c } = await fetchCourses('active'); // update this endpoint
-      console.log('Courses response:', c);
       setCourses(c);
     } catch (e) {
       console.error('Failed to fetch courses', e);
@@ -64,7 +63,6 @@ export function CourseSelect({
   };
 
   useEffect(() => {
-    console.log('Fetching courses...');
     getCourses();
   }, []);
 

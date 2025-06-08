@@ -60,7 +60,6 @@ export default function IntakeEditView({ intakeId }: Props) {
     try {
       // For production, this would be a real API call:
       const response = await authAxiosInstance.get(`${endpoints.intakes.details(intakeId)}`);
-      console.log('Intake response:', response.data);
       setIntake(response.data);
     } catch (error) {
       console.error('Failed to fetch intake:', error);

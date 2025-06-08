@@ -47,7 +47,6 @@ type Props = {
 
 export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
   const router = useRouter();
-  console.log('IntakeNewEditForm', currentIntake, initialIntakeId);
   const defaultValues: NewIntakeSchemaType = {
     name: '',
     startDate: new Date().toDateString(),
@@ -77,10 +76,9 @@ export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
   } = methods;
 
   const createIntake = async (data: ICreateIntake) => {
-    console.log('Creating Intake with data:', data);
     // Create a direct payload object instead of using formData
     const payload = {
-      name: data.name.trim(),
+      name: data?.name?.trim(),
       startDate: new Date(data.startDate).toISOString(),
       description: data.description?.trim(),
       endDate: new Date(data.endDate).toISOString(),
@@ -96,7 +94,7 @@ export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
     if (!initialIntakeId) return {};
 
     const payload = {
-      name: data.name.trim(),
+      name: data.name?.trim(),
       startDate: data.startDate,
       description: data.description?.trim(),
       endDate: data.endDate,

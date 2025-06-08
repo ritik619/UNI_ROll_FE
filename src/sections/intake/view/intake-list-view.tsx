@@ -64,7 +64,7 @@ const TABLE_HEAD: TableHeadCellProps[] = [
 
 // ----------------------------------------------------------------------
 
-export function IntakeListView({earning}:{earning?:boolean}) {
+export function IntakeListView({ earning }: { earning?: boolean }) {
   const table = useTable();
 
   const confirmDialog = useBoolean();
@@ -183,7 +183,6 @@ export function IntakeListView({earning}:{earning?:boolean}) {
         table.page,
         table.rowsPerPage
       );
-      console.log(intakes);
       setTableData(intakes);
       setTotalCount(total);
     } catch (err) {
@@ -193,11 +192,11 @@ export function IntakeListView({earning}:{earning?:boolean}) {
     }
   }, [table.page, table.rowsPerPage, filters.state]);
 
-  useEffect(()=>{
-    if(earning){
+  useEffect(() => {
+    if (earning) {
       table.setDense(true);
     }
-  },[earning])
+  }, [earning]);
 
   useEffect(() => {
     // table.setRowsPerPage(2);
@@ -209,13 +208,18 @@ export function IntakeListView({earning}:{earning?:boolean}) {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Intakes"
-          links={earning?[]:[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Intakes', href: paths.dashboard.intakes.root },
-            { name: 'List' },
-          ]}
+          links={
+            earning
+              ? []
+              : [
+                  { name: 'Dashboard', href: paths.dashboard.root },
+                  { name: 'Intakes', href: paths.dashboard.intakes.root },
+                  { name: 'List' },
+                ]
+          }
           action={
-            isAdmin && !earning && (
+            isAdmin &&
+            !earning && (
               <Button
                 component={RouterLink}
                 href={paths.dashboard.intakes.new}

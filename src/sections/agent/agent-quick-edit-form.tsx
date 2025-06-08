@@ -132,7 +132,6 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
   };
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('onSubmit', data);
     try {
       await updateAgent(data);
       toast.success(currentAgent ? 'Update success!' : 'Update error!');

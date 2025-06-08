@@ -93,7 +93,6 @@ export function CourseNewEditForm({
     const getUniversities = async () => {
       try {
         const { universities: uni } = await fetchUniversities('active', 1, 100);
-        console.log('universities', uni);
         setUniversities(uni || []);
       } catch (error) {
         console.error('Failed to fetch universities', error);
@@ -231,11 +230,7 @@ export function CourseNewEditForm({
       // feeCurrency: 'USD',
       // Note: universityId is not included in the update payload as it cannot be changed
     };
-    console.log(
-      'Payload for update:',
-      currentCourse?.id,
-      `${endpoints.courses.details(currentCourse?.id)}`
-    );
+
     const response = await authAxiosInstance.patch<{ id: string }>(
       `${endpoints.courses.details(currentCourse?.id)}`,
       payload

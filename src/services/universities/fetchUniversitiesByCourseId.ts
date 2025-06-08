@@ -1,4 +1,3 @@
-
 import type {} from 'src/types/agent';
 
 import { toast } from 'sonner';
@@ -11,7 +10,7 @@ export const fetchUniversitiesByCourseId = async (
   page?: number,
   limit?: number,
   cityId?: string,
-  countryCode?: string,
+  countryCode?: string
 ) => {
   try {
     const params: Record<string, any> = { page, limit };
@@ -34,7 +33,6 @@ export const fetchUniversitiesByCourseId = async (
     const response = await authAxiosInstance.get(endpoints.associations.byCourses(courseId), {
       params,
     });
-    console.log('Response:', response);
     return response.data;
   } catch (err) {
     console.error('Error fetching universities:', err);

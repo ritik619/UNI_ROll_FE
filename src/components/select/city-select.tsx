@@ -66,7 +66,6 @@ export function CitySelect({
       const response = await authAxiosInstance.post(endpoints.location.cities, {
         countryCode,
       });
-      console.log('response', response);
       setCities(response.data);
     } catch (e) {
       console.error('Failed to fetch cities', e);

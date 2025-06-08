@@ -138,7 +138,6 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
   };
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('onSubmit', data);
     try {
       await updateAgent(data);
       toast.success(currentStudents ? 'Update success!' : 'Update error!');

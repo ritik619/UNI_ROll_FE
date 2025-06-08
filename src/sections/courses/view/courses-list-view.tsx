@@ -177,7 +177,6 @@ export function CoursesListView() {
   );
   const fetchPaginatedCourses = useCallback(async () => {
     try {
-      console.log('fetchPaginatedCourses', filters.state);
       setLoading(true);
       const { courses, total } = await fetchCourses(
         filters.state.status,
@@ -188,7 +187,6 @@ export function CoursesListView() {
         filters.state.countryCode
         // filters.state.role
       );
-      console.log(courses);
       setTableData(courses);
       setTotalCount(total);
     } catch (err) {
@@ -199,7 +197,6 @@ export function CoursesListView() {
   }, [table.page, table.rowsPerPage, filters.state]);
 
   useEffect(() => {
-    console.log('called');
     // table.setRowsPerPage(2);
     fetchPaginatedCourses();
   }, []);
@@ -283,7 +280,6 @@ export function CoursesListView() {
               placeholder="Choose a country"
               onChange={(event, newValue) => {
                 // Handle value change
-                console.log(newValue);
                 filters.setState({ countryCode: newValue });
               }}
             />
@@ -294,7 +290,6 @@ export function CoursesListView() {
                 getValue="cityId"
                 onChange={(event, newValue) => {
                   // Handle value change
-                  console.log(newValue);
                   filters.setState({ cityId: newValue });
                 }}
                 countryCode={filters.state.countryCode}

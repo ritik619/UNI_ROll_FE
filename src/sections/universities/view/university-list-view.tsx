@@ -67,7 +67,7 @@ const TABLE_HEAD: TableHeadCellProps[] = [
 
 // ----------------------------------------------------------------------
 
-export function UniversityListView({earning}:{earning?:boolean}) {
+export function UniversityListView({ earning }: { earning?: boolean }) {
   const table = useTable();
 
   const confirmDialog = useBoolean();
@@ -154,7 +154,6 @@ export function UniversityListView({earning}:{earning?:boolean}) {
     },
     [updateFilters, table]
   );
-  console.log(filters);
   const renderConfirmDialog = () => (
     <ConfirmDialog
       open={confirmDialog.value}
@@ -189,7 +188,6 @@ export function UniversityListView({earning}:{earning?:boolean}) {
         filters.state.cityId,
         filters.state.countryCode
       );
-      console.log(universities);
       setTableData(universities);
       setTotalCount(total);
     } catch (err) {
@@ -199,11 +197,11 @@ export function UniversityListView({earning}:{earning?:boolean}) {
     }
   }, [table.page, table.rowsPerPage, filters.state]);
 
-  useEffect(()=>{
-    if(earning){
+  useEffect(() => {
+    if (earning) {
       table.setDense(true);
     }
-  },[earning])
+  }, [earning]);
 
   useEffect(() => {
     fetchPaginatedUniversities();
@@ -219,13 +217,18 @@ export function UniversityListView({earning}:{earning?:boolean}) {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Universities"
-          links={earning?[]:[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Universities', href: paths.dashboard.universitiesAndCourses.list },
-            { name: 'List' },
-          ]}
+          links={
+            earning
+              ? []
+              : [
+                  { name: 'Dashboard', href: paths.dashboard.root },
+                  { name: 'Universities', href: paths.dashboard.universitiesAndCourses.list },
+                  { name: 'List' },
+                ]
+          }
           action={
-            isAdmin &&!earning&& (
+            isAdmin &&
+            !earning && (
               <Button
                 component={RouterLink}
                 href={paths.dashboard.universitiesAndCourses.addUniversity}
@@ -293,7 +296,7 @@ export function UniversityListView({earning}:{earning?:boolean}) {
               placeholder="Choose a country"
               onChange={(event, newValue) => {
                 // Handle value change
-                console.log(newValue);
+
                 filters.setState({ countryCode: newValue });
               }}
             />
@@ -304,7 +307,7 @@ export function UniversityListView({earning}:{earning?:boolean}) {
                 getValue="cityId"
                 onChange={(event, newValue) => {
                   // Handle value change
-                  console.log(newValue);
+
                   filters.setState({ cityId: newValue });
                 }}
                 countryCode={filters.state.countryCode}

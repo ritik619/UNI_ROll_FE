@@ -58,7 +58,7 @@ type Props = {
 
 export function StudentsNewEditForm({ currentStudent }: Props) {
   const router = useRouter();
-  
+
   const defaultValues: NewStudentsSchemaType = {
     fName: currentStudent?.firstName || '',
     lName: currentStudent?.lastName || '',
@@ -75,7 +75,6 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     // courses: '',
     // status: 'free',
   };
-  console.log(defaultValues.dob,'defaultValues',currentStudent);
 
   const methods = useForm<NewStudentsSchemaType>({
     mode: 'onSubmit',
@@ -89,7 +88,6 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     formState: { isSubmitting },
   } = methods;
 
-  console.log('currentStudent', methods);
   const createStudents = async (data: NewStudentsSchemaType) => {
     if (data.coverPhoto instanceof File) {
       const fileName = `${uuidv4}.${data.coverPhoto.name.split('.').pop()}`;
@@ -206,7 +204,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
             >
               <Field.Text name="fName" label="First Name" />
               <Field.Text name="lName" label="Last Name" />
-              <Field.DatePicker name="dob" label="Date of Birth" maxDate={dayjs()}/>
+              <Field.DatePicker name="dob" label="Date of Birth" maxDate={dayjs()} />
               <Field.Text name="email" label="Email Address" />
               {/* <Field.Text name="phoneNumber" label="Phone Number" /> */}
               <Field.CountrySelect

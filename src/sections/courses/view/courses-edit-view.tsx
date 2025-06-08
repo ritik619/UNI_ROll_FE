@@ -38,7 +38,6 @@ export default function CourseEditView({ courseId }: Props) {
     try {
       // For production, this would be a real API call:
       const response = await authAxiosInstance.get(`${endpoints.courses.details(courseId)}`);
-      console.log('Course response:', response.data);
       setCourse(response.data);
     } catch (error) {
       console.error('Failed to fetch course:', error);

@@ -56,12 +56,14 @@ export type DashboardLayoutProps = LayoutBaseProps & {
   };
 };
 
-
-function filterNavByUser(navData: {
-  subheader?: string;
-  roles?: string[];
-  items: NavItemDataProps[];
-}[], user: { role?: string, showUniversities?: boolean, showIntakes?: boolean }) {
+function filterNavByUser(
+  navData: {
+    subheader?: string;
+    roles?: string[];
+    items: NavItemDataProps[];
+  }[],
+  user: { role?: string; showUniversities?: boolean; showIntakes?: boolean }
+) {
   const isAdmin = user?.role === 'admin';
 
   return navData
@@ -94,23 +96,21 @@ function filterNavByUser(navData: {
             if (child.roles.includes('showIntakes') && user?.showIntakes) return true;
             return false;
           });
-          item.roles=user?.role==='admin'?['admin']: ['agent'];
+          item.roles = user?.role === 'admin' ? ['admin'] : ['agent'];
           return {
             ...item,
             ...(filteredChildren ? { children: filteredChildren } : {}),
           };
         });
-      
-      console.log({filteredItems,section});
+
       return {
         ...section,
-        roles:user?.role==='admin'?['admin']: ['agent','showUniversities','showIntakes'],
+        roles: user?.role === 'admin' ? ['admin'] : ['agent', 'showUniversities', 'showIntakes'],
         items: filteredItems,
       };
     })
     .filter((section) => section.items.length > 0); // Remove sections with no visible items
 }
-
 
 export function DashboardLayout({
   sx,
@@ -129,9 +129,8 @@ export function DashboardLayout({
 
   const navData = filterNavByUser(
     slotProps?.nav?.data ?? dashboardNavData,
-    user as { role: 'admin' | 'agent', showUniversities?: boolean, showIntakes?: boolean }
+    user as { role: 'admin' | 'agent'; showUniversities?: boolean; showIntakes?: boolean }
   );
-  console.log(navData,'navd');
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
   const isNavVertical = isNavMini || settings.state.navLayout === 'vertical';

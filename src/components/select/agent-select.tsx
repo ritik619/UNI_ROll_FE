@@ -77,7 +77,6 @@ export function AgentSelect({
       const agt = agents.find(
         (a) => `${a?.firstName} ${a?.lastName}` === inputValue || a.id === inputValue
       );
-      console.log(agt);
       return {
         agentId: agt?.id || '',
         agentName: `${agt?.firstName} ${agt?.lastName}` || '',
@@ -89,7 +88,6 @@ export function AgentSelect({
   const renderOption = useCallback(
     (props: React.HTMLAttributes<HTMLLIElement>, option: Value) => {
       const agent = getAgent(option);
-      console.log(agent);
       return (
         <li {...props} key={agent.agentId}>
           {agent.agentName}

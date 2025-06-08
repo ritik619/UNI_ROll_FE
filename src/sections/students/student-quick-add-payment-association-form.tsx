@@ -90,9 +90,7 @@ function PaymentItem({ index, onRemove }: { index: number; onRemove: () => void 
           mb: 2,
         }}
       >
-        <Typography variant="subtitle2">
-          Payment #{index + 1}
-        </Typography>
+        <Typography variant="subtitle2">Payment #{index + 1}</Typography>
         {index > 0 && (
           <Button
             size="small"
@@ -112,23 +110,10 @@ function PaymentItem({ index, onRemove }: { index: number; onRemove: () => void 
           gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
         }}
       >
-        <Field.Text
-          name={`payments.${index}.amount`}
-          label="Payment Amount"
-          type="number"
-        />
-        <Field.Text
-          name={`payments.${index}.description`}
-          label="Payment Description"
-        />
-        <Field.DatePicker
-          name={`payments.${index}.paymentDate`}
-          label="Payment Date"
-        />
-        <Field.Select
-          name={`payments.${index}.status`}
-          label="Payment Status"
-        >
+        <Field.Text name={`payments.${index}.amount`} label="Payment Amount" type="number" />
+        <Field.Text name={`payments.${index}.description`} label="Payment Description" />
+        <Field.DatePicker name={`payments.${index}.paymentDate`} label="Payment Date" />
+        <Field.Select name={`payments.${index}.status`} label="Payment Status">
           <MenuItem value="Paid">Paid</MenuItem>
           <MenuItem value="Pending">Pending</MenuItem>
         </Field.Select>
@@ -145,7 +130,7 @@ export function StudentQuickAddPaymentAssociationForm({
   agentId,
   courseId,
   intakeId,
-  earning
+  earning,
 }: Props) {
   const router = useRouter();
 
@@ -158,7 +143,6 @@ export function StudentQuickAddPaymentAssociationForm({
     // commissionPercentage: earning?.commissionPercentage ?? 0,
     payments: earning?.payments ?? [defaultPayment],
   };
-  console.log('defaultValues', defaultValues);
   const methods = useForm<PaymentAssociationFormType>({
     mode: 'all',
     resolver: zodResolver(PaymentAssociationSchema),
@@ -194,7 +178,6 @@ export function StudentQuickAddPaymentAssociationForm({
         courseId,
         intakeId,
       };
-      console.log(payload);
       await createPaymentAssociation(payload);
       toast.success('Payment completed successfully!');
       router.refresh();
@@ -205,7 +188,6 @@ export function StudentQuickAddPaymentAssociationForm({
     }
   });
 
-
   // Update form values when earning changes
   useEffect(() => {
     if (earning) {
@@ -214,7 +196,7 @@ export function StudentQuickAddPaymentAssociationForm({
         totalCommission: earning.totalCommission,
         commissionCurrency: earning.commissionCurrency,
         // commissionPercentage: earning.commissionPercentage,
-        payments: earning.payments
+        payments: earning.payments,
       });
     }
   }, [earning, reset]);
@@ -266,11 +248,7 @@ export function StudentQuickAddPaymentAssociationForm({
               py: 2,
             }}
           >
-            <Field.Text
-              name="totalCommission"
-              label="Total Commission"
-              type="number"
-            />
+            <Field.Text name="totalCommission" label="Total Commission" type="number" />
           </Box>
 
           <Divider sx={{ my: 3 }} />
@@ -281,11 +259,7 @@ export function StudentQuickAddPaymentAssociationForm({
 
           <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
             {fields.map((field, index) => (
-              <PaymentItem
-                key={field.id}
-                index={index}
-                onRemove={() => remove(index)}
-              />
+              <PaymentItem key={field.id} index={index} onRemove={() => remove(index)} />
             ))}
           </Stack>
 
