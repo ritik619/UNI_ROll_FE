@@ -1,7 +1,7 @@
 'use client';
 
 import type { Breakpoint } from '@mui/material/styles';
-import type { NavSectionProps } from 'src/components/nav-section';
+import type { NavItemDataProps, NavSectionProps } from 'src/components/nav-section';
 
 import { merge } from 'es-toolkit';
 import { useBoolean } from 'minimal-shared/hooks';
@@ -56,6 +56,62 @@ export type DashboardLayoutProps = LayoutBaseProps & {
   };
 };
 
+
+function filterNavByUser(navData: {
+  subheader?: string;
+  roles?: string[];
+  items: NavItemDataProps[];
+}[], user: { role?: string, showUniversities?: boolean, showIntakes?: boolean }) {
+  const isAdmin = user?.role === 'admin';
+
+  return navData
+    .filter((section) => {
+      // Admin sees everything
+      if (isAdmin) return !section.roles || section.roles.includes('admin');
+
+      // Agents see only sections where roles include 'agent' or no roles
+      return !section.roles || section.roles.includes('agent');
+    })
+    .map((section) => {
+      const filteredItems = section.items
+        .filter((item) => {
+          if (isAdmin) return true;
+
+          // Agents: check item roles
+          if (!item.roles) return true;
+          if (item.roles.includes('agent')) return true;
+          if (item.roles.includes('showUniversities') && user?.showUniversities) return true;
+          if (item.roles.includes('showIntakes') && user?.showIntakes) return true;
+          return false;
+        })
+        .map((item) => {
+          const filteredChildren = item.children?.filter((child) => {
+            if (isAdmin) return true;
+
+            if (!child.roles) return true;
+            if (child.roles.includes('agent')) return true;
+            if (child.roles.includes('showUniversities') && user?.showUniversities) return true;
+            if (child.roles.includes('showIntakes') && user?.showIntakes) return true;
+            return false;
+          });
+          item.roles=user?.role==='admin'?['admin']: ['agent'];
+          return {
+            ...item,
+            ...(filteredChildren ? { children: filteredChildren } : {}),
+          };
+        });
+      
+      console.log({filteredItems,section});
+      return {
+        ...section,
+        roles:user?.role==='admin'?['admin']: ['agent','showUniversities','showIntakes'],
+        items: filteredItems,
+      };
+    })
+    .filter((section) => section.items.length > 0); // Remove sections with no visible items
+}
+
+
 export function DashboardLayout({
   sx,
   cssVars,
@@ -71,10 +127,11 @@ export function DashboardLayout({
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
-  const navData = (slotProps?.nav?.data ?? dashboardNavData).filter(
-    (item) => item?.roles ? item?.roles?.includes(user?.role) : true
+  const navData = filterNavByUser(
+    slotProps?.nav?.data ?? dashboardNavData,
+    user as { role: 'admin' | 'agent', showUniversities?: boolean, showIntakes?: boolean }
   );
-
+  console.log(navData,'navd');
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
   const isNavVertical = isNavMini || settings.state.navLayout === 'vertical';

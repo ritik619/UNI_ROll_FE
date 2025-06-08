@@ -189,7 +189,7 @@ export function AgentListView({earning}:{earning?:boolean}) {
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Agents List"
+          heading="Agents"
           links={earning?[]:[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Agent', href: paths.dashboard.agent.root },

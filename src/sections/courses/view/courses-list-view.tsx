@@ -208,7 +208,7 @@ export function CoursesListView() {
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Courses List"
+          heading="Courses"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Courses', href: paths.dashboard.universitiesAndCourses.listCourses },

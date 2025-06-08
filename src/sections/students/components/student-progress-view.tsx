@@ -16,10 +16,12 @@ const STATUS_COLORS = {
   Enrolled: 'success',
   Withdrawn: 'error',
   Deferred: 'warning',
+  Unafilliated: 'error',
+  UnEnrolled: 'error',
 } as const;
 
 export function StudentProgressView({ student, status, onRefresh }: Props) {
-  const [currentStatus, setCurrentStatus] = useState<'Enrolled' | 'Withdrawn' | 'Deferred'>(status);
+  const [currentStatus, setCurrentStatus] = useState<IStudentStatus>(status);
   const [loading, setLoading] = useState(false);
 
   const handleStatusUpdate = async () => {
@@ -70,6 +72,7 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
           }}
         >
           <MenuItem value="Enrolled">Enrolled</MenuItem>
+          <MenuItem value="Unaffiliated">Unaffiliated</MenuItem>
           <MenuItem value="Withdrawn">Withdrawn</MenuItem>
           <MenuItem value="Deferred">Deferred</MenuItem>
         </Select>
@@ -78,11 +81,11 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
       <Box mt={2} sx={{ padding: '10px' }}>
         <Button
           onClick={handleStatusUpdate}
-          variant="contained"
+          variant="soft"
           color={STATUS_COLORS[currentStatus]}
           disabled={loading} // Disable button when loading
         >
-          {loading ? 'Updating...' : `Update Status to ${currentStatus}`}
+          {loading ? 'Updating...' : `Update`}
         </Button>
       </Box>
     </Card>

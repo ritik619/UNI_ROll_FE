@@ -24,6 +24,7 @@ import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 import { uploadFileAndGetURL } from 'src/auth/context';
 import { uuidv4 } from 'minimal-shared/utils';
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -57,12 +58,12 @@ type Props = {
 
 export function StudentsNewEditForm({ currentStudent }: Props) {
   const router = useRouter();
-
+  
   const defaultValues: NewStudentsSchemaType = {
     fName: currentStudent?.firstName || '',
     lName: currentStudent?.lastName || '',
     email: currentStudent?.email || '',
-    dob: currentStudent?.dateOfBirth || '',
+    dob: new Date(currentStudent?.dateOfBirth?.split('/').reverse().join('-')).toString() || '',
     // phonePrefix: '+91',
     phoneNumber: currentStudent?.phoneNumber || '',
     nationality: currentStudent?.nationality || '',
@@ -74,6 +75,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     // courses: '',
     // status: 'free',
   };
+  console.log(defaultValues.dob,'defaultValues',currentStudent);
 
   const methods = useForm<NewStudentsSchemaType>({
     mode: 'onSubmit',
@@ -204,21 +206,21 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
             >
               <Field.Text name="fName" label="First Name" />
               <Field.Text name="lName" label="Last Name" />
-              <Field.DatePicker name="dob" label="Date of Birth" />
+              <Field.DatePicker name="dob" label="Date of Birth" maxDate={dayjs()}/>
               <Field.Text name="email" label="Email Address" />
-              <Field.Phone
-                name="phoneNumber"
-                label="Country Code"
-                // getValue="phone"
-                // size="small"
-                id="phoneNumber"
-              />
               {/* <Field.Text name="phoneNumber" label="Phone Number" /> */}
               <Field.CountrySelect
                 name="nationality"
                 label="Country"
                 getValue="name"
                 id="nationality"
+              />
+              <Field.Text
+                name="phoneNumber"
+                label="Phone Number"
+                // getValue="phone"
+                // size="small"
+                id="phoneNumber"
               />
               <Field.Select name="sex" label="Sex">
                 {[

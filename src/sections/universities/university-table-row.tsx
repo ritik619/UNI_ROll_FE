@@ -50,6 +50,7 @@ type Props = {
   onSelectRow: () => void;
   onDeleteRow: () => void;
   onToggleStatus?: (id: string, status: string) => void;
+  earning?: boolean;
 };
 
 export function UniversityTableRow({
@@ -59,6 +60,7 @@ export function UniversityTableRow({
   onSelectRow,
   onDeleteRow,
   onToggleStatus,
+  earning,
 }: Props) {
   const theme = useTheme();
   const menuActions = usePopover(); // For university row actions
@@ -82,7 +84,7 @@ export function UniversityTableRow({
 
   // Fetch courses when row is expanded - using mock data for now
   useEffect(() => {
-    if (collapseRow.value) {
+    if (collapseRow.value && !earning) {
       const fetchCoursesById = async () => {
         setLoading(true);
         try {
@@ -104,7 +106,7 @@ export function UniversityTableRow({
 
       fetchCoursesById();
     }
-  }, [collapseRow.value, row.id]);
+  }, [collapseRow.value, row.id,earning]);
 
   // Function to handle course deletion
   const handleDeleteCourse = async () => {
@@ -287,13 +289,13 @@ export function UniversityTableRow({
 
       <TableCell>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton
+          {!earning && <IconButton
             color={collapseRow.value ? 'primary' : 'default'}
             onClick={collapseRow.onToggle}
             sx={{ ...(collapseRow.value && { bgcolor: 'action.hover' }) }}
           >
             <Iconify icon="eva:arrow-ios-downward-fill" />
-          </IconButton>
+          </IconButton>}
 
           <IconButton color={menuActions.open ? 'inherit' : 'default'} onClick={menuActions.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />

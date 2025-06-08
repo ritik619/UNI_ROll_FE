@@ -84,14 +84,14 @@ const CARD_CONFIGS = [
     gradient: 'linear-gradient(135deg, #8E33FF 0%, #9C27B0 100%)',
     roles: ['admin'],
   },
-  {
-    title: 'Total Earnings',
-    key: 'totalEarnings',
-    icon: 'solar:money-bag-bold',
-    color: '#FFAB00',
-    gradient: 'linear-gradient(135deg, #FFAB00 0%, #FFC107 100%)',
-    isCurrency: true,
-  },
+  // {
+  //   title: 'Total Earnings',
+  //   key: 'totalEarnings',
+  //   icon: 'solar:money-bag-bold',
+  //   color: '#FFAB00',
+  //   gradient: 'linear-gradient(135deg, #FFAB00 0%, #FFC107 100%)',
+  //   isCurrency: true,
+  // },
   {
     title: 'Total Universities',
     key: 'totalUniversities',

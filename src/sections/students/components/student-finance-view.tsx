@@ -25,13 +25,12 @@ export function StudentFinanceView({ student, finance, onRefresh }: Props) {
     setLoading(true);
 
     const data = {
-      studentId: student.id,
-      finance: currentFinance,
+      status: currentFinance,
     };
 
     try {
       const response = await authAxiosInstance.patch(
-        `${endpoints.students.finance}/${student.id}`,
+        endpoints.students.sendFinanceForm(student.id),
         data
       );
 
@@ -76,11 +75,11 @@ export function StudentFinanceView({ student, finance, onRefresh }: Props) {
       <Box mt={2} sx={{ padding: '10px' }}>
         <Button
           onClick={handleFinanceStatusUpdate}
-          variant="contained"
-          color={FINANCE_STATUS_COLORS[currentFinance]}
+          variant="soft"
+          color={'primary'}
           disabled={loading} // Disable button when loading
         >
-          {loading ? 'Updating...' : `Update Finance Status to ${currentFinance}`}
+          {loading ? 'Updating...' : `Update`}
         </Button>
       </Box>
     </Card>

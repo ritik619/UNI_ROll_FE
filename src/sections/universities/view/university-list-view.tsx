@@ -218,14 +218,14 @@ export function UniversityListView({earning}:{earning?:boolean}) {
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Universities List"
+          heading="Universities"
           links={earning?[]:[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Universities', href: paths.dashboard.universitiesAndCourses.list },
             { name: 'List' },
           ]}
           action={
-            isAdmin && (
+            isAdmin &&!earning&& (
               <Button
                 component={RouterLink}
                 href={paths.dashboard.universitiesAndCourses.addUniversity}
@@ -371,6 +371,7 @@ export function UniversityListView({earning}:{earning?:boolean}) {
                             onDeleteRow={() => handleDeleteRow(row.id)}
                             onToggleStatus={handleToggleStatus as any}
                             editHref={paths.dashboard.universitiesAndCourses.list}
+                            earning={earning}
                           />
                         ))
                       ) : (

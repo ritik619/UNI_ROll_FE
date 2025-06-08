@@ -22,7 +22,7 @@ type FormValues = {
 export function StudentExamBookView({ student, booking, onRefresh }: Props) {
   const methods = useForm<FormValues>({
     defaultValues: {
-      examDate: booking?.examDate ?? null, // Initialize with existing booking or null
+      examDate: new Date(booking?.examDate) ?? null, // Initialize with existing booking or null
       examTime: booking?.examTime ? new Date(booking.examTime) : null, // Handle examTime if available
     },
   });
@@ -41,7 +41,7 @@ export function StudentExamBookView({ student, booking, onRefresh }: Props) {
 
     try {
       const response = await authAxiosInstance.patch(
-        `${endpoints.students.booking}/${student.id}`,
+        endpoints.students.sendBookingForm(student.id),
         bookingData
       );
 
