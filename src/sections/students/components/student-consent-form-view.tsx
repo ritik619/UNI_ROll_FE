@@ -23,6 +23,7 @@ type Props = {
 export function StudentConsentFormView({ student, onRefresh }: Props) {
   const [status, setStatus] = useState<'Sent' | 'Pending' | 'Accepted'>(student?.consent?.signed ? 'Accepted' :student?.consent?.sent ? 'Sent' :  'Pending');
   const [loading, setLoading] = useState(false);
+  const [loadingMarkAsAccepted, setLoadingMarkAsAccepted] = useState(false);
 
   // Handle sending the consent form
   const handleSendConsentForm = async () => {
@@ -48,7 +49,7 @@ export function StudentConsentFormView({ student, onRefresh }: Props) {
   };
 
   const handleMarkAsAccepted = async () => {
-    setLoading(true);
+    setLoadingMarkAsAccepted(true);
     try {
       const response = await authAxiosInstance.patch(endpoints.students.sendConsentForm(student.id), {
         signed: true
@@ -56,7 +57,7 @@ export function StudentConsentFormView({ student, onRefresh }: Props) {
     } catch (error) {
       toast.error('An error occurred while marking the consent form as accepted.');
     } finally {
-      setLoading(false);
+      setLoadingMarkAsAccepted(false);
     }
   };
 
@@ -83,7 +84,7 @@ export function StudentConsentFormView({ student, onRefresh }: Props) {
               {status==="Accepted" && 'Accepted'}
             </Button>
           )}
-          {status === 'Accepted' ? <></> : loading ? (
+          {status === 'Accepted' ? <></> : loadingMarkAsAccepted ? (
             <CircularProgress size={24} color="inherit" /> // Show spinner while fetching or sending
           ) : (
             <Button

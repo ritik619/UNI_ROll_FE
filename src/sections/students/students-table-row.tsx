@@ -553,7 +553,7 @@ export function StudentsTableRow({
           </MenuItem>
         )}
 
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             if (onToggleStatus) {
               const newStatus = row.status;
@@ -571,7 +571,7 @@ export function StudentsTableRow({
             }
           />
           {row.status === 'Enrolled' ? 'Deactivate' : 'Activate'}
-        </MenuItem>
+        </MenuItem> */}
 
         <MenuItem
           onClick={() => {
