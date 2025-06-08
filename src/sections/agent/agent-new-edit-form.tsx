@@ -1,7 +1,7 @@
 import type { IAgentItem } from 'src/types/agent';
 
 import { z as zod } from 'zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -20,6 +20,7 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
+import { Switch } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +50,8 @@ export const NewAgentSchema = zod.object({
   utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
   password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.enum(['active', 'inactive']).optional(),
+  unc: zod.boolean(),
+  intake: zod.boolean(),
 });
 
 export type NewAgentSchemaType = zod.infer<typeof NewAgentSchema>;
@@ -73,6 +76,8 @@ export function AgentNewEditForm({ currentAgent }: Props) {
     sortCode: '',
     utrNumber: '',
     password: '',
+    unc: true,
+    intake: true,
   };
 
   const methods = useForm<NewAgentSchemaType>({
@@ -102,6 +107,10 @@ export function AgentNewEditForm({ currentAgent }: Props) {
       utrNumber: data.utrNumber.trim(),
       password: data.password.trim(),
       status: 'active',
+      // accessControl: {
+      //   unc: data.unc,
+      //   intake: data.intake,
+      // },
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.agents.list, payload);
@@ -173,7 +182,90 @@ export function AgentNewEditForm({ currentAgent }: Props) {
               />
               <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
             </Box>
+            {/* Access Control */}
+            {/* <Card
+              sx={{
+                padding: '20px',
+                marginY: '10px',
+                // width: '40vw',
+                display: 'flex',
+                alignItems: 'flex-start',
+                alignContent: 'center',
+                justifyContent: 'space-between',
+                flexDirection: 'column',
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ color: '#919eab' }}>
+                Access Control
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  alignContent: 'center',
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  width: '-webkit-fill-available',
+                }}
+              >
+                <Card
+                  sx={{
+                    p: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    width: '50%',
 
+                    padding: '10px',
+                    margin: '5px',
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ color: '#919eab' }}>
+                    Universities & Courses
+                  </Typography>
+                  <Controller
+                    name="unc"
+                    control={methods.control}
+                    render={({ field }) => (
+                      <Switch
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                      />
+                    )}
+                  />
+                </Card>
+
+                <Card
+                  sx={{
+                    p: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    width: '50%',
+                    padding: '10px',
+                    margin: '5px',
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ color: '#919eab' }}>
+                    Earnings Overview
+                  </Typography>
+                  <Controller
+                    name="intake"
+                    control={methods.control}
+                    render={({ field }) => (
+                      <Switch
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                      />
+                    )}
+                  />{' '}
+                </Card>
+              </Box>
+            </Card> */}
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 {!currentAgent ? 'Create agent' : 'Save changes'}

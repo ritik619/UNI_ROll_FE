@@ -88,6 +88,10 @@ export type IAgentItem = {
   status: 'active' | 'inactive';
   name?: string;
   role?: string;
+  accessControl?: {
+    unc: boolean;
+    intake: boolean;
+  };
 };
 
 export type IAgentAccountBillingHistory = {

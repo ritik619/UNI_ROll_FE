@@ -58,7 +58,6 @@ export const navData: NavSectionProps['data'] = [
         title: 'Agents',
         path: paths.dashboard.agent.list,
         icon: ICONS.agent,
-        roles: ['admin'],
         children: [
           // { title: 'Profile', path: paths.dashboard.agent.root },
           { title: 'Add Agent', path: paths.dashboard.agent.new },
@@ -74,6 +73,7 @@ export const navData: NavSectionProps['data'] = [
         icon: ICONS.booking,
         children: [
           // { title: 'Profile', path: paths.dashboard.students.root },
+          { title: 'Add Student', path: paths.dashboard.students.new },
           { title: 'Students List', path: paths.dashboard.students.list },
           // { title: 'Cards', path: paths.dashboard.students.cards },
           // { title: 'Edit', path: paths.dashboard.students.demo.edit },
@@ -133,12 +133,8 @@ export const navData: NavSectionProps['data'] = [
         path: paths.dashboard.students.root,
         icon: ICONS.booking,
         children: [
-          // { title: 'Profile', path: paths.dashboard.students.root },
           { title: 'Add Student', path: paths.dashboard.students.new },
           { title: 'Students List', path: paths.dashboard.students.list },
-          // { title: 'Cards', path: paths.dashboard.students.cards },
-          // { title: 'Edit', path: paths.dashboard.students.demo.edit },
-          // { title: 'Account', path: paths.dashboard.students.account },
         ],
       },
       {
