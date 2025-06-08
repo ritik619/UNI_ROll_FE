@@ -208,7 +208,7 @@ export function IntakeListView({earning}:{earning?:boolean}) {
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Intakes List"
+          heading="Intakes"
           links={earning?[]:[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Intakes', href: paths.dashboard.intakes.root },

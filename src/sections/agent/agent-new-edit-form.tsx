@@ -107,10 +107,8 @@ export function AgentNewEditForm({ currentAgent }: Props) {
       utrNumber: data.utrNumber.trim(),
       password: data.password.trim(),
       status: 'active',
-      // accessControl: {
-      //   unc: data.unc,
-      //   intake: data.intake,
-      // },
+      showUniversities: data.unc,
+      showIntakes: data.intake,
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.agents.list, payload);
@@ -183,7 +181,7 @@ export function AgentNewEditForm({ currentAgent }: Props) {
               <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
             </Box>
             {/* Access Control */}
-            {/* <Card
+            <Card
               sx={{
                 padding: '20px',
                 marginY: '10px',
@@ -265,7 +263,7 @@ export function AgentNewEditForm({ currentAgent }: Props) {
                   />{' '}
                 </Card>
               </Box>
-            </Card> */}
+            </Card>
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 {!currentAgent ? 'Create agent' : 'Save changes'}

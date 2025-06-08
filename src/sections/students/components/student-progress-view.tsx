@@ -78,11 +78,11 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
       <Box mt={2} sx={{ padding: '10px' }}>
         <Button
           onClick={handleStatusUpdate}
-          variant="contained"
+          variant="soft"
           color={STATUS_COLORS[currentStatus]}
           disabled={loading} // Disable button when loading
         >
-          {loading ? 'Updating...' : `Update Status to ${currentStatus}`}
+          {loading ? 'Updating...' : `Updatela`}
         </Button>
       </Box>
     </Card>
