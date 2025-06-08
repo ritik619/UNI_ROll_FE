@@ -3,7 +3,7 @@
 import type { DashboardStats, EarningsSummaryResponse } from 'src/types/dashboard';
 
 import { useState, useEffect } from 'react';
-
+import React from 'react';
 import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid2';
@@ -121,7 +121,7 @@ export function DashboardView() {
   const [loading, setLoading] = useState(true);
   const { user } = useAuthContext();
   const userRole = user?.role;
-
+  const isAgent = userRole == 'agent';
 
   // Filter cards based on user role
   const filteredCards = CARD_CONFIGS.filter(
@@ -226,6 +226,134 @@ export function DashboardView() {
     );
   }
 
+  const UserDetails = () => {
+    const formatDate = (timestamp: any) => {
+      if (timestamp && timestamp.seconds) {
+        const date = new Date(timestamp.seconds * 1000);
+        return date.toLocaleDateString(); // You can format the date as you like
+      }
+      return 'N/A'; // Fallback if the date is not available
+    };
+
+    return (
+      <Box sx={{ paddingY: 2 }}>
+        {/* Profile Header */}
+        <Card
+          sx={{
+            p: 4,
+            position: 'relative',
+            height: '180px',
+            transition: 'all 0.3s ease-in-out',
+            '&:hover': {
+              transform: 'translateY(-4px)',
+              boxShadow: 8,
+            },
+          }}
+        >
+          {/* Background gradient */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              opacity: 0.1,
+              background: 'linear-gradient(135deg, #f0f0f0, #e0e0e0)',
+            }}
+          />
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ height: '100%', px: 3 }}
+          >
+            <Stack spacing={1} alignItems="flex-end">
+              <Typography variant="h3" sx={{ color: 'text.primary', fontWeight: 700 }}>
+                {`${user?.firstName} ${user?.lastName}`}
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+                {user?.email}
+              </Typography>
+            </Stack>
+            {/* Additional Details Section */}
+            <Card
+              sx={{
+                p: 4,
+                position: 'relative',
+                height: '18vh',
+                transition: 'all 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 8,
+                },
+              }}
+            >
+              {/* Background gradient */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  opacity: 0.1,
+                  background: 'linear-gradient(135deg, #f0f0f0, #e0e0e0)',
+                }}
+              />
+              <Stack direction="column" justifyContent="center" sx={{ px: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Additional Details
+                </Typography>
+                <Typography variant="body1">Date of Birth: {user?.dateOfBirth}</Typography>
+                <Typography variant="body1">Phone Number: {user?.phoneNumber}</Typography>
+                <Typography variant="body1">Address: {user?.address}</Typography>
+                <Typography variant="body1">Post Code: {user?.postCode}</Typography>
+              </Stack>
+            </Card>
+
+            {/* Bank Details Section */}
+            <Card
+              sx={{
+                p: 4,
+                position: 'relative',
+                height: '18vh',
+                transition: 'all 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 8,
+                },
+              }}
+            >
+              {/* Background gradient */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  opacity: 0.1,
+                  background: 'linear-gradient(135deg, #f0f0f0, #e0e0e0)',
+                }}
+              />
+              <Stack direction="column" justifyContent="center" sx={{ px: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Bank Details
+                </Typography>
+                <Typography variant="body1">Sort Code: {user?.bankDetails?.sortCode}</Typography>
+                <Typography variant="body1">
+                  Account Number: {user?.bankDetails?.accountNumber}
+                </Typography>
+                <Typography variant="body1">UTR Number: {user?.utrNumber}</Typography>
+              </Stack>
+            </Card>
+          </Stack>
+        </Card>
+      </Box>
+    );
+  };
+
   return (
     <DashboardContent>
       <Stack spacing={3}>
@@ -234,6 +362,7 @@ export function DashboardView() {
         </Typography>
 
         <Card sx={{ p: 3 }}>
+          {isAgent && UserDetails()}
           <Grid
             container
             spacing={3}
@@ -369,4 +498,4 @@ export function DashboardView() {
       </Stack>
     </DashboardContent>
   );
-} 
+}
