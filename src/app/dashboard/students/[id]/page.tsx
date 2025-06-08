@@ -24,6 +24,10 @@ import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { IStudentsItem } from 'src/types/students';
 import { StudentDocumentsView } from 'src/sections/students/components/student-documents-view';
+import { StudentFinanceView } from 'src/sections/students/components/student-finance-view';
+import { StudentBookingView } from 'src/sections/students/components/student-booking-view';
+import { StudentConsentFormView } from 'src/sections/students/components/student-consent-form-view';
+import { StudentProgressView } from 'src/sections/students/components/student-progress-view';
 
 // ----------------------------------------------------------------------
 
@@ -108,29 +112,27 @@ export default function StudentDetailsPage({ params }: Props) {
 
       {/* Student Info Card */}
       <Card sx={{ p: 3, mb: 4 }}>
-        <Stack 
-          direction={{ xs: 'column', sm: 'row' }} 
-          spacing={3}
-          alignItems={{ sm: 'center' }}
-        >
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems={{ sm: 'center' }}>
           <Box
             component="img"
             alt={student.firstName}
             src={student.coverPhoto}
-            sx={{ 
-              width: 80, 
+            sx={{
+              width: 80,
               height: 80,
               borderRadius: 1.5,
               bgcolor: 'background.neutral',
               border: (theme) => `solid 1px ${theme.palette.divider}`,
             }}
           />
-          
+
           <Stack spacing={1.5} flexGrow={1}>
-            <Typography variant="h5">{student.firstName} {student.lastName}</Typography>
-            
-            <Stack 
-              direction={{ xs: 'column', sm: 'row' }} 
+            <Typography variant="h5">
+              {student.firstName} {student.lastName}
+            </Typography>
+
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secondary', typography: 'body2' }}
             >
@@ -138,7 +140,7 @@ export default function StudentDetailsPage({ params }: Props) {
                 <Iconify icon="eva:email-fill" width={16} />
                 <span>{student.email}</span>
               </Stack>
-              
+
               <Stack direction="row" spacing={1} alignItems="center">
                 <Iconify icon="eva:phone-fill" width={16} />
                 <span>{student.phoneNumber}</span>
@@ -146,7 +148,9 @@ export default function StudentDetailsPage({ params }: Props) {
 
               <Stack direction="row" spacing={1} alignItems="center">
                 <Iconify icon="eva:pin-fill" width={16} />
-                <span>{student.address}, {student.postCode}</span>
+                <span>
+                  {student.address}, {student.postCode}
+                </span>
               </Stack>
             </Stack>
           </Stack>
@@ -175,29 +179,26 @@ export default function StudentDetailsPage({ params }: Props) {
         {/* Tab Content */}
         <Box sx={{ mt: 3 }}>
           {currentTab === 'documents' && (
-            <StudentDocumentsView 
-              student={student} 
-              onRefresh={fetchStudent}
-            />
+            <StudentDocumentsView student={student} onRefresh={fetchStudent} />
           )}
 
           {currentTab === 'finance' && (
-            <Typography>Finance content will go here</Typography>
+            <StudentFinanceView student={student} onRefresh={fetchStudent} />
           )}
 
           {currentTab === 'booking' && (
-            <Typography>Booking content will go here</Typography>
+            <StudentBookingView student={student} onRefresh={fetchStudent} />
           )}
 
           {currentTab === 'progress' && (
-            <Typography>Progress content will go here</Typography>
+            <StudentProgressView student={student} onRefresh={fetchStudent} />
           )}
 
           {currentTab === 'consent' && (
-            <Typography>Consent Form content will go here</Typography>
+            <StudentConsentFormView student={student} onRefresh={fetchStudent} />
           )}
         </Box>
       </Card>
     </DashboardContent>
   );
-} 
+}

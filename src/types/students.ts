@@ -30,7 +30,16 @@ export type IStudentsTableFilters = {
   agentId: string;
   intakeId: string;
 };
-
+export type IStudentsCard = {
+  id: string;
+  name: string;
+  role: string;
+  coverUrl: string;
+  avatarUrl: string;
+  totalPosts: number;
+  totalFollowers: number;
+  totalFollowing: number;
+};
 export interface IFinance {
   status: IFinanceStatus;
 }

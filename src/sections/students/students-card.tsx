@@ -1,4 +1,4 @@
-import type { IStudentsCard } from 'src/types/agent';
+import type { IStudentsCard } from 'src/types/students';
 import type { CardProps } from '@mui/material/Card';
 
 import { varAlpha } from 'minimal-shared/utils';

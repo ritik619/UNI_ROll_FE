@@ -520,19 +520,17 @@ export function StudentsTableRow({
       slotProps={{ arrow: { placement: 'right-top' } }}
     >
       <MenuList>
-        {isAgent && (
-          <Link
-            component={RouterLink}
-            href={paths.dashboard.students.edit(row.id)}
-            color="inherit"
-            sx={{ cursor: 'pointer' }}
-          >
-            <MenuItem href={paths.dashboard.students.details(row.id)}>
-              <Iconify icon="solar:pen-bold" />
-              Edit
-            </MenuItem>
-          </Link>
-        )}
+        <Link
+          component={RouterLink}
+          href={paths.dashboard.students.edit(row.id)}
+          color="inherit"
+          sx={{ cursor: 'pointer' }}
+        >
+          <MenuItem href={paths.dashboard.students.details(row.id)}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </MenuItem>
+        </Link>
 
         {row.status !== 'Enrolled' ? (
           <MenuItem

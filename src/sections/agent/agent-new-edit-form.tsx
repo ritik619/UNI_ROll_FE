@@ -76,8 +76,8 @@ export function AgentNewEditForm({ currentAgent }: Props) {
     sortCode: '',
     utrNumber: '',
     password: '',
-    unc: true,
-    intake: true,
+    unc: false,
+    intake: false,
   };
 
   const methods = useForm<NewAgentSchemaType>({
