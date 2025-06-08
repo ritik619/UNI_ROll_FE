@@ -21,7 +21,7 @@ type Props = {
 };
 
 export function StudentConsentFormView({ student, onRefresh }: Props) {
-  const [status, setStatus] = useState<'Sent' | 'Pending' | 'Accepted'>(student?.consent?.sent ? 'Sent' : student?.consent?.accepted ? 'Accepted' : 'Pending');
+  const [status, setStatus] = useState<'Sent' | 'Pending' | 'Accepted'>(student?.consent?.signed ? 'Accepted' :student?.consent?.sent ? 'Sent' :  'Pending');
   const [loading, setLoading] = useState(false);
 
   // Handle sending the consent form
@@ -51,7 +51,7 @@ export function StudentConsentFormView({ student, onRefresh }: Props) {
     setLoading(true);
     try {
       const response = await authAxiosInstance.patch(endpoints.students.sendConsentForm(student.id), {
-        accepted: true
+        signed: true
       });
     } catch (error) {
       toast.error('An error occurred while marking the consent form as accepted.');
@@ -90,7 +90,7 @@ export function StudentConsentFormView({ student, onRefresh }: Props) {
               variant="outlined"
               component="span"
               color={CONSENT_FORM_STATUS_COLORS.Accepted}
-              onClick={handleSendConsentForm} // Trigger API call when button is clicked
+              onClick={handleMarkAsAccepted} // Trigger API call when button is clicked
             >
               Mark as Accepted
             </Button>

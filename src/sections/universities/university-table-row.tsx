@@ -252,16 +252,13 @@ export function UniversityTableRow({
         </Box>
       </TableCell>
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.cityName}</TableCell>
-
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.countryName}</TableCell>
-
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+      <TableCell>{row.cityName}</TableCell>
+      <TableCell>{row.countryName}</TableCell>
+      <TableCell>
         <Link href={row.website} target="_blank" rel="noopener" sx={{ color: 'primary.main' }}>
           {row.website}
         </Link>
       </TableCell>
-
       <TableCell>
         <Label
           variant="soft"
@@ -271,8 +268,21 @@ export function UniversityTableRow({
             'default'
           }
         >
-          {row.status ?? 'active'}
+          {row.status}
         </Label>
+      </TableCell>
+      <TableCell>
+        <Stack spacing={0.5}>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Total: {row.totalAmount ? fCurrency(row.totalAmount) : '—'}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'success.main' }}>
+            Paid: {row.paidAmount ? fCurrency(row.paidAmount) : '—'}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'warning.main' }}>
+            Pending: {row.pendingAmount ? fCurrency(row.pendingAmount) : '—'}
+          </Typography>
+        </Stack>
       </TableCell>
 
       <TableCell>

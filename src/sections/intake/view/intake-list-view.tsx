@@ -58,12 +58,13 @@ const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'endDate', label: 'End Date', width: 180 },
   // { id: 'description', label: 'Website', width: 220 },
   { id: 'status', label: 'Status', width: 100 },
+  { id: 'payments', label: 'Payment Details', width: 200 },
   { id: '', width: 88 },
 ];
 
 // ----------------------------------------------------------------------
 
-export function IntakeListView() {
+export function IntakeListView({earning}:{earning?:boolean}) {
   const table = useTable();
 
   const confirmDialog = useBoolean();
@@ -192,6 +193,12 @@ export function IntakeListView() {
     }
   }, [table.page, table.rowsPerPage, filters.state]);
 
+  useEffect(()=>{
+    if(earning){
+      table.setDense(true);
+    }
+  },[earning])
+
   useEffect(() => {
     // table.setRowsPerPage(2);
     fetchPaginatedIntakes();
@@ -202,13 +209,13 @@ export function IntakeListView() {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Intakes List"
-          links={[
+          links={earning?[]:[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Intakes', href: paths.dashboard.intakes.root },
             { name: 'List' },
           ]}
           action={
-            isAdmin && (
+            isAdmin && !earning && (
               <Button
                 component={RouterLink}
                 href={paths.dashboard.intakes.new}

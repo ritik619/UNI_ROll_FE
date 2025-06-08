@@ -80,12 +80,15 @@ export type IAgentItem = {
   lastName: string;
   email: string;
   utrNumber: string;
-  postCode: string;
-  bankDetails?: {
+  bankDetails: {
     sortCode: string;
     accountNumber: string;
   };
+  postCode: string;
   status: 'active' | 'inactive';
+  totalAmount?: number;
+  paidAmount?: number;
+  pendingAmount?: number;
   name?: string;
   role?: string;
   accessControl?: {

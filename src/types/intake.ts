@@ -10,11 +10,14 @@ export type IIntakeTableFilters = {
 
 export type IIntake = {
   id: string;
-  name?: string;
+  name: string;
+  description?: string;
   startDate: string;
   endDate: string;
-  description?: string;
-  status?: 'active' | 'inactive';
+  status: 'active' | 'inactive';
+  totalAmount?: number;
+  paidAmount?: number;
+  pendingAmount?: number;
   createdAt: Date;
   updatedAt: Date;
 };

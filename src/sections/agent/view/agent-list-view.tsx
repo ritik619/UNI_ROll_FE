@@ -57,12 +57,13 @@ const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'bankDetails', label: 'Bank Details', width: 220 },
   { id: 'postCode', label: 'Post Code', width: 120 },
   { id: 'status', label: 'Status', width: 100 },
+  { id: 'payments', label: 'Payment Details', width: 200 },
   { id: '', width: 88 },
 ];
 
 // ----------------------------------------------------------------------
 
-export function AgentListView() {
+export function AgentListView({earning}:{earning?:boolean}) {
   const table = useTable();
 
   const confirmDialog = useBoolean();
@@ -178,17 +179,24 @@ export function AgentListView() {
     />
   );
 
+  useEffect(()=>{
+    if(earning){
+      table.setDense(true);
+    }
+  },[earning])
+
   return (
     <>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="List"
-          links={[
+          heading="Agents List"
+          links={earning?[]:[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Agent', href: paths.dashboard.agent.root },
             { name: 'List' },
           ]}
           action={
+            !earning && (
             <Button
               component={RouterLink}
               href={paths.dashboard.agent.new}
@@ -196,7 +204,7 @@ export function AgentListView() {
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
               New Agent
-            </Button>
+            </Button>)
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />

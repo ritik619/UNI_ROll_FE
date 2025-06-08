@@ -120,6 +120,7 @@ export const endpoints = {
     list: 'students',
     details: (id: string) => `students/${id}`,
     sendConsentForm: (id: string) => `students/${id}/consent`,
+    sendFinanceForm: (id: string) => `students/${id}/finance`,
     enroll: (id: string) => `students/${id}/enroll`,
     profilePhoto: (id: string) => `students/${id}/profile-photo`,
     status: (id: string) => `students/${id}/status`,

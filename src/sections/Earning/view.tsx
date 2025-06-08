@@ -15,6 +15,9 @@ import { fetchEarningStats } from 'src/services/earning/fetch-stats';
 
 import { AppRecentIntakeEarnings } from './recent-intakes';
 import { AppTopUniversityEarnings } from './top-earning-university';
+import { UniversityListView } from '../universities/view/university-list-view';
+import { AgentListView } from '../agent/view';
+import { IntakeListView } from '../intake/view/intake-list-view';
 
 // ----------------------------------------------------------------------
 
@@ -87,6 +90,9 @@ export function EarningView() {
             />
           </Grid>
         </Grid>
+        <Grid container spacing={3}><UniversityListView earning={true}/></Grid>
+        <Grid container spacing={3}><AgentListView earning={true}/></Grid>
+        <Grid container spacing={3}><IntakeListView earning={true}/></Grid>
       </Stack>
     </DashboardContent>
   );

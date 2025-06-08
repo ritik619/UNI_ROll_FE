@@ -61,12 +61,13 @@ const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'countryName', label: 'Country', width: 180 },
   { id: 'website', label: 'Website', width: 220 },
   { id: 'status', label: 'Status', width: 100 },
+  { id: 'payments', label: 'Payment Details', width: 200 },
   { id: '', width: 88 },
 ];
 
 // ----------------------------------------------------------------------
 
-export function UniversityListView() {
+export function UniversityListView({earning}:{earning?:boolean}) {
   const table = useTable();
 
   const confirmDialog = useBoolean();
@@ -198,6 +199,12 @@ export function UniversityListView() {
     }
   }, [table.page, table.rowsPerPage, filters.state]);
 
+  useEffect(()=>{
+    if(earning){
+      table.setDense(true);
+    }
+  },[earning])
+
   useEffect(() => {
     fetchPaginatedUniversities();
   }, [
@@ -212,7 +219,7 @@ export function UniversityListView() {
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Universities List"
-          links={[
+          links={earning?[]:[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Universities', href: paths.dashboard.universitiesAndCourses.list },
             { name: 'List' },

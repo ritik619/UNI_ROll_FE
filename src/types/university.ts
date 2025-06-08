@@ -21,6 +21,9 @@ export type IUniversity = {
   website?: string;
   logoUrl?: string | File | null;
   status: 'active' | 'inactive';
+  totalAmount?: number;
+  paidAmount?: number;
+  pendingAmount?: number;
   createdAt: Date;
   updatedAt: Date;
 };

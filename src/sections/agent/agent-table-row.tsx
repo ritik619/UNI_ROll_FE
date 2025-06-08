@@ -13,6 +13,7 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
 
@@ -22,6 +23,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
 import { AgentQuickEditForm } from './agent-quick-edit-form';
+import { fCurrency } from 'src/utils/format-number';
 
 // ----------------------------------------------------------------------
 
@@ -159,6 +161,20 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
           >
             {row.status ?? 'active'}
           </Label>
+        </TableCell>
+
+        <TableCell>
+          <Stack spacing={0.5}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Total: {row.totalAmount ? fCurrency(row.totalAmount) : '—'}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'success.main' }}>
+              Paid: {row.paidAmount ? fCurrency(row.paidAmount) : '—'}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'warning.main' }}>
+              Pending: {row.pendingAmount ? fCurrency(row.pendingAmount) : '—'}
+            </Typography>
+          </Stack>
         </TableCell>
 
         <TableCell>
