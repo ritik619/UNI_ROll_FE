@@ -199,7 +199,7 @@ export function CoursesListView() {
   useEffect(() => {
     // table.setRowsPerPage(2);
     fetchPaginatedCourses();
-  }, []);
+  }, [fetchPaginatedCourses]);
 
   return (
     <>
