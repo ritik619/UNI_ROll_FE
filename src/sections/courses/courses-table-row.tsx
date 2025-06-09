@@ -69,6 +69,8 @@ export function CoursesTableRow({
 
   // State to track course being deleted
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
+  const [associationToDelete, setAssociationToDelete] = useState<string | null>(null);
+
   const courseDeleteDialog = useBoolean();
 
   const { user } = useAuthContext();
@@ -122,6 +124,34 @@ export function CoursesTableRow({
     } catch (error) {
       console.error('Failed to delete course:', error);
       toast.error('Failed to delete course');
+    }
+  };
+  const handleDeleteAssociation = async () => {
+    console.log('handleDeleteAssociation');
+    if (!associationToDelete) return;
+
+    try {
+      // Make API call to delete the association
+      await authAxiosInstance.delete(
+        `${endpoints.associations.byAssociation(associationToDelete)}`
+      );
+
+      // Remove the deleted association from local state
+      setUniversity((prevCourses) => prevCourses.filter((course) => course.id !== courseToDelete));
+
+      setUniversity((prevCourses) =>
+        prevCourses.filter((course) => course.id !== associationToDelete)
+      );
+
+      // Show success message
+      toast.success('Association deleted successfully');
+
+      // Reset selected ID and close dialog
+      setAssociationToDelete(null);
+      courseDeleteDialog.onFalse();
+    } catch (error) {
+      console.error('Failed to delete association:', error);
+      toast.error('Failed to delete association');
     }
   };
 
@@ -191,7 +221,7 @@ export function CoursesTableRow({
       title="Delete"
       content="Are you sure want to delete?"
       action={
-        <Button variant="contained" color="error" onClick={onDeleteRow}>
+        <Button variant="contained" color="error" onClick={handleDeleteCourse}>
           Delete
         </Button>
       }
@@ -552,7 +582,7 @@ export function CoursesTableRow({
 
                                   // Show success message
                                   toast.success(
-                                    `Course ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`
+                                    `Association ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`
                                   );
 
                                   // Force re-render by updating university state
@@ -562,8 +592,8 @@ export function CoursesTableRow({
                                   // Close the menu
                                   courseMenuActions.onClose();
                                 } catch (error) {
-                                  console.error('Failed to update course status:', error);
-                                  toast.error('Failed to update course status');
+                                  console.error('Failed to update association status:', error);
+                                  toast.error('Failed to update association status');
                                 }
                               }}
                               sx={{
@@ -579,7 +609,9 @@ export function CoursesTableRow({
                                 width={16}
                                 sx={{ mr: 1 }}
                               />
-                              {course.status === 'active' ? 'Deactivate Course' : 'Activate Course'}
+                              {course.status === 'active'
+                                ? 'Deactivate Association'
+                                : 'Activate Association'}
                             </MenuItem>
                             {/* Delete Option */}
                             {isAdmin && (
@@ -587,6 +619,9 @@ export function CoursesTableRow({
                                 onClick={() => {
                                   // Set course for deletion and show confirmation dialog
                                   setCourseToDelete(course.id);
+                                  setAssociationToDelete(course.id);
+                                  console.log('setAssociationToDelete', course);
+
                                   courseDeleteDialog.onTrue();
                                   // Close the menu
                                   courseMenuActions.onClose();
@@ -598,7 +633,7 @@ export function CoursesTableRow({
                                   width={16}
                                   sx={{ mr: 1 }}
                                 />
-                                Delete Course
+                                Delete Association
                               </MenuItem>
                             )}
                           </MenuList>
@@ -640,10 +675,16 @@ export function CoursesTableRow({
         courseDeleteDialog.onFalse();
         setCourseToDelete(null);
       }}
-      title="Delete Course"
-      content="Are you sure you want to delete this course? This action cannot be undone."
+      title="Delete Association"
+      content={
+        <>
+          Are you sure you want to remove this Association?
+          <br />
+          This action cannot be undone.
+        </>
+      }
       action={
-        <Button variant="contained" color="error" onClick={handleDeleteCourse}>
+        <Button variant="contained" color="error" onClick={handleDeleteAssociation}>
           Delete
         </Button>
       }

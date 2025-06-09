@@ -153,6 +153,7 @@ export const endpoints = {
   },
   associations: {
     root: 'course-associations',
+    byAssociation: (id: string) => `course-associations/${id}`,
     byUniversity: (id: string) => `course-associations/university/${id}`,
     byCourses: (id: string) => `course-associations/courses/${id}`,
   },
