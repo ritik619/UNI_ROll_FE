@@ -79,11 +79,13 @@ export type IAgentItem = {
   firstName: string;
   lastName: string;
   email: string;
+  dateOfBirth?: string; // Add this line if this property exists in data
   utrNumber: string;
   bankDetails: {
     sortCode: string;
     accountNumber: string;
   };
+  address: string;
   postCode: string;
   status: 'active' | 'inactive';
   totalAmount?: number;

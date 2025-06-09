@@ -2,7 +2,7 @@ import type { IAgentItem } from 'src/types/agent';
 
 import { z as zod } from 'zod';
 import router from 'next/router';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
@@ -14,54 +14,46 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import { Card, Grid2, Typography } from '@mui/material';
+import { Card, Grid, Switch, Typography } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
-
 import { fData } from 'src/utils/format-number';
-
 import { USER_STATUS_OPTIONS } from 'src/_mock';
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
-
 import { uploadFileAndGetURL } from 'src/auth/context';
 
-// ----------------------------------------------------------------------
+import { useEffect } from 'react';
 
-export type AgentQuickEditSchemaType = zod.infer<typeof AgentQuickEditSchema>;
+// ----------------------------------------------------------------------
 
 export const AgentQuickEditSchema = zod.object({
   avatarUrl: schemaHelper.file().nullable().optional(),
-  firstName: zod.string().min(1, { message: 'First Name is required!' }),
-  lastName: zod.string().min(1, { message: 'Last Name is required!' }),
-  dateOfBirth: zod.string().min(1, { message: 'Date of Birth is required!' }),
-  email: zod
+  firstName: zod
     .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .min(1, { message: 'First Name is required!' })
+    .transform((str) => str.trim()),
+  lastName: zod
+    .string()
+    .min(1, { message: 'Last Name is required!' })
+    .transform((str) => str.trim()),
+  dateOfBirth: zod.string().min(1, { message: 'Date of Birth is required!' }),
+  email: zod.string().email({ message: 'Email must be a valid email address!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
   postCode: zod.string().min(1, { message: 'Post code is required!' }),
-  accountNumber: zod
-    .string()
-    .min(1, { message: 'Account Number is required!' })
-    .regex(/^\d{8}$/, { message: 'Account number should be 10 digits' }),
+  accountNumber: zod.string().min(1, { message: 'Account number is required' }),
   sortCode: zod
     .string()
-    .min(1, { message: 'Sort code is required!' })
-    .regex(/^\d{2}-\d{2}-\d{2}$/, {
-      message: 'Sort code should be in the format XX-XX-XX',
-    })
-    .refine((val) => val.replace(/\D/g, '').length === 6, {
-      message: 'Sort code must be exactly 6 digits!',
-    }),
-  utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
-  // password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
+    .regex(/^\d{2}-\d{2}-\d{2}$/, { message: 'Sort code should be in the format XX-XX-XX' }),
+  utrNumber: zod.string().min(1, { message: 'UTR number is required' }),
   status: zod.string(),
+  unc: zod.boolean(),
+  intake: zod.boolean(),
 });
 
-// ----------------------------------------------------------------------
+export type AgentQuickEditSchemaType = zod.infer<typeof AgentQuickEditSchema>;
 
 type Props = {
   open: boolean;
@@ -71,29 +63,25 @@ type Props = {
 
 export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
   const defaultValues: AgentQuickEditSchemaType = {
-    status: '',
     avatarUrl: null,
-    firstName: '',
-    lastName: '',
-    email: '',
-    dateOfBirth: new Date().toString(),
-    accountNumber: '',
-    address: '',
-    postCode: '',
-    sortCode: '',
-    utrNumber: '',
-    // password: '',
+    firstName: currentAgent?.firstName ?? '',
+    lastName: currentAgent?.lastName ?? '',
+    dateOfBirth: currentAgent?.dateOfBirth ?? new Date().toISOString().split('T')[0],
+    email: currentAgent?.email ?? '',
+    address: currentAgent?.address ?? '',
+    postCode: currentAgent?.postCode ?? '',
+    accountNumber: currentAgent?.bankDetails?.accountNumber ?? '',
+    sortCode: currentAgent?.bankDetails?.sortCode ?? '',
+    utrNumber: currentAgent?.utrNumber ?? '',
+    status: currentAgent?.status ?? '',
+    unc: currentAgent?.accessControl?.unc ?? false,
+    intake: currentAgent?.accessControl?.intake ?? false,
   };
 
   const methods = useForm<AgentQuickEditSchemaType>({
     mode: 'all',
     resolver: zodResolver(AgentQuickEditSchema),
     defaultValues,
-    values: {
-      accountNumber: currentAgent?.bankDetails?.accountNumber,
-      sortCode: currentAgent?.bankDetails.sortCode,
-      ...currentAgent,
-    },
   });
 
   const {
@@ -103,6 +91,16 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
   } = methods;
 
   const updateAgent = async (data: AgentQuickEditSchemaType) => {
+    if (!currentAgent?.id) throw new Error('Agent ID missing');
+
+    let avatarUrl = data.avatarUrl;
+
+    if (data.avatarUrl instanceof File) {
+      const extension = data.avatarUrl.name.split('.').pop();
+      const fileName = `${currentAgent.id}.${extension}`;
+      avatarUrl = await uploadFileAndGetURL(data.avatarUrl, `agent/${fileName}`);
+    }
+
     const payload = {
       avatarUrl: data.avatarUrl ?? null,
       firstName: data.firstName.trim(),
@@ -116,52 +114,53 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
         sortCode: data.sortCode.trim(),
       },
       utrNumber: data.utrNumber.trim(),
-      status: 'active',
+      status: data.status,
+      accessControl: {
+        unc: data.unc,
+        intake: data.intake,
+      },
     };
 
-    const uId = currentAgent?.id || '';
-    // Then handle profile photo upload if available
-    if (data.avatarUrl instanceof File) {
-      const fileName = `${uId}.${data.avatarUrl.name.split('.').pop()}`;
-      const url = await uploadFileAndGetURL(data.avatarUrl, `agent/${fileName}`);
-      payload['avatarUrl'] = url;
-    } else {
-      payload['avatarUrl'] = data.avatarUrl as string;
-    }
-    return await authAxiosInstance.patch<{ id: string }>(endpoints.agents.details(uId), payload);
+    return authAxiosInstance.patch<{ id: string }>(
+      endpoints.agents.details(currentAgent.id),
+      payload
+    );
   };
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       await updateAgent(data);
-      toast.success(currentAgent ? 'Update success!' : 'Update error!');
+      toast.success('Agent updated successfully!');
       router.push(paths.dashboard.agent.list);
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
+      toast.error('Failed to update agent. Please try again.');
     }
   });
 
   return (
     <Dialog
       fullWidth
-      maxWidth={false}
+      maxWidth="md"
       open={open}
       onClose={onClose}
       PaperProps={{ sx: { maxWidth: 720 } }}
+      aria-labelledby="agent-quick-edit-dialog"
     >
-      <DialogTitle>Quick update</DialogTitle>
+      <DialogTitle id="agent-quick-edit-dialog">Quick Update</DialogTitle>
 
       <Form methods={methods} onSubmit={onSubmit}>
-        <DialogContent>
+        <DialogContent dividers>
           {currentAgent?.status === 'inactive' && (
             <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
               Account is waiting for confirmation
             </Alert>
           )}
+
           <Box sx={{ mb: 5 }}>
             <Field.UploadAvatar
               name="avatarUrl"
-              maxSize={3145728}
+              maxSize={3145728} // 3MB
               helperText={
                 <Typography
                   variant="caption"
@@ -173,28 +172,32 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
                     color: 'text.disabled',
                   }}
                 >
-                  Allowed *.jpeg, *.jpg, *.png, *.gif
-                  <br /> max size of {fData(3145728)}
+                  Allowed file types: *.jpeg, *.jpg, *.png, *.gif
+                  <br />
+                  Max size: {fData(3145728)}
                 </Typography>
               }
             />
           </Box>
+
           <Box
             sx={{
+              display: 'grid',
               rowGap: 3,
               columnGap: 2,
-              display: 'grid',
               gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
             }}
           >
             <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
+
             <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 2' }}>
-              {USER_STATUS_OPTIONS.map((status) => (
-                <MenuItem key={status.value} value={status.value}>
-                  {status.label}
+              {USER_STATUS_OPTIONS.map(({ value, label }) => (
+                <MenuItem key={value} value={value}>
+                  {label}
                 </MenuItem>
               ))}
             </Field.Select>
+
             <Field.Text name="firstName" label="First Name" />
             <Field.Text name="lastName" label="Last Name" />
             <Field.DatePicker name="dateOfBirth" label="Date of Birth" />
@@ -202,16 +205,16 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
             <Field.Text name="address" label="Address" />
             <Field.Text name="postCode" label="Post Code" />
 
-            <Grid2 size={{ xs: 12 }} spacing={2} sx={{ gridColumn: 'span 2' }}>
+            <Grid xs={12} sx={{ gridColumn: 'span 2' }}>
               <Card sx={{ p: 2 }}>
-                <Typography variant="subtitle2" sx={{ mb: 2, color: '#919eab' }}>
+                <Typography variant="subtitle2" sx={{ mb: 2, color: 'text.secondary' }}>
                   Bank Details
                 </Typography>
                 <Box
                   sx={{
+                    display: 'grid',
                     rowGap: 3,
                     columnGap: 2,
-                    display: 'grid',
                     gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
                   }}
                 >
@@ -219,18 +222,62 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
                   <Field.Text name="sortCode" label="Sort Code" />
                 </Box>
               </Card>
-            </Grid2>
+            </Grid>
 
             <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
-            {/* <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} /> */}
           </Box>
+
+          <Card sx={{ p: 3, my: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              Access Control
+            </Typography>
+
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Card
+                sx={{
+                  flex: 1,
+                  p: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Universities & Courses
+                </Typography>
+                <Controller
+                  name="unc"
+                  control={methods.control}
+                  render={({ field }) => <Switch {...field} checked={field.value} />}
+                />
+              </Card>
+
+              <Card
+                sx={{
+                  flex: 1,
+                  p: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Earnings Overview
+                </Typography>
+                <Controller
+                  name="intake"
+                  control={methods.control}
+                  render={({ field }) => <Switch {...field} checked={field.value} />}
+                />
+              </Card>
+            </Box>
+          </Card>
         </DialogContent>
 
         <DialogActions>
-          <Button variant="outlined" onClick={onClose}>
+          <Button variant="outlined" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
-
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
             Update
           </LoadingButton>

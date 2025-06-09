@@ -24,20 +24,25 @@ import { Switch } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
+export type NewAgentSchemaType = zod.infer<typeof NewAgentSchema>;
+
 export const NewAgentSchema = zod.object({
-  fName: zod.string().min(1, { message: 'First Name is required!' }),
-  lName: zod.string().min(1, { message: 'Last Name is required!' }),
-  dob: zod.string().min(1, { message: 'Date of Birth is required!' }),
+  firstName: zod
+    .string()
+    .min(1, { message: 'First Name is required!' })
+    .transform((str) => str.trim()),
+  lastName: zod
+    .string()
+    .min(1, { message: 'Last Name is required!' })
+    .transform((str) => str.trim()),
+  dateOfBirth: zod.string().min(1, { message: 'Date of Birth is required!' }),
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
   address: zod.string().min(1, { message: 'Address is required!' }),
   postCode: zod.string().min(1, { message: 'Post code is required!' }),
-  accountNumber: zod
-    .string()
-    .min(1, { message: 'Account Number is required!' })
-    .regex(/^\d{10}$/, { message: 'Account number should be 10 digits' }),
+  accountNumber: zod.string().min(1, { message: 'Account number is required' }),
   sortCode: zod
     .string()
     .min(1, { message: 'Sort code is required!' })
@@ -47,29 +52,31 @@ export const NewAgentSchema = zod.object({
     .refine((val) => val.replace(/\D/g, '').length === 6, {
       message: 'Sort code must be exactly 6 digits!',
     }),
-  utrNumber: zod.string().regex(/^\d{10}$/, { message: 'UTR number should be 10 digits' }),
+  utrNumber: zod.string().min(1, { message: 'UTR number is required' }),
   password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.enum(['active', 'inactive']).optional(),
   unc: zod.boolean(),
   intake: zod.boolean(),
 });
 
-export type NewAgentSchemaType = zod.infer<typeof NewAgentSchema>;
-
 // ----------------------------------------------------------------------
 
 type Props = {
-  currentAgent?: IAgentItem;
+  // currentAgent?: IAgentItem;
 };
 
-export function AgentNewEditForm({ currentAgent }: Props) {
+export function AgentNewEditForm(
+  {
+    // currentAgent
+  }: Props
+) {
   const router = useRouter();
 
   const defaultValues: NewAgentSchemaType = {
-    fName: '',
-    lName: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    dob: '',
+    dateOfBirth: new Date().toISOString().substring(0, 10), // "YYYY-MM-DD"
     accountNumber: '',
     address: '',
     postCode: '',
@@ -84,19 +91,19 @@ export function AgentNewEditForm({ currentAgent }: Props) {
     mode: 'onSubmit',
     resolver: zodResolver(NewAgentSchema),
     defaultValues,
-    values: currentAgent,
+    // values: currentAgent,
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
   } = methods;
 
   const createAgent = async (data: NewAgentSchemaType) => {
     const payload = {
-      firstName: data.fName.trim(),
-      lastName: data.lName.trim(),
-      dateOfBirth: new Date(data.dob),
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
+      dateOfBirth: new Date(data.dateOfBirth),
       email: data.email.trim().toLowerCase(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
@@ -118,7 +125,10 @@ export function AgentNewEditForm({ currentAgent }: Props) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await createAgent(data);
-      toast.success(currentAgent ? 'Update success!' : 'Create success!');
+      toast.success(
+        // currentAgent ? 'Update success!' :
+        'Create success!'
+      );
       router.push(paths.dashboard.agent.list);
     } catch (error: any) {
       console.error(error);
@@ -138,32 +148,47 @@ export function AgentNewEditForm({ currentAgent }: Props) {
                 gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
               }}
             >
-              <Field.Text name="fName" label="First Name" />
-              <Field.Text name="lName" label="Last Name" />
-              <Field.DatePicker name="dob" label="Date of Birth" />
+              <Field.Text name="firstName" label="First Name" />
+              <Field.Text name="lastName" label="Last Name" />
+              <Field.DatePicker name="dateOfBirth" label="Date of Birth" />
               <Field.Text name="email" label="Email Address" />
               <Field.Text name="address" label="Address" />
               <Field.Text name="postCode" label="Post Code" />
 
               <Grid size={{ xs: 24 }} spacing={4}>
-                <Card sx={{ p: 1 }}>
+                <Card
+                  sx={{
+                    padding: '20px',
+                    marginY: '10px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    alignContent: 'center',
+                    justifyContent: 'space-between',
+                    flexDirection: 'column',
+                  }}
+                >
                   <Typography variant="subtitle2" sx={{ mb: 2, color: '#919eab' }}>
                     Bank Details
                   </Typography>
                   <Box
                     sx={{
-                      rowGap: 3,
-                      columnGap: 2,
-                      display: 'grid',
-                      gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                      p: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      alignContent: 'center',
+                      justifyContent: 'space-between',
+                      flexDirection: 'row',
+                      width: '100%',
                     }}
                   >
                     <Field.Text
+                      sx={{ padding: '5px' }}
                       name="sortCode"
                       label="Sort Code"
                       helperText="Format: XX-XX-XX (e.g., 12-34-56)"
                     />
                     <Field.Text
+                      sx={{ padding: '5px' }}
                       name="accountNumber"
                       label="Account Number"
                       helperText="Must be 10 digits (e.g., 1234567890)"
@@ -183,7 +208,7 @@ export function AgentNewEditForm({ currentAgent }: Props) {
             {/* Access Control */}
             <Card
               sx={{
-                padding: '20px',
+                padding: '10px',
                 marginY: '10px',
                 // width: '40vw',
                 display: 'flex',
@@ -265,8 +290,16 @@ export function AgentNewEditForm({ currentAgent }: Props) {
               </Box>
             </Card>
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentAgent ? 'Create agent' : 'Save changes'}
+              <LoadingButton
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+                disabled={!isValid || isSubmitting} // disable if form invalid or submitting
+              >
+                {
+                  // currentAgent ? 'Save changes' :
+                  'Create agent'
+                }
               </LoadingButton>
             </Stack>
           </Card>
