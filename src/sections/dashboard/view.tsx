@@ -4,7 +4,7 @@ import type { DashboardStats, EarningsSummaryResponse } from 'src/types/dashboar
 
 import { useState, useEffect } from 'react';
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
@@ -18,6 +18,7 @@ import { fetchDashboardStats } from 'src/services/dashboard/fetch-stats';
 import { Iconify } from 'src/components/iconify';
 
 import { useAuthContext } from 'src/auth/hooks';
+import { skeleton } from 'src/theme/core/components/skeleton';
 // ----------------------------------------------------------------------
 
 // Custom hook for counting animation
@@ -59,52 +60,52 @@ const CARD_CONFIGS = [
     title: 'Total Students',
     key: 'totalStudents',
     icon: 'solar:users-group-rounded-bold',
-    color: '#2065D1',
-    gradient: 'linear-gradient(135deg, #2065D1 0%, #1E88E5 100%)',
+    color: '#0EA5E9',
+    gradient: 'linear-gradient(135deg, #0EA5E9 0%, #67E8F9 100%)',
   },
   {
     title: 'Enrolled Students',
     key: 'enrolledStudents',
     icon: 'solar:user-check-rounded-bold',
-    color: '#00AB55',
-    gradient: 'linear-gradient(135deg, #00AB55 0%, #36B37E 100%)',
+    color: '#059669',
+    gradient: 'linear-gradient(135deg, #059669 0%, #34D399 100%)',
   },
   {
     title: 'Unenrolled Students',
     key: 'unenrolledStudents',
     icon: 'solar:user-cross-rounded-bold',
-    color: '#FF4842',
-    gradient: 'linear-gradient(135deg, #FF4842 0%, #FF6B6B 100%)',
+    color: '#B91C1C',
+    gradient: 'linear-gradient(135deg, #B91C1C 0%, #EF4444 100%)',
   },
   {
     title: 'Total Agents',
     key: 'totalAgents',
     icon: 'solar:user-id-bold',
-    color: '#8E33FF',
-    gradient: 'linear-gradient(135deg, #8E33FF 0%, #9C27B0 100%)',
+    color: '#D97706',
+    gradient: 'linear-gradient(135deg, #D97706 0%, #FBBF24 100%)',
     roles: ['admin'],
   },
   // {
   //   title: 'Total Earnings',
   //   key: 'totalEarnings',
   //   icon: 'solar:money-bag-bold',
-  //   color: '#FFAB00',
-  //   gradient: 'linear-gradient(135deg, #FFAB00 0%, #FFC107 100%)',
+  //   color: '#F59E0B',
+  //   gradient: 'linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%)',
   //   isCurrency: true,
   // },
   {
     title: 'Total Universities',
     key: 'totalUniversities',
     icon: 'solar:buildings-bold',
-    color: '#637381',
-    gradient: 'linear-gradient(135deg, #637381 0%, #919EAB 100%)',
+    color: '#7C3AED',
+    gradient: 'linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%)',
   },
   {
     title: 'Total Courses',
     key: 'totalCourses',
     icon: 'solar:book-bold',
-    color: '#00B8D9',
-    gradient: 'linear-gradient(135deg, #00B8D9 0%, #00A3BF 100%)',
+    color: '#DB2777',
+    gradient: 'linear-gradient(135deg, #DB2777 0%, #F472B6 100%)',
   },
 ];
 
@@ -152,7 +153,7 @@ export function DashboardView() {
 
     loadStats();
   }, []);
-
+  // skeleton
   if (loading) {
     return (
       <DashboardContent>
@@ -229,8 +230,12 @@ export function DashboardView() {
   const UserDetails = () => {
     return (
       <Card
+        className="card user"
         sx={{
+          gridRowStart: 1,
+          gridRowEnd: 4,
           p: 4,
+          width: '100%',
           height: '100%',
           position: 'relative',
           overflow: 'hidden',
@@ -243,89 +248,209 @@ export function DashboardView() {
       >
         {/* Background gradient */}
         <Box
+          className="box user"
           sx={{
             position: 'absolute',
+            width: '100%',
+            height: '100%',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
             opacity: 0.1,
-            background: 'linear-gradient(135deg, #00AB55 0%, #36B37E 100%)',
+            color: '#637381',
+            background: 'linear-gradient(135deg, #637381 0%, #919EAB 100%)',
           }}
         />
-        <Stack spacing={1} sx={{ position: 'relative' }}>
-          <Typography variant="h2" sx={{ fontWeight: 600 }}>
-            {`${user?.firstName} ${user?.lastName}`}{' '}
-          </Typography>
-          <Typography variant="body1">Email: {user?.email}</Typography>
-          <Typography variant="body1">Date of Birth: {user?.dateOfBirth}</Typography>
-          <Typography variant="body1">Phone Number: {user?.phoneNumber}</Typography>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Address Details
-          </Typography>
-          <Typography variant="body1">Address: {user?.address}</Typography>
-          <Typography variant="body1">Post Code: {user?.postCode}</Typography>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Bank Details
-          </Typography>
-          <Typography variant="body1">Sort Code: {user?.bankDetails?.sortCode ?? 'N/A'}</Typography>
-          <Typography variant="body1">
-            Account Number: {user?.bankDetails?.accountNumber ?? 'N/A'}
-          </Typography>
-          <Typography variant="body1">UTR Number: {user?.utrNumber ?? 'N/A'}</Typography>
+        <Stack
+          className="stack user"
+          spacing={1}
+          sx={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-evenly',
+          }}
+        >
+          <Box
+            className="box user basic"
+            sx={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Box
+              className="box user basic header"
+              sx={{
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+            >
+              <Typography variant="h2" sx={{ fontWeight: 600 }}>
+                {`${user?.firstName} ${user?.lastName}`}
+              </Typography>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+            </Box>
+            <Box
+              className="box user basic details"
+              sx={{
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-evenly',
+              }}
+            >
+              <Typography variant="body1">Email: {user?.email}</Typography>
+              <Typography variant="body1">Date of Birth: {user?.dateOfBirth}</Typography>
+              <Typography variant="body1">Phone Number: {user?.phoneNumber}</Typography>
+            </Box>
+          </Box>
+          <Box
+            className="box user address"
+            sx={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-evenly',
+            }}
+          >
+            <Box
+              className="box user address header"
+              sx={{
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Address Details
+              </Typography>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+            </Box>
+            <Box
+              className="box user address details"
+              sx={{
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-evenly',
+              }}
+            >
+              <Typography variant="body1">Address: {user?.address}</Typography>
+              <Typography variant="body1">Post Code: {user?.postCode}</Typography>{' '}
+            </Box>
+          </Box>
+          <Box
+            className="box user bank"
+            sx={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-evenly',
+            }}
+          >
+            <Box
+              className="box user bank header"
+              sx={{
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Bank Details
+              </Typography>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+            </Box>
+            <Box
+              className="box user bank details"
+              sx={{
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-evenly',
+              }}
+            >
+              <Typography variant="body1">
+                Sort Code: {user?.bankDetails?.sortCode ?? 'N/A'}
+              </Typography>
+              <Typography variant="body1">
+                Account Number: {user?.bankDetails?.accountNumber ?? 'N/A'}
+              </Typography>
+              <Typography variant="body1">UTR Number: {user?.utrNumber ?? 'N/A'}</Typography>
+            </Box>
+          </Box>
         </Stack>
       </Card>
     );
   };
 
   return (
-    <DashboardContent>
-      <Stack spacing={3}>
-        <Typography variant="h4" sx={{ mb: 2 }}>
+    <DashboardContent className="dashboard">
+      <Stack className="body" spacing={3}>
+        <Typography className="title" variant="h4" sx={{ mb: 2 }}>
           Dashboard Overview
         </Typography>
 
         <Card
+          className="main card"
           sx={{
             p: 3,
             display: isAgent ? 'flex' : 'block',
-            width: '100%',
+            width: 'auto',
+            height: 'auto',
+
             flexDirection: 'row',
             justifyContent: 'space-evenly',
           }}
         >
-          {isAgent && (
-            <Grid
-              container
-              spacing={3}
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: 'repeat(1, 1fr)',
-                  sm: 'repeat(1, 1fr)',
-                  md: 'repeat(1, 1fr)',
-                  lg: 'repeat(1, 1fr)',
-                },
-              }}
-            >
-              {UserDetails()}
-            </Grid>
-          )}
-
           <Grid
+            className="main grid"
             container
             spacing={3}
             sx={{
+              alignItems: 'center',
+              justifyContent: 'center',
               display: 'grid',
+              width: '100%',
+              height: '100%',
+
               gridTemplateColumns: {
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-                md: 'repeat(2, 1fr)',
-                lg: isAgent ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+                xs: isAgent ? 'repeat(1, 1fr)' : 'repeat(1, 1fr)',
+                sm: isAgent ? 'repeat(2, 1fr)' : 'repeat(2, 1fr)',
+                md: isAgent ? 'repeat(3, 1fr)' : 'repeat(3, 1fr)',
+                lg: isAgent ? 'repeat(3, 1fr)' : 'repeat(3, 1fr)',
               },
               gap: 3,
             }}
           >
+            {isAgent && UserDetails()}
             {filteredCards.map((card) => {
               let animatedValue: number;
               switch (card.key) {
@@ -360,15 +485,21 @@ export function DashboardView() {
 
               return (
                 <Grid
+                  className="grid details"
                   key={card.title}
                   sx={{
-                    width: '100%',
+                    // width: '25vw',
+                    height: '25vh',
                   }}
                 >
                   <Card
+                    className="card details"
                     sx={{
                       p: 4,
-                      height: '180px',
+                      width: 'auto',
+                      height: '100%',
+                      alignContent: 'center',
+                      alignItems: 'center',
                       position: 'relative',
                       overflow: 'hidden',
                       transition: 'all 0.3s ease-in-out',
@@ -383,6 +514,7 @@ export function DashboardView() {
                   >
                     {/* Background gradient */}
                     <Box
+                      className="box details"
                       sx={{
                         position: 'absolute',
                         top: 0,
@@ -395,10 +527,11 @@ export function DashboardView() {
                     />
 
                     <Stack
+                      className="stack details"
                       direction="row"
                       alignItems="center"
                       justifyContent="space-between"
-                      sx={{ height: '100%', px: 2 }}
+                      sx={{ px: 2 }}
                     >
                       <Box
                         className="icon-wrapper"
