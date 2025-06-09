@@ -526,7 +526,7 @@ export function CoursesTableRow({
                           id={courseMenuActions.id}
                         >
                           <MenuList>
-                            {isAdmin && (
+                            {/* {isAdmin && (
                               <MenuItem
                                 component={RouterLink}
                                 href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
@@ -535,7 +535,7 @@ export function CoursesTableRow({
                                 <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
                                 Edit Course
                               </MenuItem>
-                            )}
+                            )} */}
                             {/* //Activate/Deactivate Option */}
                             <MenuItem
                               onClick={async () => {

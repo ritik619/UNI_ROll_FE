@@ -102,16 +102,26 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
+    async (id: string) => {
+      try {
+        // 1. Call DELETE API
+        await authAxiosInstance.delete(endpoints.universities.details(id));
 
-      toast.success('Delete success!');
+        // 2. Remove item from UI state
+        const updatedRows = tableData.filter((row) => row.id !== id);
+        setTableData(updatedRows);
 
-      setTableData(deleteRow);
+        // 3. Show toast
+        toast.success('University deleted successfully');
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
+        // 4. Update pagination
+        table.onUpdatePageDeleteRow(dataInPage.length);
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed to delete university');
+      }
     },
-    [dataInPage.length, table, tableData]
+    [tableData, dataInPage.length, table]
   );
 
   const handleToggleStatus = useCallback(
