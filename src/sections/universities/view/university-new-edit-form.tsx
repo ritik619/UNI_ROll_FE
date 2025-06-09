@@ -32,7 +32,7 @@ import { uploadFileAndGetURL } from 'src/auth/context';
 export const NewUniversitySchema = zod.object({
   name: zod.string().min(1, { message: 'University name is required!' }),
   cityId: zod.string().min(1, { message: 'City ID is required!' }),
-  description: zod.string().optional(),
+  description: zod.string().max(500).optional(),
   website: zod
     .string()
     .transform((val) => {

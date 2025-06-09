@@ -35,7 +35,7 @@ export const UniversityQuickEditSchema = zod.object({
   logoUrl: schemaHelper.file().nullable().optional(),
   name: zod.string().min(1, { message: 'University name is required!' }),
   cityId: zod.string().min(1, { message: 'City ID is required!' }),
-  description: zod.string().optional(),
+  description: zod.string().max(500).optional(),
   website: zod.string().url({ message: 'Website must be a valid URL!' }).optional(),
   status: zod.enum(['active', 'inactive']).default('active'),
 });
