@@ -47,7 +47,7 @@ type Props = {
   universityId: string;
 };
 
-export function UniversityQuickAddCourseAssociationForm({ open, onClose, universityId }: Props) {
+export function QuickAssociationForm({ open, onClose, universityId }: Props) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);

@@ -33,9 +33,10 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
-import { UniversityQuickAddCourseAssociationForm } from '../universities/university-quick-add-course-association-form';
+import { QuickAssociationForm } from '../universities/university-quick-add-course-association-form';
 import { fetchAssociations } from 'src/services/associations/fetchAssociations';
 import { useAuthContext } from 'src/auth/hooks';
+import { toDMY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
@@ -66,6 +67,7 @@ export function CoursesTableRow({
   const collapseRow = useBoolean();
   const [university, setUniversity] = useState<ICourseAssociation[]>([]);
   const [loading, setLoading] = useState(false);
+  const quickAssociateUniversity = useBoolean();
 
   // State to track course being deleted
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
@@ -155,10 +157,18 @@ export function CoursesTableRow({
   };
 
   const renderQuickEditForm = () => (
-    <UniversityQuickAddCourseAssociationForm
+    <QuickAssociationForm
       universityId={row.id}
       open={quickEditAssociationForm.value}
       onClose={quickEditAssociationForm.onFalse}
+    />
+  );
+
+  const renderQuickAssociateUniversityForm = () => (
+    <QuickAssociationForm
+      universityId={row.id}
+      open={quickAssociateUniversity.value}
+      onClose={quickAssociateUniversity.onFalse}
     />
   );
 
@@ -171,10 +181,17 @@ export function CoursesTableRow({
     >
       <MenuList>
         {isAdmin && (
-          <MenuItem href={editHref} component={RouterLink}>
-            <Iconify icon="solar:pen-bold" />
-            Edit
-          </MenuItem>
+          <>
+            <MenuItem href={editHref} component={RouterLink}>
+              <Iconify icon="solar:pen-bold" />
+              Edit
+            </MenuItem>
+
+            {/* <MenuItem href={editHref} onClick={quickAssociateUniversity.onTrue}>
+              <Iconify icon="tabler:school" />
+              Associate University
+            </MenuItem> */}
+          </>
         )}
 
         <MenuItem
@@ -366,13 +383,12 @@ export function CoursesTableRow({
 
               {isAdmin && (
                 <Button
-                  component={RouterLink}
-                  href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
+                  variant="contained"
                   size="small"
-                  startIcon={<Iconify icon="mingcute:add-line" />}
-                  sx={{ ml: 2 }}
+                  onClick={quickAssociateUniversity.onTrue}
+                  startIcon={<Iconify icon="mingcute:add-line" sx={{ ml: 2 }} />}
                 >
-                  Add to University
+                  Associate Course to Universities
                 </Button>
               )}
             </Box>
@@ -509,7 +525,7 @@ export function CoursesTableRow({
                               fontWeight: 500,
                             }}
                           >
-                            {new Date(course.applicationDeadline).toLocaleDateString('en-GB', {
+                            {toDMY(course.applicationDeadline).toLocaleDateString('en-GB', {
                               year: 'numeric',
                               month: 'short',
                               day: 'numeric',
@@ -654,18 +670,18 @@ export function CoursesTableRow({
             ) : (
               <Box sx={{ py: 3, textAlign: 'center' }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
-                  No university found for this university
+                  No associate university found for this course
                 </Typography>
 
                 {isAdmin && (
                   <Button
-                    component={RouterLink}
-                    href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
+                    href={editHref}
+                    onClick={quickAssociateUniversity.onTrue}
                     variant="outlined"
                     size="small"
                     startIcon={<Iconify icon="mingcute:add-line" />}
                   >
-                    Add First Course
+                    Associate First University
                   </Button>
                 )}
               </Box>
@@ -704,6 +720,7 @@ export function CoursesTableRow({
       {renderPrimaryRow()}
       {renderAssociationRow()}
       {renderQuickEditForm()}
+      {renderQuickAssociateUniversityForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}
       {renderCourseDeleteDialog()}

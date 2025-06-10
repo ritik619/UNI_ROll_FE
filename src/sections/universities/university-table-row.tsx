@@ -34,10 +34,11 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
 import { UniversityQuickEditForm } from './university-quick-edit-form';
-import { UniversityQuickAddCourseAssociationForm } from './university-quick-add-course-association-form';
+import { QuickAssociationForm } from './university-quick-add-course-association-form';
 import { useAuthContext } from 'src/auth/hooks';
 
 import { useTheme } from '@mui/material/styles';
+import { toDMY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
@@ -67,7 +68,7 @@ export function UniversityTableRow({
   const courseMenuActions = usePopover(); // For course row actions
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
-  const quickAddCourse = useBoolean();
+  const quickAssociateCourse = useBoolean();
 
   const collapseRow = useBoolean();
   const [courses, setCourses] = useState<ICourseAssociation[]>([]);
@@ -164,11 +165,11 @@ export function UniversityTableRow({
     />
   );
 
-  const renderQuickAddCourseForm = () => (
-    <UniversityQuickAddCourseAssociationForm
+  const renderQuickAssociateCourseForm = () => (
+    <QuickAssociationForm
       universityId={row.id}
-      open={quickAddCourse.value}
-      onClose={quickAddCourse.onFalse}
+      open={quickAssociateCourse.value}
+      onClose={quickAssociateCourse.onFalse}
     />
   );
 
@@ -187,10 +188,10 @@ export function UniversityTableRow({
               Edit
             </MenuItem>
 
-            <MenuItem href={editHref} onClick={quickAddCourse.onTrue}>
+            {/* <MenuItem href={editHref} onClick={quickAssociateCourse.onTrue}>
               <Iconify icon="tabler:school" />
-              Add Course
-            </MenuItem>
+              Associate Course
+            </MenuItem> */}
           </>
         )}
 
@@ -354,10 +355,10 @@ export function UniversityTableRow({
                 <Button
                   variant="contained"
                   size="small"
-                  onClick={quickAddCourse.onTrue}
+                  onClick={quickAssociateCourse.onTrue}
                   startIcon={<Iconify icon="mingcute:add-line" sx={{ ml: 2 }} />}
                 >
-                  Add Course to University
+                  Associate University to Courses
                 </Button>
               )}
             </Box>
@@ -497,7 +498,7 @@ export function UniversityTableRow({
                               fontWeight: 500,
                             }}
                           >
-                            {new Date(course.applicationDeadline).toLocaleDateString('en-GB', {
+                            {toDMY(course.applicationDeadline).toLocaleDateString('en-GB', {
                               year: 'numeric',
                               month: 'short',
                               day: 'numeric',
@@ -633,18 +634,18 @@ export function UniversityTableRow({
             ) : (
               <Box sx={{ py: 3, textAlign: 'center' }}>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
-                  No courses found for this university
+                  No associate courses found for this university
                 </Typography>
 
                 {isAdmin && (
                   <Button
-                    component={RouterLink}
-                    href={`${paths.dashboard.universitiesAndCourses.addCourse}?universityId=${row.id}`}
+                    href={editHref}
+                    onClick={quickAssociateCourse.onTrue}
                     variant="outlined"
                     size="small"
                     startIcon={<Iconify icon="mingcute:add-line" />}
                   >
-                    Add First Course
+                    Associate First Course
                   </Button>
                 )}
               </Box>
@@ -683,7 +684,7 @@ export function UniversityTableRow({
       {renderPrimaryRow()}
       {renderAssociationRow()}
       {renderQuickEditForm()}
-      {renderQuickAddCourseForm()}
+      {renderQuickAssociateCourseForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}
       {renderCourseDeleteDialog()}
