@@ -51,7 +51,7 @@ const PaymentSchema = zod.object({
       message: 'Payment number is required'
     }),
   status: zod.enum(['Paid', 'Pending', 'Failed']),
-  description: zod.string().min(1, 'Description is required'),
+  description: zod.string(),
   paymentDate: zod.string().min(1, 'Payment date is required'),
 });
 

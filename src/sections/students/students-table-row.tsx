@@ -93,7 +93,8 @@ export function StudentsTableRow({
   const paymentMenuActions = usePopover();
   const paymentDeleteDialog = useBoolean();
   const [paymentToDelete, setPaymentToDelete] = useState<string | null>(null);
-  const [menuId, setMenuId] = useState<string | null>(null);
+  const [menuId, setMenuId] = useState<number | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const { user } = useAuthContext();
   const userRole = user?.role;
@@ -145,6 +146,17 @@ export function StudentsTableRow({
       console.error('Error unenrolling student:', error);
       toast.error('Failed to unenroll student');
     }
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, index: number) => {
+    event.stopPropagation();
+    setMenuId(index);
+    paymentMenuActions.onOpen(event);
+  };
+
+  const handleMenuClose = () => {
+    setMenuId(null);
+    paymentMenuActions.onClose();
   };
 
   const renderPrimaryRow = () => (
@@ -318,7 +330,7 @@ export function StudentsTableRow({
                 </Box>
 
                 <Stack spacing={2}>
-                  {payments.map((payment) => (
+                  {payments.map((payment,index) => (
                     <Box
                       key={payment.id}
                       sx={(theme) => ({
@@ -389,82 +401,9 @@ export function StudentsTableRow({
                         {isAdmin && (
                           <IconButton
                             size="small"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              setMenuId(`payment-menu-${payment.id}`);
-                              paymentMenuActions.onOpen(event);
-                            }}
+                            onClick={(event) => handleMenuOpen(event, index)}
                           >
                             <Iconify icon="eva:more-vertical-fill" width={18} />
-                            <CustomPopover
-                              open={paymentMenuActions.open}
-                              anchorEl={paymentMenuActions.anchorEl}
-                              onClose={paymentMenuActions.onClose}
-                              slotProps={{ arrow: { placement: 'right-top' } }}
-                              id={menuId ?? undefined}
-                            >
-                              <MenuList>
-                                <MenuItem
-                                  onClick={async () => {
-                                    try {
-                                      const newStatus: PaymentStatus =
-                                        payment.status === 'Paid' ? 'Pending' : 'Paid';
-                                      await authAxiosInstance.patch(
-                                        `${endpoints.earnings.details(earning?.id)}/payments/${payment.id}`,
-                                        {
-                                          amount: payment.amount,
-                                          status: newStatus,
-                                          description: payment.description,
-                                        }
-                                      );
-
-                                      // Update local state
-                                      const updatedPayments = payments.map((p) =>
-                                        p.id === payment.id ? { ...p, status: newStatus } : p
-                                      );
-                                      setPayments(updatedPayments);
-
-                                      toast.success(`Payment marked as ${newStatus}`);
-                                      paymentMenuActions.onClose();
-                                    } catch (error) {
-                                      console.error(error);
-                                      toast.error('Failed to update payment status');
-                                    }
-                                  }}
-                                  sx={{
-                                    color:
-                                      payment.status === 'Paid' ? 'warning.main' : 'success.main',
-                                  }}
-                                >
-                                  <Iconify
-                                    icon={
-                                      payment.status === 'Paid'
-                                        ? 'material-symbols:toggle-off'
-                                        : 'material-symbols:toggle-on'
-                                    }
-                                    width={16}
-                                    sx={{ mr: 1 }}
-                                  />
-                                  {payment.status === 'Paid' ? 'Mark Pending' : 'Mark Paid'}
-                                </MenuItem>
-
-                                <MenuItem
-                                  onClick={() => {
-                                    setPaymentToDelete(payment.id);
-                                    paymentDeleteDialog.onTrue();
-                                    paymentMenuActions.onClose();
-                                  }}
-                                  sx={{ color: 'error.main' }}
-                                >
-                                  <Iconify
-                                    icon="solar:trash-bin-trash-bold"
-                                    width={16}
-                                    sx={{ mr: 1 }}
-                                  />
-                                  Delete Payment
-                                </MenuItem>
-                              </MenuList>
-                            </CustomPopover>
                           </IconButton>
                         )}
                       </Box>
@@ -633,6 +572,86 @@ export function StudentsTableRow({
       {renderMenuActions()}
       {renderConfirmDialog()}
       {renderUnenrollDialog()}
+      {payments.map((payment, index) => (
+        <CustomPopover
+          key={`popover-${payment.id}`}
+          open={index === menuId && paymentMenuActions.open}
+          anchorEl={paymentMenuActions.anchorEl}
+          onClose={handleMenuClose}
+          slotProps={{ 
+            arrow: { placement: 'right-top' },
+            paper: {
+              onClick: (e) => e.stopPropagation()
+            }
+          }}
+        >
+          <MenuList>
+            <MenuItem
+              onClick={async () => {
+                try {
+                  const newStatus: PaymentStatus =
+                    payment.status === 'Paid' ? 'Pending' : 'Paid';
+                  handleMenuClose();
+                  if (!earning?.id) {
+                    toast.error('Earning ID is missing');
+                    return;
+                  }
+                  await authAxiosInstance.patch(
+                    `${endpoints.earnings.details(earning.id)}/payments/${payment.id}`,
+                    {
+                      amount: payment.amount,
+                      status: newStatus,
+                      description: payment.description,
+                    }
+                  );
+
+                  // Update local state
+                  const updatedPayments = payments.map((p) =>
+                    p.id === payment.id ? { ...p, status: newStatus } : p
+                  );
+                  setPayments(updatedPayments);
+
+                  toast.success(`Payment marked as ${newStatus}`);
+                } catch (error) {
+                  console.error(error);
+                  toast.error('Failed to update payment status');
+                }
+              }}
+              sx={{
+                color:
+                  payment.status === 'Paid' ? 'warning.main' : 'success.main',
+              }}
+            >
+              <Iconify
+                icon={
+                  payment.status === 'Paid'
+                    ? 'material-symbols:toggle-off'
+                    : 'material-symbols:toggle-on'
+                }
+                width={16}
+                sx={{ mr: 1 }}
+              />
+              {payment.status === 'Paid' ? 'Mark Pending' : 'Mark Paid'}
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                setPaymentToDelete(payment.id);
+                paymentDeleteDialog.onTrue();
+                handleMenuClose();
+              }}
+              sx={{ color: 'error.main' }}
+            >
+              <Iconify
+                icon="solar:trash-bin-trash-bold"
+                width={16}
+                sx={{ mr: 1 }}
+              />
+              Delete Payment
+            </MenuItem>
+          </MenuList>
+        </CustomPopover>
+      ))}
     </>
   );
 }
