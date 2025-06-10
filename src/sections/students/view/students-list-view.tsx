@@ -382,18 +382,18 @@ export function StudentsListView() {
                       iconPosition="end"
                       value={tab.value}
                       label={tab.label}
-                      icon={
-                        <Label
-                          variant={
-                            tab.value === 'All' || tab.value === currentFilters.status
-                              ? 'filled'
-                              : 'soft'
-                          }
-                          color={tab.value === 'Enrolled' ? 'success' : 'default'}
-                        >
-                          {statusCount}
-                        </Label>
-                      }
+                      // icon={
+                      //   <Label
+                      //     variant={
+                      //       tab.value === 'All' || tab.value === currentFilters.status
+                      //         ? 'filled'
+                      //         : 'soft'
+                      //     }
+                      //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
+                      //   >
+                      //     {/* {statusCount} */}
+                      //   </Label>
+                      // }
                     />
                   );
                 })}

@@ -230,19 +230,19 @@ export function AgentListView({ earning }: { earning?: boolean }) {
                 iconPosition="end"
                 value={tab.value}
                 label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
-                      'soft'
-                    }
-                    color={(tab.value === 'Active' && 'success') || 'default'}
-                  >
-                    {['active', 'inactive'].includes(tab.value)
-                      ? tableData.filter((agent) => agent.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
+                // icon={
+                //   <Label
+                //     variant={
+                //       ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
+                //       'soft'
+                //     }
+                //     color={(tab.value === 'Active' && 'success') || 'default'}
+                //   >
+                //     {['active', 'inactive'].includes(tab.value)
+                //       ? tableData.filter((agent) => agent.status === tab.value).length
+                //       : tableData.length}
+                //   </Label>
+                // }
               />
             ))}
           </Tabs>
