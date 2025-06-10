@@ -41,6 +41,7 @@ type Props = {
   studentId: string;
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
+  onEnroll?: (studentId: string, data: { universityId: string; courseId: string; intakeId: string }) => void;
 };
 
 export function StudentQuickEnrollForm({
@@ -49,6 +50,7 @@ export function StudentQuickEnrollForm({
   studentId,
   associations = [],
   intakes = [],
+  onEnroll,
 }: Props) {
   const defaultValues: StudentQuickEnrollSchemaType = {
     universityId: '',
@@ -72,6 +74,9 @@ export function StudentQuickEnrollForm({
   const onSubmit = handleSubmit(async (data) => {
     try {
       await authAxiosInstance.patch(endpoints.students.enroll(studentId), data);
+      if (onEnroll) {
+        onEnroll(studentId, data);
+      }
       toast.success('Student enrolled successfully!');
       onClose();
     } catch (error) {

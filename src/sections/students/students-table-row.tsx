@@ -62,6 +62,8 @@ type Props = {
   onToggleStatus?: (id: string, status: IStudentStatus) => void;
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
+  onEnroll?: (studentId: string, data: { universityId: string; courseId: string; intakeId: string }) => void;
+  onUnenroll?: (studentId: string) => void;
 };
 
 export function StudentsTableRow({
@@ -73,6 +75,8 @@ export function StudentsTableRow({
   onToggleStatus,
   associations = [],
   intakes = [],
+  onEnroll,
+  onUnenroll,
 }: Props) {
   const theme = useTheme();
   const menuActions = usePopover();
@@ -128,6 +132,11 @@ export function StudentsTableRow({
     try {
       // Call the remove-intake-link API
       await authAxiosInstance.patch(endpoints.students.removeIntakeLink(row.id));
+
+      // Call the onUnenroll callback if provided
+      if (onUnenroll) {
+        onUnenroll(row.id);
+      }
 
       toast.success('Student unenrolled successfully');
       unenrollDialog.onFalse();
@@ -510,6 +519,7 @@ export function StudentsTableRow({
       studentId={row.id}
       associations={associations}
       intakes={intakes}
+      onEnroll={onEnroll}
     />
   );
   const renderMenuActions = () => (

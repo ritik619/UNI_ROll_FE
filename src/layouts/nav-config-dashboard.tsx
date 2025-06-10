@@ -73,7 +73,7 @@ export const navData: NavSectionProps['data'] = [
         icon: ICONS.booking,
         children: [
           // { title: 'Profile', path: paths.dashboard.students.root },
-          { title: 'Add Student', path: paths.dashboard.students.new },
+          // { title: 'Add Student', path: paths.dashboard.students.new },
           { title: 'Students List', path: paths.dashboard.students.list },
           // { title: 'Cards', path: paths.dashboard.students.cards },
           // { title: 'Edit', path: paths.dashboard.students.demo.edit },
