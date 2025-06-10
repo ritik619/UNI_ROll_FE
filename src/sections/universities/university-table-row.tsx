@@ -3,6 +3,7 @@ import type { ICourseAssociation } from 'src/types/courseAssociation';
 
 import { useState, useEffect } from 'react';
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
+import { useTheme } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -34,13 +35,9 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomPopover } from 'src/components/custom-popover';
 
 import { UniversityQuickEditForm } from './university-quick-edit-form';
-import { QuickAssociationForm } from './university-quick-add-course-association-form';
+import { UniversityQuickAssociationForm } from './university-quick-association-form';
 import { useAuthContext } from 'src/auth/hooks';
-
-import { useTheme } from '@mui/material/styles';
 import { toDMY } from 'src/utils/format-date';
-
-// ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
@@ -64,8 +61,9 @@ export function UniversityTableRow({
   earning,
 }: Props) {
   const theme = useTheme();
+
   const menuActions = usePopover(); // For university row actions
-  const courseMenuActions = usePopover(); // For course row actions
+  const universityMenuActions = usePopover(); // For course row actions
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
   const quickAssociateCourse = useBoolean();
@@ -77,7 +75,7 @@ export function UniversityTableRow({
   // State to track course being deleted
   const [universityToDelete, setUniversityToDelete] = useState<string | null>(null);
   const [associationToDelete, setAssociationToDelete] = useState<string | number | null>(null);
-  const courseDeleteDialog = useBoolean();
+  const universityDeleteDialog = useBoolean();
 
   const { user } = useAuthContext();
   const userRole = user?.role;
@@ -127,8 +125,8 @@ export function UniversityTableRow({
       // Reset the course to delete
       setUniversityToDelete(null);
     } catch (error) {
-      console.error('Failed to delete course:', error);
-      toast.error('Failed to delete course');
+      console.error('Failed to delete University:', error);
+      toast.error('Failed to delete University');
     }
   };
   const handleDeleteAssociation = async () => {
@@ -150,7 +148,7 @@ export function UniversityTableRow({
 
       // Reset selected ID and close dialog
       setAssociationToDelete(null);
-      courseDeleteDialog.onFalse();
+      universityDeleteDialog.onFalse();
     } catch (error) {
       console.error('Failed to delete association:', error);
       toast.error('Failed to delete association');
@@ -166,7 +164,7 @@ export function UniversityTableRow({
   );
 
   const renderQuickAssociateCourseForm = () => (
-    <QuickAssociationForm
+    <UniversityQuickAssociationForm
       universityId={row.id}
       open={quickAssociateCourse.value}
       onClose={quickAssociateCourse.onFalse}
@@ -358,7 +356,7 @@ export function UniversityTableRow({
                   onClick={quickAssociateCourse.onTrue}
                   startIcon={<Iconify icon="mingcute:add-line" sx={{ ml: 2 }} />}
                 >
-                  Associate University to Courses
+                  Associate Courses with University
                 </Button>
               )}
             </Box>
@@ -424,8 +422,8 @@ export function UniversityTableRow({
                       {/* Course Name and Code - 30% width */}
                       <Box sx={{ width: '30%' }}>
                         <Link
-                          component={RouterLink}
-                          href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
+                          // component={RouterLink}
+                          // href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
                           color="inherit"
                           sx={{
                             typography: 'subtitle2',
@@ -535,18 +533,18 @@ export function UniversityTableRow({
                             setAssociationToDelete(index);
                             // Create a unique popover ID for each course
                             const courseMenuId = `course-menu-${course.id}`;
-                            courseMenuActions.onOpen(event);
+                            universityMenuActions.onOpen(event);
                           }}
                         >
                           <Iconify icon="eva:more-vertical-fill" width={18} />
                         </IconButton>
                         {/* Course Actions Popover */}
                         <CustomPopover
-                          open={courseMenuActions.open}
-                          anchorEl={courseMenuActions.anchorEl}
-                          onClose={() => courseMenuActions.onClose()}
+                          open={universityMenuActions.open}
+                          anchorEl={universityMenuActions.anchorEl}
+                          onClose={() => universityMenuActions.onClose()}
                           slotProps={{ arrow: { placement: 'right-top' } }}
-                          id={courseMenuActions.id}
+                          id={universityMenuActions.id}
                         >
                           <MenuList>
                             {/* {isAdmin && (
@@ -567,12 +565,13 @@ export function UniversityTableRow({
                                       ? 'inactive'
                                       : 'active';
                                   courses[associationToDelete as number].status = newStatus;
-                                  courseMenuActions.onClose();
+                                  universityMenuActions.onClose();
+
                                   await authAxiosInstance.patch(
                                     `${endpoints.associations.byAssociation(courses[associationToDelete as number].id)}`,
                                     { status: newStatus }
                                   );
-                                  // Sho  w success message
+                                  // Show success message
                                   toast.success(
                                     `Course ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`
                                   );
@@ -610,9 +609,9 @@ export function UniversityTableRow({
                                 onClick={() => {
                                   // Set course for deletion and show confirmation dialog
                                   setAssociationToDelete(course.id);
-                                  courseDeleteDialog.onTrue();
+                                  universityDeleteDialog.onTrue();
                                   // Close the menu
-                                  courseMenuActions.onClose();
+                                  universityMenuActions.onClose();
                                 }}
                                 sx={{ color: 'error.main' }}
                               >
@@ -656,11 +655,11 @@ export function UniversityTableRow({
     </TableRow>
   );
 
-  const renderCourseDeleteDialog = () => (
+  const renderAssociationDeleteDialog = () => (
     <ConfirmDialog
-      open={courseDeleteDialog.value}
+      open={universityDeleteDialog.value}
       onClose={() => {
-        courseDeleteDialog.onFalse();
+        universityDeleteDialog.onFalse();
         setAssociationToDelete(null);
       }}
       title="Delete Association"
@@ -687,7 +686,7 @@ export function UniversityTableRow({
       {renderQuickAssociateCourseForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}
-      {renderCourseDeleteDialog()}
+      {renderAssociationDeleteDialog()}
     </>
   );
 }

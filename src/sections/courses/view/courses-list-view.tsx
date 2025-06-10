@@ -49,6 +49,8 @@ import { CoursesTableRow } from '../courses-table-row';
 // import { CoursesTableToolbar } from '../courses-table-toolbar';
 import { CoursesTableFiltersResult } from '../courses-table-filters-result';
 import { useAuthContext } from 'src/auth/hooks';
+import { IUniversity } from 'src/types/university';
+import { fetchUniversities } from 'src/services/universities/fetchUniversities';
 
 // ----------------------------------------------------------------------
 
@@ -72,6 +74,7 @@ export function CoursesListView() {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<ICourse[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [universities, setUniversities] = useState<IUniversity[]>([]);
 
   const { user } = useAuthContext();
   const userRole = user?.role;
@@ -201,6 +204,22 @@ export function CoursesListView() {
     // table.setRowsPerPage(2);
     fetchPaginatedCourses();
   }, [fetchPaginatedCourses]);
+
+  const fetchPaginatedUniversities = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { universities: c, total } = await fetchUniversities('active');
+      setUniversities(c);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPaginatedUniversities();
+  }, [fetchPaginatedUniversities]);
 
   return (
     <>
@@ -356,6 +375,7 @@ export function CoursesListView() {
                           onDeleteRow={() => handleDeleteRow(row.id)}
                           onToggleStatus={handleToggleStatus}
                           editHref={paths.dashboard.universitiesAndCourses.editCourse(row.id)}
+                          universities={universities}
                         />
                       ))}
 
