@@ -540,7 +540,7 @@ export function UniversityTableRow({
                         </IconButton>
                         {/* Course Actions Popover */}
                         <CustomPopover
-                          open={universityMenuActions.open}
+                          open={associationToDelete===index&& universityMenuActions.open}
                           anchorEl={universityMenuActions.anchorEl}
                           onClose={() => universityMenuActions.onClose()}
                           slotProps={{ arrow: { placement: 'right-top' } }}

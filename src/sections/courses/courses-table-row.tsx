@@ -576,7 +576,7 @@ export function CoursesTableRow({
                         </IconButton>
                         {/* Course Actions Popover */}
                         <CustomPopover
-                          open={courseMenuActions.open}
+                          open={associationToDelete===index&& courseMenuActions.open}
                           anchorEl={courseMenuActions.anchorEl}
                           onClose={() => courseMenuActions.onClose()}
                           slotProps={{ arrow: { placement: 'right-top' } }}
