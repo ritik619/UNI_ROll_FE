@@ -43,15 +43,7 @@ export const NewAgentSchema = zod.object({
   address: zod.string().min(1, { message: 'Address is required!' }),
   postCode: zod.string().min(1, { message: 'Post code is required!' }),
   accountNumber: zod.string().min(1, { message: 'Account number is required' }),
-  sortCode: zod
-    .string()
-    .min(1, { message: 'Sort code is required!' })
-    .regex(/^\d{2}-\d{2}-\d{2}$/, {
-      message: 'Sort code should be in the format XX-XX-XX',
-    })
-    .refine((val) => val.replace(/\D/g, '').length === 6, {
-      message: 'Sort code must be exactly 6 digits!',
-    }),
+  sortCode: zod.string().min(1, { message: 'Sort code is required!' }),
   utrNumber: zod.string().min(1, { message: 'UTR number is required' }),
   password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.enum(['active', 'inactive']).optional(),
@@ -294,7 +286,7 @@ export function AgentNewEditForm(
                 type="submit"
                 variant="contained"
                 loading={isSubmitting}
-                disabled={!isValid || isSubmitting} // disable if form invalid or submitting
+                disabled={isSubmitting} // disable if form invalid or submitting
               >
                 {
                   // currentAgent ? 'Save changes' :
