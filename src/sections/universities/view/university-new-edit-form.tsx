@@ -135,7 +135,7 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
     try {
       await createUniversity(data);
       toast.success(currentUniversity ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.universitiesAndCourses.list);
+      router.push(paths.dashboard.universitiesAndCourses.listUniversities);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || 'Something went wrong');

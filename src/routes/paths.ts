@@ -70,13 +70,13 @@ export const paths = {
     },
 
     universitiesAndCourses: {
-      list: `${ROOTS.DASHBOARD}/universities-&-courses/list`,
+      listUniversities: `${ROOTS.DASHBOARD}/universities-&-courses/list/universities`,
       listCourses: `${ROOTS.DASHBOARD}/universities-&-courses/list/courses`,
       addUniversity: `${ROOTS.DASHBOARD}/universities-&-courses/add-university`,
       addCourse: `${ROOTS.DASHBOARD}/universities-&-courses/add-course`,
       editCourse: (id: string) => `${ROOTS.DASHBOARD}/universities-&-courses/edit-course/${id}`,
-      universityCourses: (id: string) =>
-        `${ROOTS.DASHBOARD}/universities-&-courses/university/${id}`,
+      // universityCourses: (id: string) =>
+      //   `${ROOTS.DASHBOARD}/universities-&-courses/university/${id}`,
     },
     intakes: {
       edit: (id: string) => `${ROOTS.DASHBOARD}/intakes/${id}`,

@@ -80,7 +80,7 @@ export default function CourseEditView({ courseId }: Props) {
         heading="Edit Course"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Courses', href: paths.dashboard.universitiesAndCourses.list },
+          { name: 'Courses', href: paths.dashboard.universitiesAndCourses.listCourses },
           { name: 'Edit Course' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

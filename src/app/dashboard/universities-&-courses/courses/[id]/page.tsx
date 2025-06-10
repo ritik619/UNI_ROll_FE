@@ -60,7 +60,7 @@ export default function UniversityCoursesPage({ params }: Props) {
     // } catch (error) {
     //   console.error('Failed to fetch course details:', error);
     //   toast.error('Failed to fetch course information');
-    //   router.push(paths.dashboard.universitiesAndCourses.list);
+    //   router.push(paths.dashboard.universitiesAndCourses.listUniversities);
     // } finally {
     //   setLoading(false);
     // }
@@ -98,7 +98,7 @@ export default function UniversityCoursesPage({ params }: Props) {
   //       heading={`${course.name} Course`}
   //       links={[
   //         { name: 'Dashboard', href: paths.dashboard.root },
-  //         { name: 'Universities & Courses', href: paths.dashboard.universitiesAndCourses.list },
+  //         { name: 'Universities & Courses', href: paths.dashboard.universitiesAndCourses.listUniversities },
   //         { name: course.name },
   //       ]}
   //       action={

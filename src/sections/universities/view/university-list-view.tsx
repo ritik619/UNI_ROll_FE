@@ -232,7 +232,10 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
               ? []
               : [
                   { name: 'Dashboard', href: paths.dashboard.root },
-                  { name: 'Universities', href: paths.dashboard.universitiesAndCourses.list },
+                  {
+                    name: 'Universities',
+                    href: paths.dashboard.universitiesAndCourses.listUniversities,
+                  },
                   { name: 'List' },
                 ]
           }
@@ -383,7 +386,7 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}
                             onToggleStatus={handleToggleStatus as any}
-                            editHref={paths.dashboard.universitiesAndCourses.list}
+                            editHref={paths.dashboard.universitiesAndCourses.listUniversities}
                             earning={earning}
                           />
                         ))

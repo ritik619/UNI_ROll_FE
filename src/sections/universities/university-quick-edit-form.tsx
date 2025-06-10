@@ -126,7 +126,7 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
     try {
       await updateUniversity(data);
       toast.success('University updated successfully!');
-      router.push(paths.dashboard.universitiesAndCourses.list);
+      router.push(paths.dashboard.universitiesAndCourses.listUniversities);
       onClose();
     } catch (error: any) {
       console.error(error);

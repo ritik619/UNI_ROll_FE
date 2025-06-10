@@ -10,7 +10,6 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { UniversityNewEditForm } from './university-new-edit-form';
 
-
 export default function UniversityEditView() {
   return (
     <DashboardContent>
@@ -18,7 +17,7 @@ export default function UniversityEditView() {
         heading="EditUniversity"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'University', href: paths.dashboard.universitiesAndCourses.list },
+          { name: 'Universities', href: paths.dashboard.universitiesAndCourses.listUniversities },
           { name: 'New University' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

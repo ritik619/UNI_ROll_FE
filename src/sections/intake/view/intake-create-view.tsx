@@ -18,11 +18,11 @@ export default function CourseCreateView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Create a new Course"
+        heading="Create a new Intakes"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Courses', href: paths.dashboard.universitiesAndCourses.list },
-          { name: 'New Course' },
+          { name: 'Intakes', href: paths.dashboard.intakes.root },
+          { name: 'List' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

@@ -21,13 +21,13 @@ export default function CourseCreateView() {
         heading="Create a new Course"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Courses', href: paths.dashboard.universitiesAndCourses.list },
+          { name: 'Courses', href: paths.dashboard.universitiesAndCourses.listCourses },
           { name: 'New Course' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <CourseNewEditForm initialUniversityId={universityId} />
+      <CourseNewEditForm />
     </DashboardContent>
   );
 }

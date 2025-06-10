@@ -47,22 +47,22 @@ export default function UniversityCoursesPage({ params }: Props) {
       // Fetch university details
       const response = await authAxiosInstance.get(`${endpoints.universities.details(id)}`);
       setUniversity(response.data);
-      
+
       // Fetch university courses
       const coursesResponse = await authAxiosInstance.get(`${endpoints.courses.list}`, {
-        params: { 
+        params: {
           universityId: id,
-          status: 'all', 
-          page: 1, 
-          limit: 100 
-        }
+          status: 'all',
+          page: 1,
+          limit: 100,
+        },
       });
-      
+
       setCourses(coursesResponse.data.courses || []);
     } catch (error) {
       console.error('Failed to fetch university details:', error);
       toast.error('Failed to fetch university information');
-      router.push(paths.dashboard.universitiesAndCourses.list);
+      router.push(paths.dashboard.universitiesAndCourses.listUniversities);
     } finally {
       setLoading(false);
     }
@@ -100,7 +100,10 @@ export default function UniversityCoursesPage({ params }: Props) {
         heading={`${university.name} Courses`}
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Universities & Courses', href: paths.dashboard.universitiesAndCourses.list },
+          {
+            name: 'Universities & Courses',
+            href: paths.dashboard.universitiesAndCourses.listUniversities,
+          },
           { name: university.name },
         ]}
         action={
@@ -118,50 +121,51 @@ export default function UniversityCoursesPage({ params }: Props) {
 
       {/* University Info Card */}
       <Card sx={{ p: 3, mb: 4 }}>
-        <Stack 
-          direction={{ xs: 'column', sm: 'row' }} 
-          spacing={3}
-          alignItems={{ sm: 'center' }}
-        >
-          <Avatar 
-            alt={university.name} 
-            src={university.logoUrl} 
-            sx={{ 
-              width: 80, 
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems={{ sm: 'center' }}>
+          <Avatar
+            alt={university.name}
+            src={university.logoUrl}
+            sx={{
+              width: 80,
               height: 80,
               borderRadius: 1.5,
               bgcolor: 'background.neutral',
               border: (theme) => `solid 1px ${theme.palette.divider}`,
             }}
           >
-            {!university.logoUrl && (
-              <Iconify icon="mdi:university" width={42} />
-            )}
+            {!university.logoUrl && <Iconify icon="mdi:university" width={42} />}
           </Avatar>
-          
+
           <Stack spacing={1.5} flexGrow={1}>
             <Typography variant="h5">{university.name}</Typography>
-            
-            <Stack 
-              direction={{ xs: 'column', sm: 'row' }} 
+
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secondary', typography: 'body2' }}
             >
               <Stack direction="row" spacing={1} alignItems="center">
                 <Iconify icon="eva:pin-fill" width={16} />
-                <span>{university.cityName}, {university.countryName}</span>
+                <span>
+                  {university.cityName}, {university.countryName}
+                </span>
               </Stack>
-              
+
               {university.website && (
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Iconify icon="eva:globe-fill" width={16} />
-                  <a href={university.website} target="_blank" rel="noopener" style={{ color: 'inherit' }}>
+                  <a
+                    href={university.website}
+                    target="_blank"
+                    rel="noopener"
+                    style={{ color: 'inherit' }}
+                  >
                     {university.website}
                   </a>
                 </Stack>
               )}
             </Stack>
-            
+
             {university.description && (
               <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
                 {university.description}
@@ -172,7 +176,11 @@ export default function UniversityCoursesPage({ params }: Props) {
       </Card>
 
       {/* Courses Section */}
-      <UniversityCoursesView courses={courses} university={university} onCoursesChange={fetchUniversity} />
+      <UniversityCoursesView
+        courses={courses}
+        university={university}
+        onCoursesChange={fetchUniversity}
+      />
     </DashboardContent>
   );
 }

@@ -82,14 +82,17 @@ export const navData: NavSectionProps['data'] = [
       },
       {
         title: 'Universities & Courses',
-        path: paths.dashboard.universitiesAndCourses.list,
+        path: paths.dashboard.universitiesAndCourses.listUniversities,
         icon: ICONS.course,
         children: [
           {
             title: 'Add University',
             path: paths.dashboard.universitiesAndCourses.addUniversity,
           },
-          { title: 'Universities List', path: paths.dashboard.universitiesAndCourses.list },
+          {
+            title: 'Universities List',
+            path: paths.dashboard.universitiesAndCourses.listUniversities,
+          },
           {
             title: 'Add Course',
             path: paths.dashboard.universitiesAndCourses.addCourse,
@@ -139,11 +142,14 @@ export const navData: NavSectionProps['data'] = [
       },
       {
         title: 'Universities & Courses',
-        path: paths.dashboard.universitiesAndCourses.list,
+        path: paths.dashboard.universitiesAndCourses.listUniversities,
         icon: ICONS.course,
-        roles:['showUniversities'],
+        roles: ['showUniversities'],
         children: [
-          { title: 'Universities List', path: paths.dashboard.universitiesAndCourses.list },
+          {
+            title: 'Universities List',
+            path: paths.dashboard.universitiesAndCourses.listUniversities,
+          },
           { title: 'Courses List', path: paths.dashboard.universitiesAndCourses.listCourses },
         ],
       },
@@ -151,7 +157,7 @@ export const navData: NavSectionProps['data'] = [
         title: 'Intakes',
         path: paths.dashboard.intakes.root,
         icon: ICONS.calendar,
-        roles:['showIntakes'],
+        roles: ['showIntakes'],
         children: [
           {
             title: 'Intakes List',
