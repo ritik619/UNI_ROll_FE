@@ -145,7 +145,7 @@ export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
               <Field.Text
                 name="name"
                 label="Intake Name"
-                placeholder="Bachelor of Computer Science"
+                placeholder="Academic Batch"
                 helperText="Enter the full name of the Intake"
               />
 

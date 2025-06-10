@@ -75,7 +75,7 @@ export function UniversityTableRow({
 
   // State to track course being deleted
   const [universityToDelete, setUniversityToDelete] = useState<string | null>(null);
-  const [associationToDelete, setAssociationToDelete] = useState<string |number| null>(null);
+  const [associationToDelete, setAssociationToDelete] = useState<string | number | null>(null);
   const courseDeleteDialog = useBoolean();
 
   const { user } = useAuthContext();
@@ -111,7 +111,7 @@ export function UniversityTableRow({
 
   // Function to handle course deletion
   const handleDeleteUniversity = async () => {
-    if (!universityToDelete) return;  
+    if (!universityToDelete) return;
 
     try {
       // Make API call to delete the course
@@ -262,8 +262,8 @@ export function UniversityTableRow({
 
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
             <Link
-              component={RouterLink}
-              href={paths.dashboard.universitiesAndCourses.universityCourses(row.id)}
+              // component={RouterLink}
+              // href={paths.dashboard.universitiesAndCourses.universityCourses(row.id)}
               color="inherit"
               sx={{ cursor: 'pointer' }}
             >
@@ -408,7 +408,7 @@ export function UniversityTableRow({
                   </Box>
                 </Box>
                 <Stack spacing={2}>
-                  {courses.map((course,index) => (
+                  {courses.map((course, index) => (
                     <Box
                       key={course.id}
                       sx={(theme) => ({
@@ -531,7 +531,7 @@ export function UniversityTableRow({
                           color="default"
                           onClick={(event) => {
                             event.stopPropagation();
-                            setAssociationToDelete(index)
+                            setAssociationToDelete(index);
                             // Create a unique popover ID for each course
                             const courseMenuId = `course-menu-${course.id}`;
                             courseMenuActions.onOpen(event);
@@ -562,10 +562,15 @@ export function UniversityTableRow({
                               onClick={async () => {
                                 try {
                                   const newStatus =
-                                    courses[associationToDelete as number].status === 'active' ? 'inactive' : 'active';
+                                    courses[associationToDelete as number].status === 'active'
+                                      ? 'inactive'
+                                      : 'active';
                                   courses[associationToDelete as number].status = newStatus;
                                   courseMenuActions.onClose();
-                                  await authAxiosInstance.patch(`${endpoints.associations.byAssociation(courses[associationToDelete as number].id)}`, {status:newStatus});       
+                                  await authAxiosInstance.patch(
+                                    `${endpoints.associations.byAssociation(courses[associationToDelete as number].id)}`,
+                                    { status: newStatus }
+                                  );
                                   // Sho  w success message
                                   toast.success(
                                     `Course ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`
@@ -574,7 +579,7 @@ export function UniversityTableRow({
                                   // Force re-render by updating courses state
                                   const updatedCourses = [...courses];
                                   setCourses(updatedCourses);
-                                  setAssociationToDelete(null)
+                                  setAssociationToDelete(null);
                                   // Close the menu
                                 } catch (error) {
                                   console.error('Failed to update association status:', error);

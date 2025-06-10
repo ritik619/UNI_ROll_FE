@@ -19,6 +19,7 @@ import { Iconify } from 'src/components/iconify';
 
 import { useAuthContext } from 'src/auth/hooks';
 import { skeleton } from 'src/theme/core/components/skeleton';
+import UserDetailsCard from './user-details-card';
 // ----------------------------------------------------------------------
 
 // Custom hook for counting animation
@@ -227,190 +228,6 @@ export function DashboardView() {
     );
   }
 
-  const UserDetails = () => {
-    return (
-      <Card
-        className="card user"
-        sx={{
-          gridRowStart: 1,
-          gridRowEnd: 3,
-          p: 4,
-          width: '100%',
-          height: '100%',
-          position: 'relative',
-          overflow: 'hidden',
-          transition: 'all 0.3s ease-in-out',
-          '&:hover': {
-            transform: 'translateY(-4px)',
-            boxShadow: 8,
-          },
-        }}
-      >
-        {/* Background gradient */}
-        <Box
-          className="box user"
-          sx={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            opacity: 0.1,
-            color: '#637381',
-            background: 'linear-gradient(135deg, #637381 0%, #919EAB 100%)',
-          }}
-        />
-        <Stack
-          className="stack user"
-          spacing={1}
-          sx={{
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-evenly',
-          }}
-        >
-          <Box
-            className="box user basic"
-            sx={{
-              position: 'relative',
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Box
-              className="box user basic header"
-              sx={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Typography variant="h2" sx={{ fontWeight: 600 }}>
-                {`${user?.firstName} ${user?.lastName}`}
-              </Typography>
-              <Divider sx={{ borderStyle: 'dashed' }} />
-            </Box>
-            <Box
-              className="box user basic details"
-              sx={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <Typography variant="body1">Email: {user?.email}</Typography>
-              <Typography variant="body2">Date of Birth: {new Date(user?.dateOfBirth?.seconds * 1000).toDateString()}</Typography>
-              <Typography variant="body1">Phone Number: {user?.phoneNumber}</Typography>
-            </Box>
-          </Box>
-          <Box
-            className="box user address"
-            sx={{
-              position: 'relative',
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-evenly',
-            }}
-          >
-            <Box
-              className="box user address header"
-              sx={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Address Details
-              </Typography>
-              <Divider sx={{ borderStyle: 'dashed' }} />
-            </Box>
-            <Box
-              className="box user address details"
-              sx={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <Typography variant="body1">Address: {user?.address}</Typography>
-              <Typography variant="body1">Post Code: {user?.postCode}</Typography>{' '}
-            </Box>
-          </Box>
-          <Box
-            className="box user bank"
-            sx={{
-              position: 'relative',
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-evenly',
-            }}
-          >
-            <Box
-              className="box user bank header"
-              sx={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Bank Details
-              </Typography>
-              <Divider sx={{ borderStyle: 'dashed' }} />
-            </Box>
-            <Box
-              className="box user bank details"
-              sx={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <Typography variant="body1">
-                Sort Code: {user?.bankDetails?.sortCode ?? 'N/A'}
-              </Typography>
-              <Typography variant="body1">
-                Account Number: {user?.bankDetails?.accountNumber ?? 'N/A'}
-              </Typography>
-              <Typography variant="body1">UTR Number: {user?.utrNumber ?? 'N/A'}</Typography>
-            </Box>
-          </Box>
-        </Stack>
-      </Card>
-    );
-  };
-
   return (
     <DashboardContent className="dashboard">
       <Stack className="body" spacing={3}>
@@ -450,7 +267,7 @@ export function DashboardView() {
               gap: 3,
             }}
           >
-            {isAgent && UserDetails()}
+            {isAgent && <UserDetailsCard />}
             {filteredCards.map((card) => {
               let animatedValue: number;
               switch (card.key) {

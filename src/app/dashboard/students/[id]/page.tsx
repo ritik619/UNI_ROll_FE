@@ -100,7 +100,7 @@ export default function StudentDetailsPage({ params }: Props) {
         action={
           <Button
             component={RouterLink}
-            href={`${paths.dashboard.students.edit}/${student.id}`}
+            href={`${paths.dashboard.students.root}/${student.id}/edit`}
             variant="contained"
             startIcon={<Iconify icon="mingcute:edit-line" />}
           >

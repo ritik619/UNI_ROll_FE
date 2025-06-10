@@ -69,7 +69,7 @@ export function CoursesTableRow({
 
   // State to track course being deleted
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
-  const [associationToDelete, setAssociationToDelete] = useState<string |number| null>(null);
+  const [associationToDelete, setAssociationToDelete] = useState<string | number | null>(null);
 
   const courseDeleteDialog = useBoolean();
 
@@ -239,15 +239,19 @@ export function CoursesTableRow({
           }}
         />
       </TableCell> */}
-
+      <TableCell>
+        <Box component="span" sx={{ color: 'text.disabled' }}>
+          {row.code}
+        </Box>
+      </TableCell>
       <TableCell>
         <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
           {/* <Avatar alt={row.name} src={row?.logoUrl} /> */}
 
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
             <Link
-              component={RouterLink}
-              href={paths.dashboard.universitiesAndCourses.universityCourses(row.id)}
+              // component={RouterLink}
+              // href={paths.dashboard.universitiesAndCourses.universityCourses(row.id)}
               color="inherit"
               sx={{ cursor: 'pointer' }}
             >
@@ -256,8 +260,9 @@ export function CoursesTableRow({
           </Stack>
         </Box>
       </TableCell>
+
       <TableCell>
-        <Box component="span" sx={{ color: 'text.disabled' }}>
+        <Box component="span" sx={{ width: '100%', color: 'text.disabled' }}>
           {row.description
             ? row.description.length > 50
               ? `${row.description.substring(0, 50)}...`
@@ -418,7 +423,7 @@ export function CoursesTableRow({
                   </Box>
                 </Box>
                 <Stack spacing={2}>
-                  {university.map((course,index) => (
+                  {university.map((course, index) => (
                     <Box
                       key={course.id}
                       sx={(theme) => ({
@@ -539,7 +544,7 @@ export function CoursesTableRow({
                           color="default"
                           onClick={(event) => {
                             event.stopPropagation();
-                            setAssociationToDelete(index)
+                            setAssociationToDelete(index);
                             // Create a unique popover ID for each course
                             const courseMenuId = `course-menu-${course.id}`;
                             courseMenuActions.onOpen(event);
@@ -571,11 +576,16 @@ export function CoursesTableRow({
                               onClick={async () => {
                                 try {
                                   const newStatus =
-                                    university[associationToDelete as number].status === 'active' ? 'inactive' : 'active';
-                                    courseMenuActions.onClose();
+                                    university[associationToDelete as number].status === 'active'
+                                      ? 'inactive'
+                                      : 'active';
+                                  courseMenuActions.onClose();
 
-                                    await authAxiosInstance.patch(`${endpoints.associations.byAssociation(university[associationToDelete as number].id)}`, {status:newStatus})       
-                                  
+                                  await authAxiosInstance.patch(
+                                    `${endpoints.associations.byAssociation(university[associationToDelete as number].id)}`,
+                                    { status: newStatus }
+                                  );
+
                                   // Update the course status in the local state
                                   university[associationToDelete as number].status = newStatus;
 
@@ -587,7 +597,7 @@ export function CoursesTableRow({
                                   // Force re-render by updating university state
                                   const updatedCourses = [...university];
                                   setUniversity(updatedCourses);
-                                  setAssociationToDelete(null)
+                                  setAssociationToDelete(null);
 
                                   // Close the menu
                                 } catch (error) {

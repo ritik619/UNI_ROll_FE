@@ -16,7 +16,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
-import { formatDateToDDMMYYYY } from 'src/utils/format-date';
+import { formatDateToDDMMYYYY, toDMY } from 'src/utils/format-date';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
@@ -63,7 +63,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     fName: currentStudent?.firstName || '',
     lName: currentStudent?.lastName || '',
     email: currentStudent?.email || '',
-    dob: new Date(currentStudent?.dateOfBirth?.split('/').reverse().join('-')).toString() || '',
+    dob: toDMY(currentStudent?.dateOfBirth).toDateString(),
     // phonePrefix: '+91',
     phoneNumber: currentStudent?.phoneNumber || '',
     nationality: currentStudent?.nationality || '',

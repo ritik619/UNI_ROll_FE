@@ -55,11 +55,12 @@ import { useAuthContext } from 'src/auth/hooks';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...COURSES_STATUS_OPTIONS];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
-  { id: 'name', label: 'Courses Name' },
-  { id: 'description', label: 'Description', width: 180 },
-  { id: 'duration', label: 'Duration', width: 220 },
-  { id: 'status', label: 'Status', width: 100 },
-  { id: '', width: 88 },
+  { id: 'code', label: 'Code', width: '10%' },
+  { id: 'name', label: 'Courses Name', width: '25%' },
+  { id: 'description', label: 'Description', width: '40%' },
+  { id: 'duration', label: 'Duration', width: '12%' },
+  { id: 'status', label: 'Status', width: '08%' },
+  { id: '', width: '5%' },
 ];
 
 // ----------------------------------------------------------------------

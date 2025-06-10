@@ -26,6 +26,7 @@ import { Form, Field, schemaHelper } from 'src/components/hook-form';
 import { uploadFileAndGetURL } from 'src/auth/context';
 
 import { useEffect } from 'react';
+import { toDMY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
@@ -44,9 +45,7 @@ export const AgentQuickEditSchema = zod.object({
   address: zod.string().min(1, { message: 'Address is required!' }),
   postCode: zod.string().min(1, { message: 'Post code is required!' }),
   accountNumber: zod.string().min(1, { message: 'Account number is required' }),
-  sortCode: zod
-    .string()
-    .regex(/^\d{2}-\d{2}-\d{2}$/, { message: 'Sort code should be in the format XX-XX-XX' }),
+  sortCode: zod.string().min(1, { message: 'Sort code is required' }),
   utrNumber: zod.string().min(1, { message: 'UTR number is required' }),
   status: zod.string(),
   // unc: zod.boolean(),
@@ -58,16 +57,16 @@ export type AgentQuickEditSchemaType = zod.infer<typeof AgentQuickEditSchema>;
 type Props = {
   open: boolean;
   onClose: () => void;
-  onCloseandUpdate:(c:boolean)=>void;
+  onCloseandUpdate: (c: boolean) => void;
   currentAgent?: IAgentItem;
 };
 
-export function AgentQuickEditForm({ currentAgent, open, onClose,onCloseandUpdate }: Props) {
+export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpdate }: Props) {
   const defaultValues: AgentQuickEditSchemaType = {
     // avatarUrl: null,
     firstName: currentAgent?.firstName ?? '',
     lastName: currentAgent?.lastName ?? '',
-    dateOfBirth: currentAgent?.dateOfBirth ?? new Date().toISOString().split('T')[0],
+    dateOfBirth: toDMY(currentAgent?.dateOfBirth).toDateString(),
     email: currentAgent?.email ?? '',
     address: currentAgent?.address ?? '',
     postCode: currentAgent?.postCode ?? '',
@@ -78,6 +77,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose,onCloseandUpdat
     // unc: currentAgent?.accessControl?.unc ?? false,
     // intake: currentAgent?.accessControl?.intake ?? false,
   };
+  console.log(toDMY(currentAgent?.dateOfBirth), 'toDMY');
 
   const methods = useForm<AgentQuickEditSchemaType>({
     mode: 'all',
@@ -132,8 +132,8 @@ export function AgentQuickEditForm({ currentAgent, open, onClose,onCloseandUpdat
     try {
       await updateAgent(data);
       toast.success('Agent updated successfully!');
-      onCloseandUpdate(true)
-      router.push(paths.dashboard.agent.list);
+      onCloseandUpdate(true);
+      // router.push(paths.dashboard.agent.list);
     } catch (error) {
       console.error(error);
       toast.error('Failed to update agent. Please try again.');
@@ -283,7 +283,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose,onCloseandUpdat
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
             Update
           </LoadingButton>
-        </DialogActions>  
+        </DialogActions>
       </Form>
     </Dialog>
   );
