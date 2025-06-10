@@ -433,13 +433,7 @@ export function StudentsListView() {
                 }),
               ]}
             >
-              <>
                 {STATUS_OPTIONS.map((tab) => {
-                  const statusCount =
-                    tab.value === 'All'
-                      ? tableData.length
-                      : tableData.filter((student) => student.status === tab.value).length;
-
                   return (
                     <Tab
                       key={tab.value}
@@ -461,7 +455,6 @@ export function StudentsListView() {
                     />
                   );
                 })}
-              </>
             </Tabs>
             <IconButton onClick={menuActions.onOpen}>
               <Iconify icon="eva:more-vertical-fill" />
@@ -514,7 +507,7 @@ export function StudentsListView() {
             <IntakeSelect
               id="intake-id"
               label="Intake"
-              getValue="intakeName"
+              getValue="intakeId"
               placeholder="Choose a Intake"
               onChange={(event, newValue) => {
                 // Handle value change
