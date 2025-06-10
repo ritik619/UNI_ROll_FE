@@ -46,10 +46,11 @@ import {
 
 import { UniversityTableRow } from '../university-table-row';
 import { UniversityTableFiltersResult } from '../university-table-filters-result';
-import { UniversityTableToolbar } from '../university-table-toolbar';
-import { Field } from 'src/components/hook-form';
-import { CitySelect, CountrySelect } from 'src/components/select';
 import { useAuthContext } from 'src/auth/hooks';
+
+import { CitySelect, CountrySelect } from 'src/components/select';
+import { ICourse } from 'src/types/course';
+import { fetchCourses } from 'src/services/courses/fetchCourses';
 
 // ----------------------------------------------------------------------
 
@@ -74,6 +75,7 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<IUniversity[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [courses, setCourses] = useState<ICourse[]>([]);
 
   const { user } = useAuthContext();
   const userRole = user?.role;
@@ -221,6 +223,22 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
     filters.state.cityId,
     filters.state.countryCode,
   ]);
+
+  const fetchPaginatedCourses = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { courses: c, total } = await fetchCourses('active');
+      setCourses(c);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPaginatedCourses();
+  }, [fetchPaginatedCourses]);
 
   return (
     <>
@@ -388,6 +406,7 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
                             onToggleStatus={handleToggleStatus as any}
                             editHref={paths.dashboard.universitiesAndCourses.listUniversities}
                             earning={earning}
+                            courses={courses}
                           />
                         ))
                       ) : (

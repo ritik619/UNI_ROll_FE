@@ -20,7 +20,6 @@ import { Form, Field } from 'src/components/hook-form';
 import { createCourseAssociation } from 'src/services/courses/attachCourses';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchUniversities } from 'src/services/universities/fetchUniversities';
-import { ICourse } from 'src/types/course';
 import { IUniversity } from 'src/types/university';
 
 // ----------------------------------------------------------------------

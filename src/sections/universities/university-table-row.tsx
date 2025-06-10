@@ -38,6 +38,7 @@ import { UniversityQuickEditForm } from './university-quick-edit-form';
 import { UniversityQuickAssociationForm } from './university-quick-association-form';
 import { useAuthContext } from 'src/auth/hooks';
 import { toDMY } from 'src/utils/format-date';
+import { ICourse } from 'src/types/course';
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +50,7 @@ type Props = {
   onDeleteRow: () => void;
   onToggleStatus?: (id: string, status: string) => void;
   earning?: boolean;
+  courses: ICourse[];
 };
 
 export function UniversityTableRow({
@@ -59,6 +61,7 @@ export function UniversityTableRow({
   onDeleteRow,
   onToggleStatus,
   earning,
+  courses,
 }: Props) {
   const theme = useTheme();
 
@@ -69,7 +72,7 @@ export function UniversityTableRow({
   const quickAssociateCourse = useBoolean();
 
   const collapseRow = useBoolean();
-  const [courses, setCourses] = useState<ICourseAssociation[]>([]);
+  const [courseAssociations, setCoursesAssociations] = useState<ICourseAssociation[]>([]);
   const [loading, setLoading] = useState(false);
 
   // State to track course being deleted
@@ -96,7 +99,7 @@ export function UniversityTableRow({
             100,
             undefined
           );
-          setCourses(c);
+          setCoursesAssociations(c);
         } catch (error) {
           console.error('Failed to fetch courses:', error);
         } finally {
@@ -118,6 +121,9 @@ export function UniversityTableRow({
 
       await authAxiosInstance.delete(`${endpoints.universities.details(universityToDelete)}`);
       // Remove the deleted course from the local state
+      setCoursesAssociations((prevUniversity) =>
+        prevUniversity.filter((university) => university.id !== universityToDelete)
+      );
 
       // Show success message
       toast.success('University deleted successfully');
@@ -139,7 +145,7 @@ export function UniversityTableRow({
       );
 
       // Remove the deleted association from local state
-      setCourses((prevCourses) =>
+      setCoursesAssociations((prevCourses) =>
         prevCourses.filter((course) => course.id !== associationToDelete)
       );
 
@@ -168,6 +174,7 @@ export function UniversityTableRow({
       universityId={row.id}
       open={quickAssociateCourse.value}
       onClose={quickAssociateCourse.onFalse}
+      courses={courses}
     />
   );
 
@@ -346,7 +353,7 @@ export function UniversityTableRow({
               sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
               <Typography variant="subtitle1" aria-description="description">
-                Course {!loading && `(${courses.length})`}
+                Course {!loading && `(${courseAssociations.length})`}
               </Typography>
 
               {isAdmin && (
@@ -365,7 +372,7 @@ export function UniversityTableRow({
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
                 <CircularProgress />
               </Box>
-            ) : courses.length > 0 ? (
+            ) : courseAssociations.length > 0 ? (
               <>
                 {/* Table Header */}
                 <Box
@@ -407,7 +414,7 @@ export function UniversityTableRow({
                   </Box>
                 </Box>
                 <Stack spacing={2}>
-                  {courses.map((course, index) => (
+                  {courseAssociations.map((course, index) => (
                     <Box
                       key={course.id}
                       sx={(theme) => ({
@@ -540,7 +547,7 @@ export function UniversityTableRow({
                         </IconButton>
                         {/* Course Actions Popover */}
                         <CustomPopover
-                          open={associationToDelete===index&& universityMenuActions.open}
+                          open={associationToDelete === index && universityMenuActions.open}
                           anchorEl={universityMenuActions.anchorEl}
                           onClose={() => universityMenuActions.onClose()}
                           slotProps={{ arrow: { placement: 'right-top' } }}
@@ -561,14 +568,16 @@ export function UniversityTableRow({
                               onClick={async () => {
                                 try {
                                   const newStatus =
-                                    courses[associationToDelete as number].status === 'active'
+                                    courseAssociations[associationToDelete as number].status ===
+                                    'active'
                                       ? 'inactive'
                                       : 'active';
-                                  courses[associationToDelete as number].status = newStatus;
+                                  courseAssociations[associationToDelete as number].status =
+                                    newStatus;
                                   universityMenuActions.onClose();
 
                                   await authAxiosInstance.patch(
-                                    `${endpoints.associations.byAssociation(courses[associationToDelete as number].id)}`,
+                                    `${endpoints.associations.byAssociation(courseAssociations[associationToDelete as number].id)}`,
                                     { status: newStatus }
                                   );
                                   // Show success message
@@ -577,8 +586,8 @@ export function UniversityTableRow({
                                   );
 
                                   // Force re-render by updating courses state
-                                  const updatedCourses = [...courses];
-                                  setCourses(updatedCourses);
+                                  const updatedCourses = [...courseAssociations];
+                                  setCoursesAssociations(updatedCourses);
                                   setAssociationToDelete(null);
                                   // Close the menu
                                 } catch (error) {

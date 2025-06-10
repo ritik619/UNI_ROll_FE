@@ -44,19 +44,20 @@ type Props = {
   open: boolean;
   onClose: () => void;
   universityId: string;
+  courses: ICourse[];
 };
 
-export function UniversityQuickAssociationForm({ open, onClose, universityId }: Props) {
+export function UniversityQuickAssociationForm({ open, onClose, universityId, courses }: Props) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [courses, setCourses] = useState<ICourse[]>([]);
+  // const [courses, setCourses] = useState<ICourse[]>([]);
 
   const defaultValues: UniversityAssociationFormType = {
     courseId: '',
     startDate: '',
     // endDate: '',
-    applicationDeadline: '',
+    // applicationDeadline: '',
     price: 0,
     currency: 'EUR',
     requirementsDescription: '',
@@ -92,22 +93,6 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId }: 
       toast.error(error.message || 'Failed to create course association');
     }
   });
-
-  const fetchPaginatedCourses = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { courses: c, total } = await fetchCourses('active');
-      setCourses(c);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPaginatedCourses();
-  }, [fetchPaginatedCourses]);
 
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>

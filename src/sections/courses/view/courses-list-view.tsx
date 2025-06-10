@@ -46,9 +46,9 @@ import {
 } from 'src/components/table';
 
 import { CoursesTableRow } from '../courses-table-row';
-// import { CoursesTableToolbar } from '../courses-table-toolbar';
 import { CoursesTableFiltersResult } from '../courses-table-filters-result';
 import { useAuthContext } from 'src/auth/hooks';
+
 import { IUniversity } from 'src/types/university';
 import { fetchUniversities } from 'src/services/universities/fetchUniversities';
 
