@@ -233,7 +233,7 @@ export function DashboardView() {
         className="card user"
         sx={{
           gridRowStart: 1,
-          gridRowEnd: 4,
+          gridRowEnd: 3,
           p: 4,
           width: '100%',
           height: '100%',
@@ -313,7 +313,7 @@ export function DashboardView() {
               }}
             >
               <Typography variant="body1">Email: {user?.email}</Typography>
-              <Typography variant="body1">Date of Birth: {user?.dateOfBirth}</Typography>
+              <Typography variant="body2">Date of Birth: {new Date(user?.dateOfBirth?.seconds * 1000).toDateString()}</Typography>
               <Typography variant="body1">Phone Number: {user?.phoneNumber}</Typography>
             </Box>
           </Box>
