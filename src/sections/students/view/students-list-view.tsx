@@ -433,28 +433,28 @@ export function StudentsListView() {
                 }),
               ]}
             >
-                {STATUS_OPTIONS.map((tab) => {
-                  return (
-                    <Tab
-                      key={tab.value}
-                      iconPosition="end"
-                      value={tab.value}
-                      label={tab.label}
-                      // icon={
-                      //   <Label
-                      //     variant={
-                      //       tab.value === 'All' || tab.value === currentFilters.status
-                      //         ? 'filled'
-                      //         : 'soft'
-                      //     }
-                      //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
-                      //   >
-                      //     {/* {statusCount} */}
-                      //   </Label>
-                      // }
-                    />
-                  );
-                })}
+              {STATUS_OPTIONS.map((tab) => {
+                return (
+                  <Tab
+                    key={tab.value}
+                    iconPosition="end"
+                    value={tab.value}
+                    label={tab.label}
+                  // icon={
+                  //   <Label
+                  //     variant={
+                  //       tab.value === 'All' || tab.value === currentFilters.status
+                  //         ? 'filled'
+                  //         : 'soft'
+                  //     }
+                  //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
+                  //   >
+                  //     {/* {statusCount} */}
+                  //   </Label>
+                  // }
+                  />
+                );
+              })}
             </Tabs>
             <IconButton onClick={menuActions.onOpen}>
               <Iconify icon="eva:more-vertical-fill" />
@@ -580,12 +580,12 @@ export function StudentsListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(
-                  //     checked,
-                  //     dataFiltered.map((row) => row.id)
-                  //   )
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(
+                //     checked,
+                //     dataFiltered.map((row) => row.id)
+                //   )
+                // }
                 />
 
                 <TableBody>
@@ -629,9 +629,9 @@ export function StudentsListView() {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={loading ? () => {} : table.onChangePage}
-            onChangeDense={loading ? () => {} : table.onChangeDense}
-            onRowsPerPageChange={loading ? () => {} : table.onChangeRowsPerPage}
+            onPageChange={loading ? () => { } : table.onChangePage}
+            onChangeDense={loading ? () => { } : table.onChangeDense}
+            onRowsPerPageChange={loading ? () => { } : table.onChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>

@@ -29,7 +29,12 @@ const CourseAssociationSchema = zod.object({
   startDate: zod.string(),
   // endDate: zod.string(),
   applicationDeadline: zod.string(),
-  price: zod.number().min(1),
+  price: zod
+    .union([zod.string(), zod.number()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val >= 0, {
+      message: 'Price is required'
+    }),
   currency: zod.string().min(1),
   requirementsDescription: zod.string(),
   languageOfInstruction: zod.string(),

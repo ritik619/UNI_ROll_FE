@@ -38,8 +38,18 @@ const defaultPayment = {
 };
 
 const PaymentSchema = zod.object({
-  amount: zod.number().min(1, 'Payment amount must be greater than 0'),
-  paymentNumber: zod.number().min(1, 'Payment number is required'),
+  amount: zod
+    .union([zod.string(), zod.number()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val >= 0, {
+      message: 'Payment must be greater than or equal to 0',
+    }),
+  paymentNumber: zod
+    .union([zod.string(), zod.number()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val >= 0, {
+      message: 'Payment number is required'
+    }),
   status: zod.enum(['Paid', 'Pending', 'Failed']),
   description: zod.string().min(1, 'Description is required'),
   paymentDate: zod.string().min(1, 'Payment date is required'),
@@ -49,7 +59,12 @@ const PaymentAssociationSchema = zod.object({
   agentId: zod.string().min(1, 'Agent ID is required'),
   universityId: zod.string().min(1, 'University ID is required'),
   studentId: zod.string().min(1, 'Student ID is required'),
-  totalCommission: zod.number().min(0, 'Total commission must be greater than or equal to 0'),
+  totalCommission: zod
+    .union([zod.string(), zod.number()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val >= 0, {
+      message: 'Total commission must be greater than or equal to 0',
+    }),
   commissionCurrency: zod.string().min(1, 'Commission currency is required'),
   // commissionPercentage: zod.number().min(0, 'Commission percentage must be greater than or equal to 0'),
   payments: zod.array(PaymentSchema).min(1, 'At least one payment is required'),
