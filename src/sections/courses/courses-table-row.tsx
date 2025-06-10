@@ -69,7 +69,7 @@ export function CoursesTableRow({
 
   // State to track course being deleted
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
-  const [associationToDelete, setAssociationToDelete] = useState<string | null>(null);
+  const [associationToDelete, setAssociationToDelete] = useState<string |number| null>(null);
 
   const courseDeleteDialog = useBoolean();
 
@@ -127,13 +127,12 @@ export function CoursesTableRow({
     }
   };
   const handleDeleteAssociation = async () => {
-    console.log('handleDeleteAssociation');
     if (!associationToDelete) return;
 
     try {
       // Make API call to delete the association
       await authAxiosInstance.delete(
-        `${endpoints.associations.byAssociation(associationToDelete)}`
+        `${endpoints.associations.byAssociation(associationToDelete as string)}`
       );
 
       // Remove the deleted association from local state
@@ -419,7 +418,7 @@ export function CoursesTableRow({
                   </Box>
                 </Box>
                 <Stack spacing={2}>
-                  {university.map((course) => (
+                  {university.map((course,index) => (
                     <Box
                       key={course.id}
                       sx={(theme) => ({
@@ -540,9 +539,10 @@ export function CoursesTableRow({
                           color="default"
                           onClick={(event) => {
                             event.stopPropagation();
+                            setAssociationToDelete(index)
                             // Create a unique popover ID for each course
                             const courseMenuId = `course-menu-${course.id}`;
-                            courseMenuActions.onOpen(event, courseMenuId);
+                            courseMenuActions.onOpen(event);
                           }}
                         >
                           <Iconify icon="eva:more-vertical-fill" width={18} />
@@ -571,14 +571,13 @@ export function CoursesTableRow({
                               onClick={async () => {
                                 try {
                                   const newStatus =
-                                    course.status === 'active' ? 'inactive' : 'active';
-                                  // await authAxiosInstance.patch(
-                                  //   `${endpoints.university.status(course.id)}`,
-                                  //   { status: newStatus }
-                                  // );
+                                    university[associationToDelete as number].status === 'active' ? 'inactive' : 'active';
+                                    courseMenuActions.onClose();
 
+                                    await authAxiosInstance.patch(`${endpoints.associations.byAssociation(university[associationToDelete as number].id)}`, {status:newStatus})       
+                                  
                                   // Update the course status in the local state
-                                  course.status = newStatus;
+                                  university[associationToDelete as number].status = newStatus;
 
                                   // Show success message
                                   toast.success(
@@ -588,9 +587,9 @@ export function CoursesTableRow({
                                   // Force re-render by updating university state
                                   const updatedCourses = [...university];
                                   setUniversity(updatedCourses);
+                                  setAssociationToDelete(null)
 
                                   // Close the menu
-                                  courseMenuActions.onClose();
                                 } catch (error) {
                                   console.error('Failed to update association status:', error);
                                   toast.error('Failed to update association status');
@@ -620,7 +619,6 @@ export function CoursesTableRow({
                                   // Set course for deletion and show confirmation dialog
                                   setCourseToDelete(course.id);
                                   setAssociationToDelete(course.id);
-                                  console.log('setAssociationToDelete', course);
 
                                   courseDeleteDialog.onTrue();
                                   // Close the menu

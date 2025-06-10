@@ -63,37 +63,41 @@ const TABLE_HEAD: TableHeadCellProps[] = [
 
 // ----------------------------------------------------------------------
 
-export function AgentListView({earning}:{earning?:boolean}) {
+export function AgentListView({ earning }: { earning?: boolean }) {
   const table = useTable();
 
   const confirmDialog = useBoolean();
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<IAgentItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [onRefresh, setOnRefresh] = useState(true)
 
   const filters = useSetState<IAgentTableFilters>({ name: '', role: [], status: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
 
   const fetchPaginatedAgents = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { agents, total } = await fetchAgents(
-        filters.state.status,
-        table.page,
-        table.rowsPerPage
-      );
-      setTableData(agents);
-      setTotalCount(total);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+   
+      try {
+        setLoading(true);
+        const { agents, total } = await fetchAgents(
+          filters.state.status,
+          table.page,
+          table.rowsPerPage
+        );
+        setTableData(agents);
+        setTotalCount(total);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+        setOnRefresh(false)
+      }
+    
   }, [table.page, table.rowsPerPage, filters.state.status]);
 
   useEffect(() => {
     fetchPaginatedAgents();
-  }, [fetchPaginatedAgents]);
+  }, [fetchPaginatedAgents, onRefresh,table.page, table.rowsPerPage, filters.state.status,]);
 
   const handleChangePage = useCallback((event: unknown, newPage: number) => {
     table.setPage(newPage);
@@ -179,32 +183,32 @@ export function AgentListView({earning}:{earning?:boolean}) {
     />
   );
 
-  useEffect(()=>{
-    if(earning){
+  useEffect(() => {
+    if (earning) {
       table.setDense(true);
     }
-  },[earning])
+  }, [earning])
 
   return (
     <>
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Agents"
-          links={earning?[]:[
+          links={earning ? [] : [
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Agent', href: paths.dashboard.agent.root },
             { name: 'List' },
           ]}
           action={
             !earning && (
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.agent.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New Agent
-            </Button>)
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.agent.new}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                New Agent
+              </Button>)
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -294,26 +298,27 @@ export function AgentListView({earning}:{earning?:boolean}) {
                     <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
                   ) : (
                     <>
-                        {tableData.map((row) => (
-                          <AgentTableRow
-                            key={row.id}
-                            row={row}
-                            selected={table.selected.includes(row.id)}
-                            onSelectRow={() => table.onSelectRow(row.id)}
-                            onDeleteRow={() => handleDeleteRow(row.id)}
-                            onToggleStatus={handleToggleStatus}
-                            editHref={paths.dashboard.agent.edit(row.id)}
-                          />
-                        ))}
+                      {tableData.map((row) => (
+                        <AgentTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id)}
+                          onSelectRow={() => table.onSelectRow(row.id)}
+                          onDeleteRow={() => handleDeleteRow(row.id)}
+                          onToggleStatus={handleToggleStatus}
+                          editHref={paths.dashboard.agent.edit(row.id)}
+                          triggerRefresh={()=>setOnRefresh(true)}
+                        />
+                      ))}
 
-                        {!loading && tableData.length === 0 && <TableNoData notFound={notFound} />}
+                      {!loading && tableData.length === 0 && <TableNoData notFound={notFound} />}
 
-                        {!loading && tableData.length > 0 && tableData.length < table.rowsPerPage && (
-                          <TableEmptyRows
-                            height={table.dense ? 56 : 56 + 20}
-                            emptyRows={table.rowsPerPage - tableData.length}
-                          />
-                        )}
+                      {!loading && tableData.length > 0 && tableData.length < table.rowsPerPage && (
+                        <TableEmptyRows
+                          height={table.dense ? 56 : 56 + 20}
+                          emptyRows={table.rowsPerPage - tableData.length}
+                        />
+                      )}
                     </>
                   )}
                 </TableBody>
@@ -327,7 +332,7 @@ export function AgentListView({earning}:{earning?:boolean}) {
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
             onPageChange={loading ? () => { } : handleChangePage}
-            onChangeDense={loading ? () => {} : table.onChangeDense}
+            onChangeDense={loading ? () => { } : table.onChangeDense}
             onRowsPerPageChange={loading ? () => { } : handleChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />

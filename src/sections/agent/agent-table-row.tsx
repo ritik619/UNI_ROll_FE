@@ -34,9 +34,10 @@ type Props = {
   onSelectRow: () => void;
   onDeleteRow: () => void;
   onToggleStatus?: (id: string, status: 'active' | 'inactive') => void;
+  triggerRefresh:()=>void
 };
 
-export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus }: Props) {
+export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus,triggerRefresh }: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
@@ -45,6 +46,10 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
     <AgentQuickEditForm
       currentAgent={row}
       open={quickEditForm.value}
+      onCloseandUpdate={(changed)=>{
+        quickEditForm.onFalse()
+        triggerRefresh()
+      }}
       onClose={quickEditForm.onFalse}
     />
   );

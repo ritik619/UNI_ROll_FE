@@ -116,7 +116,6 @@ export function CourseNewEditForm({
     // newStartDate: null,
     status: 'active',
   };
-  console.log('defaultValues', universities);
   // Function to convert total months to years and months
   const convertTotalMonthsToYearsMonths = (totalMonths: number) => {
     const years = Math.floor(totalMonths / 12);
@@ -165,29 +164,8 @@ export function CourseNewEditForm({
 
   const watchNewStartDate = watch('newStartDate');
 
-  const handleAddStartDate = () => {
-    if (watchNewStartDate) {
-      const date = new Date(watchNewStartDate);
-      console.log('Adding start date:', date);
-      // Format the date as YYYY-MM-DD
-      const dateString = date.toISOString().split('T')[0]; // e.g. 2025-09-01
-      if (!startDates.includes(dateString)) {
-        const updatedDates = [...startDates, dateString];
-        setStartDates(updatedDates);
-        setValue('startDates', updatedDates);
-        setValue('newStartDate', null);
-      }
-    }
-  };
-
-  const handleRemoveStartDate = (index: number) => {
-    const updatedDates = startDates.filter((_, i) => i !== index);
-    setStartDates(updatedDates);
-    setValue('startDates', updatedDates);
-  };
 
   const createCourse = async (data: ICreateCourse) => {
-    console.log('Creating course with data:', data);
     // Calculate total months from years and months
     const years = data.durationYears || 0;
     const months = data.durationMonths || 0;
@@ -212,7 +190,6 @@ export function CourseNewEditForm({
   };
 
   const updateCourse = async (data: ICreateCourse) => {
-    console.log('Updating course with data:', data);
     // Calculate total months from years and months
     const years = data.durationYears || 0;
     const months = data.durationMonths || 0;
@@ -232,7 +209,7 @@ export function CourseNewEditForm({
     };
 
     const response = await authAxiosInstance.patch<{ id: string }>(
-      `${endpoints.courses.details(currentCourse?.id)}`,
+      `${endpoints.courses.details(currentCourse?.id as string)}`,
       payload
     );
     return response;

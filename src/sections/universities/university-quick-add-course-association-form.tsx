@@ -144,8 +144,8 @@ export function UniversityQuickAddCourseAssociationForm({ open, onClose, univers
             <Field.Select name="status" label="Status">
               <MenuItem value="active">Active</MenuItem>
               <MenuItem value="inactive">Inactive</MenuItem>
-              <MenuItem value="upcoming">Completed</MenuItem>
-              <MenuItem value="completed">Upcoming</MenuItem>
+              <MenuItem value="upcoming">Upcoming</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
             </Field.Select>
           </Box>
         </DialogContent>

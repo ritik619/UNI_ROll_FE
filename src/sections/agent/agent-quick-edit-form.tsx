@@ -30,7 +30,7 @@ import { useEffect } from 'react';
 // ----------------------------------------------------------------------
 
 export const AgentQuickEditSchema = zod.object({
-  avatarUrl: schemaHelper.file().nullable().optional(),
+  // avatarUrl: schemaHelper.file().nullable().optional(),
   firstName: zod
     .string()
     .min(1, { message: 'First Name is required!' })
@@ -49,8 +49,8 @@ export const AgentQuickEditSchema = zod.object({
     .regex(/^\d{2}-\d{2}-\d{2}$/, { message: 'Sort code should be in the format XX-XX-XX' }),
   utrNumber: zod.string().min(1, { message: 'UTR number is required' }),
   status: zod.string(),
-  unc: zod.boolean(),
-  intake: zod.boolean(),
+  // unc: zod.boolean(),
+  // intake: zod.boolean(),
 });
 
 export type AgentQuickEditSchemaType = zod.infer<typeof AgentQuickEditSchema>;
@@ -58,12 +58,13 @@ export type AgentQuickEditSchemaType = zod.infer<typeof AgentQuickEditSchema>;
 type Props = {
   open: boolean;
   onClose: () => void;
+  onCloseandUpdate:(c:boolean)=>void;
   currentAgent?: IAgentItem;
 };
 
-export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
+export function AgentQuickEditForm({ currentAgent, open, onClose,onCloseandUpdate }: Props) {
   const defaultValues: AgentQuickEditSchemaType = {
-    avatarUrl: null,
+    // avatarUrl: null,
     firstName: currentAgent?.firstName ?? '',
     lastName: currentAgent?.lastName ?? '',
     dateOfBirth: currentAgent?.dateOfBirth ?? new Date().toISOString().split('T')[0],
@@ -74,8 +75,8 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
     sortCode: currentAgent?.bankDetails?.sortCode ?? '',
     utrNumber: currentAgent?.utrNumber ?? '',
     status: currentAgent?.status ?? '',
-    unc: currentAgent?.accessControl?.unc ?? false,
-    intake: currentAgent?.accessControl?.intake ?? false,
+    // unc: currentAgent?.accessControl?.unc ?? false,
+    // intake: currentAgent?.accessControl?.intake ?? false,
   };
 
   const methods = useForm<AgentQuickEditSchemaType>({
@@ -93,16 +94,16 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
   const updateAgent = async (data: AgentQuickEditSchemaType) => {
     if (!currentAgent?.id) throw new Error('Agent ID missing');
 
-    let avatarUrl = data.avatarUrl;
+    // let avatarUrl = data.avatarUrl;
 
-    if (data.avatarUrl instanceof File) {
-      const extension = data.avatarUrl.name.split('.').pop();
-      const fileName = `${currentAgent.id}.${extension}`;
-      avatarUrl = await uploadFileAndGetURL(data.avatarUrl, `agent/${fileName}`);
-    }
+    // if (data.avatarUrl instanceof File) {
+    //   const extension = data.avatarUrl.name.split('.').pop();
+    //   const fileName = `${currentAgent.id}.${extension}`;
+    //   avatarUrl = await uploadFileAndGetURL(data.avatarUrl, `agent/${fileName}`);
+    // }
 
     const payload = {
-      avatarUrl: data.avatarUrl ?? null,
+      // avatarUrl: data.avatarUrl ?? null,
       firstName: data.firstName.trim(),
       lastName: data.lastName.trim(),
       dateOfBirth: data.dateOfBirth,
@@ -115,10 +116,10 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
       },
       utrNumber: data.utrNumber.trim(),
       status: data.status,
-      accessControl: {
-        unc: data.unc,
-        intake: data.intake,
-      },
+      // accessControl: {
+      //   unc: data.unc,
+      //   intake: data.intake,
+      // },
     };
 
     return authAxiosInstance.patch<{ id: string }>(
@@ -131,6 +132,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
     try {
       await updateAgent(data);
       toast.success('Agent updated successfully!');
+      onCloseandUpdate(true)
       router.push(paths.dashboard.agent.list);
     } catch (error) {
       console.error(error);
@@ -157,7 +159,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
             </Alert>
           )}
 
-          <Box sx={{ mb: 5 }}>
+          {/* <Box sx={{ mb: 5 }}>
             <Field.UploadAvatar
               name="avatarUrl"
               maxSize={3145728} // 3MB
@@ -178,7 +180,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
                 </Typography>
               }
             />
-          </Box>
+          </Box> */}
 
           <Box
             sx={{
@@ -227,7 +229,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
             <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
           </Box>
 
-          <Card sx={{ p: 3, my: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* <Card sx={{ p: 3, my: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
               Access Control
             </Typography>
@@ -271,7 +273,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
                 />
               </Card>
             </Box>
-          </Card>
+          </Card> */}
         </DialogContent>
 
         <DialogActions>
@@ -281,7 +283,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose }: Props) {
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
             Update
           </LoadingButton>
-        </DialogActions>
+        </DialogActions>  
       </Form>
     </Dialog>
   );
