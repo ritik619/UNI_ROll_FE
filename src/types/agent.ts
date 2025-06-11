@@ -93,10 +93,8 @@ export type IAgentItem = {
   pendingAmount?: number;
   name?: string;
   role?: string;
-  accessControl?: {
-    unc: boolean;
-    intake: boolean;
-  };
+  showUniversities: boolean;
+  showIntakes: boolean;
 };
 
 export type IAgentAccountBillingHistory = {

@@ -18,11 +18,14 @@ import { AppTopUniversityEarnings } from './top-earning-university';
 import { UniversityListView } from '../universities/view/university-list-view';
 import { AgentListView } from '../agent/view';
 import { IntakeListView } from '../intake/view/intake-list-view';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
-
 export function EarningView() {
+  const { user } = useAuthContext();
+  const userRole = user?.role;
+  const isAdmin = userRole == 'admin';
   const [earningsByIntake, setEarningsByIntake] = useState<
     EarningsSummaryResponse['earningsByIntake']
   >([]);
@@ -58,9 +61,7 @@ export function EarningView() {
             Earning Overview
           </Typography>
 
-          <Card sx={{ p: 3 }}>
-            
-          </Card>
+          <Card sx={{ p: 3 }}></Card>
         </Stack>
       </DashboardContent>
     );
@@ -90,10 +91,18 @@ export function EarningView() {
             />
           </Grid>
         </Grid>
-        <Grid container spacing={3}><UniversityListView earning={true}/></Grid>
-        <Grid container spacing={3}><AgentListView earning={true}/></Grid>
-        <Grid container spacing={3}><IntakeListView earning={true}/></Grid>
+        <Grid container spacing={3}>
+          <UniversityListView earning={true} />
+        </Grid>
+        {isAdmin && (
+          <Grid container spacing={3}>
+            <AgentListView earning={true} />
+          </Grid>
+        )}
+        <Grid container spacing={3}>
+          <IntakeListView earning={true} />
+        </Grid>
       </Stack>
     </DashboardContent>
   );
-} 
+}

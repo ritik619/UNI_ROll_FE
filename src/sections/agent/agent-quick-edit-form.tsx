@@ -48,8 +48,8 @@ export const AgentQuickEditSchema = zod.object({
   sortCode: zod.string().min(1, { message: 'Sort code is required' }),
   utrNumber: zod.string().min(1, { message: 'UTR number is required' }),
   status: zod.string(),
-  // unc: zod.boolean(),
-  // intake: zod.boolean(),
+  showUniversities: zod.boolean(),
+  showIntakes: zod.boolean(),
 });
 
 export type AgentQuickEditSchemaType = zod.infer<typeof AgentQuickEditSchema>;
@@ -74,8 +74,8 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
     sortCode: currentAgent?.bankDetails?.sortCode ?? '',
     utrNumber: currentAgent?.utrNumber ?? '',
     status: currentAgent?.status ?? '',
-    // unc: currentAgent?.accessControl?.unc ?? false,
-    // intake: currentAgent?.accessControl?.intake ?? false,
+    showUniversities: currentAgent?.showUniversities ?? false,
+    showIntakes: currentAgent?.showIntakes ?? false,
   };
   console.log(toDMY(currentAgent?.dateOfBirth), 'toDMY');
 
@@ -116,10 +116,8 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
       },
       utrNumber: data.utrNumber.trim(),
       status: data.status,
-      // accessControl: {
-      //   unc: data.unc,
-      //   intake: data.intake,
-      // },
+      showUniversities: data.showUniversities,
+      showIntakes: data.showIntakes,
     };
 
     return authAxiosInstance.patch<{ id: string }>(
@@ -229,7 +227,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
             <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
           </Box>
 
-          {/* <Card sx={{ p: 3, my: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Card sx={{ p: 3, my: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
               Access Control
             </Typography>
@@ -248,7 +246,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
                   Universities & Courses
                 </Typography>
                 <Controller
-                  name="unc"
+                  name="showUniversities"
                   control={methods.control}
                   render={({ field }) => <Switch {...field} checked={field.value} />}
                 />
@@ -264,16 +262,16 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
                 }}
               >
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Earnings Overview
+                  Intakes
                 </Typography>
                 <Controller
-                  name="intake"
+                  name="showIntakes"
                   control={methods.control}
                   render={({ field }) => <Switch {...field} checked={field.value} />}
                 />
               </Card>
             </Box>
-          </Card> */}
+          </Card>
         </DialogContent>
 
         <DialogActions>

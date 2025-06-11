@@ -47,8 +47,8 @@ export const NewAgentSchema = zod.object({
   utrNumber: zod.string().min(1, { message: 'UTR number is required' }),
   password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.enum(['active', 'inactive']).optional(),
-  unc: zod.boolean(),
-  intake: zod.boolean(),
+  showUniversities: zod.boolean(),
+  showIntakes: zod.boolean(),
 });
 
 // ----------------------------------------------------------------------
@@ -75,8 +75,8 @@ export function AgentNewEditForm(
     sortCode: '',
     utrNumber: '',
     password: '',
-    unc: false,
-    intake: false,
+    showUniversities: false,
+    showIntakes: false,
   };
 
   const methods = useForm<NewAgentSchemaType>({
@@ -106,8 +106,8 @@ export function AgentNewEditForm(
       utrNumber: data.utrNumber.trim(),
       password: data.password.trim(),
       status: 'active',
-      showUniversities: data.unc,
-      showIntakes: data.intake,
+      showUniversities: data.showUniversities,
+      showIntakes: data.showIntakes,
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.agents.list, payload);
@@ -241,7 +241,7 @@ export function AgentNewEditForm(
                     Universities & Courses
                   </Typography>
                   <Controller
-                    name="unc"
+                    name="showUniversities"
                     control={methods.control}
                     render={({ field }) => (
                       <Switch
@@ -266,10 +266,10 @@ export function AgentNewEditForm(
                   }}
                 >
                   <Typography variant="subtitle2" sx={{ color: '#919eab' }}>
-                    Earnings Overview
+                    Intakes
                   </Typography>
                   <Controller
-                    name="intake"
+                    name="showIntakes"
                     control={methods.control}
                     render={({ field }) => (
                       <Switch
