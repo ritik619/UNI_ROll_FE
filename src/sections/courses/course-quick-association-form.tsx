@@ -37,7 +37,7 @@ const CourseAssociationSchema = zod.object({
     }),
   currency: zod.string().min(1),
   requirementsDescription: zod.string(),
-  languageOfInstruction: zod.string(),
+  // languageOfInstruction: zod.string(),
   // maxStudents: zod.number().int().nonnegative(),
   // availableSeats: zod.number().int().nonnegative(),
   status: zod.enum(['active', 'inactive', 'upcoming', 'completed']),
@@ -66,10 +66,10 @@ export function CourseQuickAssociationForm({ open, onClose, courseId, universiti
     price: 0,
     currency: 'EUR',
     requirementsDescription: '',
-    languageOfInstruction: 'English',
+    // languageOfInstruction: 'English',
     // maxStudents: 30,
     // availableSeats: 30,
-    status: 'upcoming',
+    status: 'active',
   };
 
   const methods = useForm<CourseAssociationFormType>({
@@ -78,9 +78,11 @@ export function CourseQuickAssociationForm({ open, onClose, courseId, universiti
     defaultValues,
   });
 
+
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting,errors },
+    watch
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
@@ -115,7 +117,7 @@ export function CourseQuickAssociationForm({ open, onClose, courseId, universiti
               }}
             >
               <Field.Select
-                name="courseId"
+                name="universityId"
                 label="Universities"
                 helperText="Select the universities offering"
               >
@@ -130,7 +132,7 @@ export function CourseQuickAssociationForm({ open, onClose, courseId, universiti
               <Field.DatePicker name="startDate" label="Start Date" />
               {/* <Field.DatePicker name="endDate" label="End Date" /> */}
               <Field.DatePicker name="applicationDeadline" label="Application Deadline" />
-              <Field.Text name="languageOfInstruction" label="Language" />
+              {/* <Field.Text name="languageOfInstruction" label="Language" /> */}
               <Field.Text name="requirementsDescription" label="Requirements" multiline rows={2} />
               {/* <Field.Text name="maxStudents" label="Max Students" type="number" /> */}
               {/* <Field.Text name="availableSeats" label="Available Seats" type="number" /> */}

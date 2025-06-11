@@ -10,7 +10,7 @@ export const UniversityAssociationSchema = z.object({
   // endDate: z.string(),
   price: z.number(),
   currency: z.string().min(1),
-  // applicationDeadline: z.string(),
+  applicationDeadline: z.string(),
   requirementsDescription: z.string(),
   // languageOfInstruction: z.string(),
   // maxStudents: z.number().int().nonnegative(),

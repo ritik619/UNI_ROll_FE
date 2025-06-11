@@ -22,13 +22,14 @@ import { fetchAssociations } from 'src/services/associations/fetchAssociations';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
+import { Tooltip } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export const StudentQuickEnrollSchema = zod.object({
-  universityId: zod.string().min(1, { message: 'University is required!' }),
-  courseId: zod.string().min(1, { message: 'Course is required!' }),
-  intakeId: zod.string().min(1, { message: 'Intake is required!' }),
+  universityId: zod.string().min(1, { message: 'Please select a university' }),
+  courseId: zod.string().min(1, { message: 'Please select a course' }),
+  intakeId: zod.string().min(1, { message: 'Please select an intake' }),
 });
 
 export type StudentQuickEnrollSchemaType = zod.infer<typeof StudentQuickEnrollSchema>;
@@ -84,6 +85,11 @@ export function StudentQuickEnrollForm({
       toast.error('Enrollment failed!');
     }
   });
+  const { setValue } = methods;
+
+  useEffect(() => {
+    setValue('courseId', '');
+  }, [watchUniversityId, setValue]);
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
@@ -98,29 +104,36 @@ export function StudentQuickEnrollForm({
               gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
             }}
           >
-            <Field.Select name="universityId" label="University" sx={{ gridColumn: 'span 2' }}>
+            <Field.Select name="universityId" label="University" sx={{ gridColumn: 'span 2' }} helperText={'Only universities that are associated to courses will be shown here.'}>
               {associations.map((opt) => (
                 <MenuItem key={opt.universityId} value={opt.universityId}>
                   {opt.universityName}
                 </MenuItem>
               ))}
             </Field.Select>
-
-            <Field.Select
-              name="courseId"
-              label="Course"
-              sx={{ gridColumn: 'span 2' }}
-              disabled={!watchUniversityId}
+            <Tooltip
+              title={!watchUniversityId ? 'Select University first' : ''}
+              disableHoverListener={!!watchUniversityId}
+              placement="top-start"
             >
-              {associations
-                .filter((i) => i.universityId === watchUniversityId)
-                .map((opt) => (
-                  <MenuItem key={opt.courseId} value={opt.courseId}>
-                    {opt.courseName}
-                  </MenuItem>
-                ))}
-            </Field.Select>
-
+              <span style={{ gridColumn: 'span 2', display: 'block' }}>
+                <Field.Select
+                  name="courseId"
+                  label="Course"
+                  fullWidth
+                  disabled={!watchUniversityId}
+                  helperText="Only courses associated to the selected university will be shown."
+                >
+                  {associations
+                    .filter((i) => i.universityId === watchUniversityId)
+                    .map((opt) => (
+                      <MenuItem key={opt.courseId} value={opt.courseId}>
+                        {opt.courseName}
+                      </MenuItem>
+                    ))}
+                </Field.Select>
+              </span>
+            </Tooltip>
             <Field.Select name="intakeId" label="Intake" sx={{ gridColumn: 'span 2' }}>
               {intakes.map((opt) => (
                 <MenuItem key={opt.id} value={opt.id}>

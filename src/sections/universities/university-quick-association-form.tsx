@@ -28,7 +28,7 @@ const UniversityAssociationSchema = zod.object({
   courseId: zod.string().min(1, 'Course ID is required'),
   startDate: zod.string(),
   // endDate: zod.string(),
-  // applicationDeadline: zod.string(),
+  applicationDeadline: zod.string(),
   price: zod
   .union([zod.string(), zod.number()])
   .transform((val) => Number(val))
@@ -61,14 +61,14 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId, co
     courseId: '',
     startDate: '',
     // endDate: '',
-    // applicationDeadline: '',
+    applicationDeadline: '',
     price: 0,
     currency: 'EUR',
     requirementsDescription: '',
     // languageOfInstruction: 'English',
     // maxStudents: 30,
     // availableSeats: 30,
-    status: 'upcoming',
+    status: 'active',
   };
 
   const methods = useForm<UniversityAssociationFormType>({
