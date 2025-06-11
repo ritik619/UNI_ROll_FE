@@ -83,7 +83,7 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirmDialog.onTrue();
             menuActions.onClose();
@@ -92,7 +92,7 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
       </MenuList>
     </CustomPopover>
   );
