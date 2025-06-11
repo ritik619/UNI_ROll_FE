@@ -111,30 +111,7 @@ export function UniversityTableRow({
     }
   }, [collapseRow.value, row.id, earning]);
 
-  // Function to handle course deletion
-  const handleDeleteUniversity = async () => {
-    if (!universityToDelete) return;
 
-    try {
-      // Make API call to delete the course
-      confirmDialog.onFalse();
-
-      await authAxiosInstance.delete(`${endpoints.universities.details(universityToDelete)}`);
-      // Remove the deleted course from the local state
-      setCoursesAssociations((prevUniversity) =>
-        prevUniversity.filter((university) => university.id !== universityToDelete)
-      );
-
-      // Show success message
-      toast.success('University deleted successfully');
-
-      // Reset the course to delete
-      setUniversityToDelete(null);
-    } catch (error) {
-      console.error('Failed to delete University:', error);
-      toast.error('Failed to delete University');
-    }
-  };
   const handleDeleteAssociation = async () => {
     if (!associationToDelete) return;
 
@@ -242,7 +219,10 @@ export function UniversityTableRow({
       title="Delete"
       content="Are you sure want to delete?"
       action={
-        <Button variant="contained" color="error" onClick={handleDeleteUniversity}>
+        <Button variant="contained" color="error" onClick={()=>{
+          confirmDialog.onFalse()
+          onDeleteRow()
+          }}>
           Delete
         </Button>
       }

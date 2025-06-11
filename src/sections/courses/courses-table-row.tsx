@@ -110,29 +110,25 @@ export function CoursesTableRow({
       fetchUniversitiesById();
     }
   }, [collapseRow.value, row.id]);
-
   // Function to handle course deletion
   const handleDeleteCourse = async () => {
     if (!courseToDelete) return;
 
     try {
+      confirmDialog.onFalse();
       // Make API call to delete the course
       await authAxiosInstance.delete(`${endpoints.courses.details(courseToDelete)}`);
-
       // Remove the deleted course from the local state
-      setUniversitiesAssociations((prevCourses) =>
-        prevCourses.filter((course) => course.id !== courseToDelete)
-      );
+      onDeleteRow()
 
       // Show success message
       toast.success('Course deleted successfully');
 
       // Reset the course to delete
       setCourseToDelete(null);
-      courseDeleteDialog.onFalse();
     } catch (error) {
       console.error('Failed to delete course:', error);
-      toast.error('Failed to delete course');
+      toast.error('Failed to delete course:' + error?.message);
     }
   };
   const handleDeleteAssociation = async () => {
@@ -157,7 +153,7 @@ export function CoursesTableRow({
       courseDeleteDialog.onFalse();
     } catch (error) {
       console.error('Failed to delete association:', error);
-      toast.error('Failed to delete association');
+      toast.error('Failed to delete association'+ error?.message);
     }
   };
 
@@ -221,6 +217,7 @@ export function CoursesTableRow({
         {isAdmin ? (
           <MenuItem
             onClick={() => {
+              setCourseToDelete(row.id)
               confirmDialog.onTrue();
               menuActions.onClose();
             }}
@@ -576,7 +573,7 @@ export function CoursesTableRow({
                         </IconButton>
                         {/* Course Actions Popover */}
                         <CustomPopover
-                          open={associationToDelete===index&& courseMenuActions.open}
+                          open={associationToDelete === index && courseMenuActions.open}
                           anchorEl={courseMenuActions.anchorEl}
                           onClose={() => courseMenuActions.onClose()}
                           slotProps={{ arrow: { placement: 'right-top' } }}
