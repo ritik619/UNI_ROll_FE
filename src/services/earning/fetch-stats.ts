@@ -1,10 +1,10 @@
-import type {  EarningsSummaryResponse } from 'src/types/dashboard';
+import type { EarningsSummaryResponse } from 'src/types/dashboard';
 
 import { toast } from 'sonner';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 
-export const fetchEarningStats = async (): Promise<
+export const fetchEarningStats = async (isAdmin: boolean = true): Promise<
   [
     EarningsSummaryResponse['earningsByIntake'],
     EarningsSummaryResponse['earningsByUniversity'],
@@ -13,7 +13,7 @@ export const fetchEarningStats = async (): Promise<
 > => {
   try {
     const response1: { data: EarningsSummaryResponse } = await authAxiosInstance.get(
-      endpoints.earnings.summary
+      isAdmin ? endpoints.earnings.summary : endpoints.earnings.agenetSummary
     );
     return [
       response1.data.earningsByIntake,

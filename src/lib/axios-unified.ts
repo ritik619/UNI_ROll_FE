@@ -164,6 +164,7 @@ export const endpoints = {
     root: 'earnings',
     details: (id: string) => `earnings/${id}`,
     summary: 'earnings/summary',
+    agenetSummary:'earnings/agent-portal/summary'
   },
 };
 
