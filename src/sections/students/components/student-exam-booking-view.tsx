@@ -7,6 +7,8 @@ import { IStudentsItem, IBooking } from 'src/types/students'; // Importing types
 import { Form } from 'src/components/hook-form';
 import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import { toast } from 'src/components/snackbar';
+import { toDMY } from 'src/utils/format-date';
+import dayjs from 'dayjs';
 
 type Props = {
   student: IStudentsItem;
@@ -22,8 +24,8 @@ type FormValues = {
 export function StudentExamBookView({ student, booking, onRefresh }: Props) {
   const methods = useForm<FormValues>({
     defaultValues: {
-      examDate: new Date(booking?.examDate) ?? null, // Initialize with existing booking or null
-      examTime: booking?.examTime ? new Date(booking.examTime) : null, // Handle examTime if available
+      examDate: booking?.examDate?dayjs(toDMY(booking?.examDate)):dayjs(), // Initialize with existing booking or null
+      examTime: booking?.examTime?dayjs(toDMY(booking?.examTime)):dayjs(), // Handle examTime if available
     },
   });
 
