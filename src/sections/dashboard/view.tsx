@@ -261,7 +261,7 @@ export function DashboardView() {
               gridTemplateColumns: {
                 xs: isAgent ? 'repeat(1, 1fr)' : 'repeat(1, 1fr)',
                 sm: isAgent ? 'repeat(2, 1fr)' : 'repeat(2, 1fr)',
-                md: isAgent ? 'repeat(3, 1fr)' : 'repeat(3, 1fr)',
+                md: isAgent ? 'repeat(2, 1fr)' : 'repeat(2, 1fr)',
                 lg: isAgent ? 'repeat(3, 1fr)' : 'repeat(3, 1fr)',
               },
               gap: 3,

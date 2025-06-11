@@ -54,27 +54,6 @@ const UserDetailsCard = () => {
   const formattedSortCode = sortCode
     ? `${sortCode.substring(0, 2)}-${sortCode.substring(2, 4)}-${sortCode.substring(4, 6)}`
     : 'N/A';
-  // const userRole = user?.role;
-  // const isAgent = userRole == 'agent';
-
-  // Dummy user data for demonstration. Replace with your actual user prop.
-  // const user = {
-  //   firstName: 'test',
-  //   lastName: 'agent 1',
-  //   email: 'testagent1@gmail.com',
-  //   dateOfBirth: { seconds: 1678886400 }, // Example: a valid date (Mar 15, 2023)
-  //   // dateOfBirth: { seconds: 0 }, // Example: invalid date (will show 'Invalid Date')
-  //   // dateOfBirth: undefined, // Example: missing date (will show 'N/A')
-  //   phoneNumber: '123-456-7890',
-  //   address: 'S-518, Some Road, Some Area, Some City, Some State', // Longer address for testing
-  //   postCode: '462003',
-  //   bankDetails: {
-  //     sortCode: '12-12-12',
-  //     accountNumber: '12345678',
-  //   },
-  //   utrNumber: '1234567890',
-  // };
-
   return (
     <Grid2
       sx={{
@@ -102,7 +81,7 @@ const UserDetailsCard = () => {
             boxShadow: 8, // Consistent shadow on hover
           },
           // Main background for the card - a very light, almost white grey
-          background: theme.palette.grey[50], // Or a very light subtle color from your theme
+          backgroundColor: (theme) => (theme.palette.mode === 'light' ? '#f4f6f8' : '#2b3440'), // <-- elegant balance light - f4f6f8 dark - 2b3440
         }}
       >
         {/* Removed the overly subtle background gradient box for simplicity and better match */}
@@ -120,7 +99,7 @@ const UserDetailsCard = () => {
         >
           {/* User Header Section (Name and basic details) */}
           <Box className="box user-basic-header">
-            <SectionHeader sx={{ mb: 2 }}>
+            <SectionHeader sx={{ m: 1 }}>
               {/* Iconify: User icon */}
               <Box
                 className="icon-wrapper"
@@ -139,15 +118,25 @@ const UserDetailsCard = () => {
                   icon={'solar:user-rounded-bold-duotone'}
                   width={50}
                   height={50}
-                  color={'B91C1C'}
+                  color={'#B91C1C'}
                 />
               </Box>
 
-              <Typography variant="h2" sx={{ font: 'initial', fontWeight: 500, color: 'B91C1C' }}>
+              <Typography
+                variant="h2"
+                sx={{ font: 'initial', fontWeight: 500, color: theme.palette.text.primary }}
+              >
                 {`${user?.firstName || 'N/A'} ${user?.lastName || ''}`}
               </Typography>
             </SectionHeader>
-            <Divider sx={{ borderStyle: 'dashed', borderColor: theme.palette.divider, mb: 2 }} />{' '}
+            <Divider
+              sx={{
+                height: '2px',
+                background: `linear-gradient(to right, ${theme.palette.divider} 0%, transparent 100%)`,
+                border: 'none',
+                m: 1,
+              }}
+            />
             {/* Divider below header */}
             {/* Basic Details */}
             <Box className="box user-basic-details-duotone" paddingLeft={'10px'}>
@@ -234,7 +223,14 @@ const UserDetailsCard = () => {
                 {'Address Details'}
               </Typography>
             </SectionHeader>
-            <Divider sx={{ borderStyle: 'dashed', borderColor: theme.palette.divider, mb: 2 }} />
+            <Divider
+              sx={{
+                height: '2px',
+                background: `linear-gradient(to right, ${theme.palette.divider} 0%, transparent 100%)`,
+                border: 'none',
+                m: 1,
+              }}
+            />
             <Box className="box user-address-details" paddingLeft={'10px'}>
               <DetailItem
                 sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
@@ -296,29 +292,15 @@ const UserDetailsCard = () => {
                 {'Bank Details'}
               </Typography>
             </SectionHeader>
-            <Divider sx={{ borderStyle: 'dashed', borderColor: theme.palette.divider, mb: 2 }} />
+            <Divider
+              sx={{
+                height: '2px',
+                background: `linear-gradient(to right, ${theme.palette.divider} 0%, transparent 100%)`,
+                border: 'none',
+                m: 1,
+              }}
+            />
             <Box className="box user-bank-details" paddingLeft={'10px'}>
-              <DetailItem
-                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
-              >
-                {/* Iconify: Credit card icon */}
-                <Icon
-                  icon="mdi:credit-card-outline"
-                  color={theme.palette.action.active}
-                  style={{ fontSize: 'small' }}
-                />
-                <Typography variant="body2" color="text.secondary">
-                  {'Sort Code :'}
-                  <Typography
-                    component="span"
-                    variant="body1"
-                    color="text.primary"
-                    sx={{ fontWeight: 500 }}
-                  >
-                    {formattedSortCode || 'N/A'}
-                  </Typography>
-                </Typography>
-              </DetailItem>
               <DetailItem
                 sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
               >
@@ -340,6 +322,28 @@ const UserDetailsCard = () => {
                   </Typography>
                 </Typography>
               </DetailItem>
+              <DetailItem
+                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
+                {/* Iconify: Credit card icon */}
+                <Icon
+                  icon="mdi:credit-card-outline"
+                  color={theme.palette.action.active}
+                  style={{ fontSize: 'small' }}
+                />
+                <Typography variant="body2" color="text.secondary">
+                  {'Sort Code :'}
+                  <Typography
+                    component="span"
+                    variant="body1"
+                    color="text.primary"
+                    sx={{ fontWeight: 500 }}
+                  >
+                    {formattedSortCode || 'N/A'}
+                  </Typography>
+                </Typography>
+              </DetailItem>
+
               <DetailItem
                 sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
               >
