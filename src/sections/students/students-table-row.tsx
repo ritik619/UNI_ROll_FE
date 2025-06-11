@@ -416,14 +416,14 @@ export function StudentsTableRow({
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                   No payments found
                 </Typography>
-                <Button
+                {isAdmin&&<Button
                   variant="outlined"
                   size="small"
                   onClick={quickAddPayment.onTrue}
                   startIcon={<Iconify icon="mingcute:add-line" />}
                 >
                   Add First Payment
-                </Button>
+                </Button>}
               </Box>
             )}
           </Paper>

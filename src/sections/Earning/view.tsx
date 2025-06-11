@@ -34,13 +34,12 @@ export function EarningView() {
   >([]);
   const [currencyCode, setCurrencyCode] = useState<string>('EURO');
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const data = await fetchEarningStats();
-        setEarningsByIntake(data[0]);
-        setEarningsByUniversity(data[1]);
+        const data = await fetchEarningStats(isAdmin);
+        setEarningsByIntake(data[0] ?? []);
+        setEarningsByUniversity(data[1] ?? []);
         setCurrencyCode(data[2]);
       } catch (error) {
         console.error('Failed to fetch dashboard stats:', error);
@@ -51,7 +50,7 @@ export function EarningView() {
     };
 
     loadStats();
-  }, []);
+  }, [isAdmin]);
 
   if (loading) {
     return (
