@@ -213,7 +213,7 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
               ? []
               : [
                   { name: 'Dashboard', href: paths.dashboard.root },
-                  { name: 'Intakes', href: paths.dashboard.intakes.root },
+                  { name: 'Intakes', href: paths.dashboard.intakes.list },
                   { name: 'List' },
                 ]
           }

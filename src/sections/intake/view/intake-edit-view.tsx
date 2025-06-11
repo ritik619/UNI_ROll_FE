@@ -64,7 +64,7 @@ export default function IntakeEditView({ intakeId }: Props) {
     } catch (error) {
       console.error('Failed to fetch intake:', error);
       toast.error('Failed to fetch intake details');
-      router.push(paths.dashboard.intakes.root);
+      router.push(paths.dashboard.intakes.list);
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ export default function IntakeEditView({ intakeId }: Props) {
         heading="Edit Intake"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Intakes', href: paths.dashboard.intakes.root },
+          { name: 'Intakes', href: paths.dashboard.intakes.list },
           { name: 'Edit Intake' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

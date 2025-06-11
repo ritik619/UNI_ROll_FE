@@ -102,7 +102,7 @@ export const navData: NavSectionProps['data'] = [
       },
       {
         title: 'Intakes',
-        path: paths.dashboard.intakes.root,
+        path: paths.dashboard.intakes.list,
         icon: ICONS.calendar,
         children: [
           {
@@ -111,7 +111,7 @@ export const navData: NavSectionProps['data'] = [
           },
           {
             title: 'Intakes List',
-            path: paths.dashboard.intakes.root,
+            path: paths.dashboard.intakes.list,
           },
         ],
       },
@@ -155,13 +155,13 @@ export const navData: NavSectionProps['data'] = [
       },
       {
         title: 'Intakes',
-        path: paths.dashboard.intakes.root,
+        path: paths.dashboard.intakes.list,
         icon: ICONS.calendar,
         roles: ['showIntakes'],
         children: [
           {
             title: 'Intakes List',
-            path: paths.dashboard.intakes.root,
+            path: paths.dashboard.intakes.list,
           },
         ],
       },

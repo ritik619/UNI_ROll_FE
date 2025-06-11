@@ -118,7 +118,7 @@ export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
       }
       toast.success(currentIntake ? 'Update success!' : 'Create success!');
 
-      router.push(paths.dashboard.intakes.root);
+      router.push(paths.dashboard.intakes.list);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || 'Something went wrong');
@@ -335,7 +335,7 @@ export function IntakeNewEditForm({ currentIntake, initialIntakeId }: Props) {
               <LoadingButton
                 color="inherit"
                 variant="outlined"
-                onClick={() => router.push(paths.dashboard.intakes.root)}
+                onClick={() => router.push(paths.dashboard.intakes.list)}
               >
                 Cancel
               </LoadingButton>

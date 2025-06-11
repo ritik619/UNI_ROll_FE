@@ -48,6 +48,12 @@ const UserDetailsCard = () => {
 
   const { user } = useAuthContext();
   console.log('user', user);
+  const sortCode = user?.bankDetails?.sortCode;
+
+  // Format the sortCode if it exists and is 6 digits long
+  const formattedSortCode = sortCode
+    ? `${sortCode.substring(0, 2)}-${sortCode.substring(2, 4)}-${sortCode.substring(4, 6)}`
+    : 'N/A';
   // const userRole = user?.role;
   // const isAgent = userRole == 'agent';
 
@@ -129,23 +135,25 @@ const UserDetailsCard = () => {
                   transition: 'transform 0.3s ease-in-out',
                 }}
               >
-                <Iconify icon={'solar:user-rounded-bold'} width={60} height={60} color={'B91C1C'} />
-
-                {/* <Icon
-                  icon="mdi:account-outline"
-                  style={{ fontSize: 40, color: theme.palette.primary.main }}
-                /> */}
+                <Iconify
+                  icon={'solar:user-rounded-bold-duotone'}
+                  width={50}
+                  height={50}
+                  color={'B91C1C'}
+                />
               </Box>
 
-              <Typography variant="h3" sx={{ fontWeight: 700, color: 'B91C1C' }}>
+              <Typography variant="h2" sx={{ font: 'initial', fontWeight: 500, color: 'B91C1C' }}>
                 {`${user?.firstName || 'N/A'} ${user?.lastName || ''}`}
               </Typography>
             </SectionHeader>
             <Divider sx={{ borderStyle: 'dashed', borderColor: theme.palette.divider, mb: 2 }} />{' '}
             {/* Divider below header */}
             {/* Basic Details */}
-            <Box className="box user-basic-details">
-              <DetailItem>
+            <Box className="box user-basic-details-duotone" paddingLeft={'10px'}>
+              <DetailItem
+                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
                 {/* Iconify: Email icon */}
                 <Icon
                   icon="mdi:email-outline"
@@ -153,7 +161,7 @@ const UserDetailsCard = () => {
                   style={{ fontSize: 'small' }}
                 />
                 <Typography variant="body2" color="text.secondary">
-                  Email:{' '}
+                  {'Email : '}
                   <Typography
                     component="span"
                     variant="body1"
@@ -164,7 +172,9 @@ const UserDetailsCard = () => {
                   </Typography>
                 </Typography>
               </DetailItem>
-              <DetailItem>
+              <DetailItem
+                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
                 {/* Iconify: Calendar icon */}
                 <Icon
                   icon="mdi:calendar-today"
@@ -172,7 +182,7 @@ const UserDetailsCard = () => {
                   style={{ fontSize: 'small' }}
                 />
                 <Typography variant="body2" color="text.secondary">
-                  Date of Birth:{' '}
+                  {'Date of Birth : '}
                   <Typography
                     component="span"
                     variant="body1"
@@ -184,7 +194,9 @@ const UserDetailsCard = () => {
                 </Typography>
               </DetailItem>
               {user?.phoneNumber != null && (
-                <DetailItem>
+                <DetailItem
+                  sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+                >
                   {/* Iconify: Phone icon */}
                   <Icon
                     icon="mdi:phone-outline"
@@ -192,7 +204,7 @@ const UserDetailsCard = () => {
                     style={{ fontSize: 'small' }}
                   />
                   <Typography variant="body2" color="text.secondary">
-                    Phone Number:
+                    {'Phone Number : '}
                     <Typography
                       component="span"
                       variant="body1"
@@ -215,13 +227,18 @@ const UserDetailsCard = () => {
                 icon="mdi:home-outline"
                 style={{ fontSize: 28, color: theme.palette.info.main }}
               />
-              <Typography variant="h6" sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Address Details
+              <Typography
+                variant="h6"
+                sx={{ font: 'initial', fontWeight: 600, color: theme.palette.text.primary }}
+              >
+                {'Address Details'}
               </Typography>
             </SectionHeader>
             <Divider sx={{ borderStyle: 'dashed', borderColor: theme.palette.divider, mb: 2 }} />
-            <Box className="box user-address-details">
-              <DetailItem>
+            <Box className="box user-address-details" paddingLeft={'10px'}>
+              <DetailItem
+                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
                 {/* Iconify: Location icon */}
                 <Icon
                   icon="mdi:map-marker-outline"
@@ -229,7 +246,7 @@ const UserDetailsCard = () => {
                   style={{ fontSize: 'small' }}
                 />
                 <Typography variant="body2" color="text.secondary">
-                  Address:{' '}
+                  {'Address : '}
                   <Typography
                     component="span"
                     variant="body1"
@@ -240,10 +257,17 @@ const UserDetailsCard = () => {
                   </Typography>
                 </Typography>
               </DetailItem>
-              <DetailItem>
-                {/* No icon, align using ml for text */}
-                <Typography variant="body2" color="text.secondary" sx={{ ml: '29px' }}>
-                  Post Code:{' '}
+              <DetailItem
+                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
+                {/* Iconify: Location icon */}
+                <Icon
+                  icon="mdi:map-marker"
+                  color={theme.palette.action.active}
+                  style={{ fontSize: 'small' }}
+                />
+                <Typography variant="body2" color="text.secondary">
+                  {'Post Code : '}
                   <Typography
                     component="span"
                     variant="body1"
@@ -265,13 +289,18 @@ const UserDetailsCard = () => {
                 icon="mdi:bank-outline"
                 style={{ fontSize: 28, color: theme.palette.success.main }}
               />
-              <Typography variant="h6" sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Bank Details
+              <Typography
+                variant="h6"
+                sx={{ font: 'initial', fontWeight: 600, color: theme.palette.text.primary }}
+              >
+                {'Bank Details'}
               </Typography>
             </SectionHeader>
             <Divider sx={{ borderStyle: 'dashed', borderColor: theme.palette.divider, mb: 2 }} />
-            <Box className="box user-bank-details">
-              <DetailItem>
+            <Box className="box user-bank-details" paddingLeft={'10px'}>
+              <DetailItem
+                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
                 {/* Iconify: Credit card icon */}
                 <Icon
                   icon="mdi:credit-card-outline"
@@ -279,18 +308,20 @@ const UserDetailsCard = () => {
                   style={{ fontSize: 'small' }}
                 />
                 <Typography variant="body2" color="text.secondary">
-                  Sort Code:{' '}
+                  {'Sort Code :'}
                   <Typography
                     component="span"
                     variant="body1"
                     color="text.primary"
                     sx={{ fontWeight: 500 }}
                   >
-                    {user?.bankDetails?.sortCode || 'N/A'}
+                    {formattedSortCode || 'N/A'}
                   </Typography>
                 </Typography>
               </DetailItem>
-              <DetailItem>
+              <DetailItem
+                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
                 {/* Iconify: Key icon */}
                 <Icon
                   icon="mdi:key-outline"
@@ -298,7 +329,7 @@ const UserDetailsCard = () => {
                   style={{ fontSize: 'small' }}
                 />
                 <Typography variant="body2" color="text.secondary">
-                  Account Number:{' '}
+                  {'Account Number : '}
                   <Typography
                     component="span"
                     variant="body1"
@@ -309,10 +340,17 @@ const UserDetailsCard = () => {
                   </Typography>
                 </Typography>
               </DetailItem>
-              <DetailItem>
-                {/* No icon, align using ml for text */}
-                <Typography variant="body2" color="text.secondary" sx={{ ml: '29px' }}>
-                  UTR Number:{' '}
+              <DetailItem
+                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+              >
+                {/* Iconify: Credit card icon */}
+                <Icon
+                  icon="mdi:bank-transfer"
+                  color={theme.palette.action.active}
+                  style={{ fontSize: 'small' }}
+                />
+                <Typography variant="body2" color="text.secondary">
+                  {'UTR Number : '}
                   <Typography
                     component="span"
                     variant="body1"

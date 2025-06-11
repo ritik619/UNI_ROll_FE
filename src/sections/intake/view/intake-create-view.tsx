@@ -11,7 +11,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { IntakeNewEditForm } from './intake-new-edit-form';
 
-export default function CourseCreateView() {
+export default function IntakeCreateView() {
   const searchParams = useSearchParams();
   const universityId = searchParams.get('universityId') || '';
 
@@ -21,7 +21,7 @@ export default function CourseCreateView() {
         heading="Create a new Intakes"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Intakes', href: paths.dashboard.intakes.root },
+          { name: 'Intakes', href: paths.dashboard.intakes.list },
           { name: 'List' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

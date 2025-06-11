@@ -80,8 +80,9 @@ export const paths = {
     },
     intakes: {
       edit: (id: string) => `${ROOTS.DASHBOARD}/intakes/${id}`,
-      root: `${ROOTS.DASHBOARD}/intakes`,
+      root: `${ROOTS.DASHBOARD}/intakes/list`,
       new: `${ROOTS.DASHBOARD}/intakes/new`,
+      list: `${ROOTS.DASHBOARD}/intakes/list`,
     },
     earningsoverview: `${ROOTS.DASHBOARD}/earnings-overview`,
   },

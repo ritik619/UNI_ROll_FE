@@ -113,18 +113,43 @@ export default function StudentDetailsPage({ params }: Props) {
       {/* Student Info Card */}
       <Card sx={{ p: 3, mb: 4 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems={{ sm: 'center' }}>
-          <Box
-            component="img"
-            alt={student.firstName}
-            src={student.coverPhoto}
-            sx={{
-              width: 80,
-              height: 80,
-              borderRadius: 1.5,
-              bgcolor: 'background.neutral',
-              border: (theme) => `solid 1px ${theme.palette.divider}`,
-            }}
-          />
+          {student.coverPhoto ? (
+            // If src exists, render the image
+            <Box
+              component="img"
+              src={student.coverPhoto}
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: 1.5,
+                bgcolor: 'background.neutral',
+                border: (theme) => `solid 1px ${theme.palette.divider}`,
+                objectFit: 'cover', // Ensures the image covers the area without distortion
+              }}
+            />
+          ) : (
+            // If src is missing, render a Box with the initial centered and larger
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: 1.5,
+                bgcolor: 'background.neutral',
+                border: (theme) => `solid 1px ${theme.palette.divider}`,
+                display: 'flex', // Enable flexbox
+                justifyContent: 'center', // Center horizontally
+                alignItems: 'center', // Center vertically
+              }}
+            >
+              <Typography
+                variant="h3" // Makes the text larger. You can adjust this variant.
+                color="text.secondary" // Adjust color as needed, e.g., 'primary.main'
+              >
+                {student.firstName.substring(0, 1).toUpperCase()}{' '}
+                {/* Convert to uppercase for consistency */}
+              </Typography>
+            </Box>
+          )}
 
           <Stack spacing={1.5} flexGrow={1}>
             <Typography variant="h5">
