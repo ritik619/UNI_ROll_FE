@@ -28,13 +28,13 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
     setLoading(true);
 
     const data = {
-      studentId: student.id,
+      // studentId: student.id,
       status: currentStatus,
     };
 
     try {
       const response = await authAxiosInstance.patch(
-        `${endpoints.students.status}/${student.id}`,
+        endpoints.students.details(student.id),
         data
       );
 
@@ -72,9 +72,9 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
           }}
         >
           <MenuItem value="Enrolled">Enrolled</MenuItem>
-          <MenuItem value="Unaffiliated">Unaffiliated</MenuItem>
-          <MenuItem value="Withdrawn">Withdrawn</MenuItem>
-          <MenuItem value="Deferred">Deferred</MenuItem>
+          <MenuItem value="UnEnrolled">Unenrolled</MenuItem>
+          {/* <MenuItem value="Withdrawn">Withdrawn</MenuItem> */}
+          {/* <MenuItem value="Deferred">Deferred</MenuItem> */}
         </Select>
       </FormControl>
 

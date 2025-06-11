@@ -181,6 +181,7 @@ export function StudentsTableRow({
         </Box>
       </TableCell>
 
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.leadNumber}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.nationality}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.universityName}</TableCell>
@@ -548,6 +549,24 @@ export function StudentsTableRow({
       }
     />
   );
+
+  const handleDeletePayment=()=>{
+
+  }
+
+  const renderConfirmPaymentDeleteDialog = () => (
+    <ConfirmDialog
+      open={paymentDeleteDialog.value}
+      onClose={paymentDeleteDialog.onFalse}
+      title="Delete"
+      content="Are you sure want to delete?"
+      action={
+        <Button variant="contained" color="error" onClick={handleDeletePayment}>
+          Delete
+        </Button>
+      }
+    />
+  );
   const renderUnenrollDialog = () => (
     <ConfirmDialog
       open={unenrollDialog.value}
@@ -571,6 +590,7 @@ export function StudentsTableRow({
       {renderQuickEnrollForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}
+      {renderConfirmPaymentDeleteDialog()}
       {renderUnenrollDialog()}
       {payments.map((payment, index) => (
         <CustomPopover

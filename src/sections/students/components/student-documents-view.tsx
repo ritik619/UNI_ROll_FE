@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -137,6 +139,52 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
     }
   };
 
+  const handleDownloadAll = async () => {
+    try {
+      const zip = new JSZip();
+      const documents = student.documents || {};
+      
+      // Add each document to the zip
+      for (const [docType, url] of Object.entries(documents)) {
+        if (url) {
+          try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const fileName = url.split('/').pop() || `${docType}.pdf`;
+            zip.file(fileName, blob);
+          } catch (error) {
+            console.error(`Error downloading ${docType}:`, error);
+          }
+        }
+      }
+
+      // Generate and download the zip file
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, `${student.firstName}_${student.lastName}_documents.zip`);
+      
+      toast.success('Documents downloaded successfully!');
+    } catch (error) {
+      console.error('Error creating zip:', error);
+      toast.error('Failed to download documents');
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    try {
+      // Update the student's documents to remove all documents
+      await authAxiosInstance.patch(endpoints.students.details(student.id), {
+        documents: {}
+      });
+
+      toast.success('All documents deleted successfully');
+      onRefresh();
+      confirmDialog.onFalse();
+    } catch (error) {
+      console.error('Error deleting documents:', error);
+      toast.error('Failed to delete documents');
+    }
+  };
+
   const renderDocumentItem = (title: string, url?: string) => {
     if (!url) {
       return (
@@ -207,9 +255,31 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
     <>
       <Stack spacing={3}>
         <Card sx={{ p: 3 }}>
-          <Typography variant="h6" sx={{ mb: 3 }}>
-            Required Documents
-          </Typography>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+            <Typography variant="h6">Required Documents</Typography>
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="outlined"
+                startIcon={<Iconify icon="mdi:download" />}
+                onClick={handleDownloadAll}
+                disabled={!student.documents || Object.keys(student.documents).length === 0}
+              >
+                Download All
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<Iconify icon="mdi:delete" />}
+                onClick={() => {
+                  setSelectedDocument('all');
+                  confirmDialog.onTrue();
+                }}
+                disabled={!student.documents || Object.keys(student.documents).length === 0}
+              >
+                Delete All
+              </Button>
+            </Stack>
+          </Stack>
 
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -320,10 +390,18 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
       <ConfirmDialog
         open={confirmDialog.value}
         onClose={confirmDialog.onFalse}
-        title="Delete"
-        content="Are you sure you want to delete this document?"
+        title="Delete Document"
+        content={
+          selectedDocument === 'all'
+            ? 'Are you sure you want to delete all documents? This action cannot be undone.'
+            : 'Are you sure you want to delete this document? This action cannot be undone.'
+        }
         action={
-          <Button variant="contained" color="error" onClick={handleDeleteDocument}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={selectedDocument === 'all' ? handleDeleteAll : handleDeleteDocument}
+          >
             Delete
           </Button>
         }

@@ -65,15 +65,15 @@ import { StudentsTableFiltersResult } from '../students-table-filters-result';
 const STATUS_OPTIONS = [
   { value: 'All', label: 'All' },
   { value: 'Enrolled', label: 'Enrolled' },
-  { value: 'Withdrawn', label: 'Withdrawn' },
-  { value: 'Deferred', label: 'Deferred' },
+  // { value: 'Withdrawn', label: 'Withdrawn' },
+  // { value: 'Deferred', label: 'Deferred' },
   { value: 'UnEnrolled', label: 'Un-Enrolled' },
-  { value: 'Unaffiliated', label: 'Un-Affiliated' },
+  // { value: 'Unaffiliated', label: 'Un-Affiliated' },
 ];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
   { id: 'name', label: 'Name' },
-  // { id: 'email', label: 'Email' },
+  { id: 'leadNo', label: 'Lead No', width: 120 },
   { id: 'country', label: 'Country', width: 180 },
   { id: 'phoneNumber', label: 'Phone Number' },
   { id: 'University', label: 'University', width: 220 },
@@ -434,27 +434,27 @@ export function StudentsListView() {
               ]}
             >
               {STATUS_OPTIONS.map((tab) => {
-                return (
-                  <Tab
-                    key={tab.value}
-                    iconPosition="end"
-                    value={tab.value}
-                    label={tab.label}
-                  // icon={
-                  //   <Label
-                  //     variant={
-                  //       tab.value === 'All' || tab.value === currentFilters.status
-                  //         ? 'filled'
-                  //         : 'soft'
-                  //     }
-                  //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
-                  //   >
-                  //     {/* {statusCount} */}
-                  //   </Label>
-                  // }
-                  />
-                );
-              })}
+                  return (
+                    <Tab
+                      key={tab.value}
+                      iconPosition="end"
+                      value={tab.value}
+                      label={tab.label}
+                      // icon={
+                      //   <Label
+                      //     variant={
+                      //       tab.value === 'All' || tab.value === currentFilters.status
+                      //         ? 'filled'
+                      //         : 'soft'
+                      //     }
+                      //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
+                      //   >
+                      //     {/* {statusCount} */}
+                      //   </Label>
+                      // }
+                    />
+                  );
+                })}
             </Tabs>
             <IconButton onClick={menuActions.onOpen}>
               <Iconify icon="eva:more-vertical-fill" />
