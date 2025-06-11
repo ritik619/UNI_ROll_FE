@@ -7,7 +7,7 @@ import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 export const fetchUniversities = async (
   status: 'active' | 'inactive' | 'all',
   page: number = 0,
-  limit: number = 5,
+  limit: number = 100,
   cityId?: string,
   countryCode?: string
 ) => {
