@@ -42,7 +42,10 @@ type Props = {
   studentId: string;
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
-  onEnroll?: (studentId: string, data: { universityId: string; courseId: string; intakeId: string }) => void;
+  onEnroll?: (
+    studentId: string,
+    data: { universityId: string; courseId: string; intakeId: string }
+  ) => void;
 };
 
 export function StudentQuickEnrollForm({
@@ -104,8 +107,15 @@ export function StudentQuickEnrollForm({
               gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
             }}
           >
-            <Field.Select name="universityId" label="University" sx={{ gridColumn: 'span 2' }} helperText={'Only universities that are associated to courses will be shown here.'}>
-              {associations.map((opt) => (
+            <Field.Select
+              name="universityId"
+              label="University"
+              sx={{ gridColumn: 'span 2' }}
+              helperText={'Only universities that are associated to courses will be shown here.'}
+            >
+              {Array.from(
+                new Map(associations.map((item) => [item.universityId, item])).values()
+              ).map((opt) => (
                 <MenuItem key={opt.universityId} value={opt.universityId}>
                   {opt.universityName}
                 </MenuItem>
