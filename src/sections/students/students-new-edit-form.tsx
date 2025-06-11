@@ -31,6 +31,7 @@ import { Form, Field } from 'src/components/hook-form';
 import { uploadFileAndGetURL } from 'src/auth/context';
 import { uuidv4 } from 'minimal-shared/utils';
 import dayjs from 'dayjs';
+import { CitySelect, CountrySelect } from 'src/components/select';
 
 // ----------------------------------------------------------------------
 
@@ -69,6 +70,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
   const router = useRouter();
   const [associations, setAssociations] = useState<ICourseAssociation[]>([]);
   const [intakes, setIntakes] = useState<IIntake[]>([]);
+  const [countryCode, setCountryCode] = useState('')
+  const [cityId, setCityId] = useState('')
+
 
   const defaultValues: NewStudentsSchemaType = {
     leadNo: currentStudent?.leadNumber || '',
@@ -107,7 +111,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     const fetchData = async () => {
       try {
         const [associationsData, intakesData] = await Promise.all([
-          fetchAssociations('active'),
+          fetchAssociations('active', undefined, undefined, undefined, undefined, cityId, countryCode),
           fetchIntakes('active'),
         ]);
         setAssociations(associationsData.courseAssociations);
@@ -118,7 +122,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       }
     };
     fetchData();
-  }, []);
+  }, [countryCode]);
 
   useEffect(() => {
     methods.setValue('courseId', '');
@@ -198,7 +202,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
         const studentId = response.data.id;
 
         // If enrollment fields are provided, enroll the student
-        if (data.universityId && data.courseId && data.intakeId && studentId) {
+        if (data.universityId && data.courseId && data.intakeId && studentId && !currentStudent) {
           await enrollStudent(studentId, {
             universityId: data.universityId,
             courseId: data.courseId,
@@ -220,6 +224,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       toast.error('Operation failed!');
     }
   });
+  useEffect(() => {
+    setCityId('')
+  }, [countryCode])
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
@@ -296,60 +303,96 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
               />
               <Field.Text name="postCode" label="Post Code" />
               <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
-
               {/* Enrollment Fields */}
-              <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 2 }}>
-                Enrollment Information 
-              </Typography>
-              
-              <Field.Select
-                name="universityId"
-                label="University"
-                sx={{ gridColumn: 'span 2' }}
-                helperText={'Only universities that are associated to courses will be shown here.'}
-              >
-                {Array.from(
-                  new Map(associations.map((item) => [item.universityId, item])).values()
-                ).map((opt) => (
-                  <MenuItem key={opt.universityId} value={opt.universityId}>
-                    {opt.universityName}
-                  </MenuItem>
-                ))}
-              </Field.Select>
+              {!currentStudent && (
+                <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 2 }}>
+                  Enrollment Information
+                </Typography>)}
+              {!currentStudent &&
+                (<CountrySelect
+                  id="country-id"
+                  label="Country"
+                  getValue="code"
+                  placeholder="Choose a Country"
+                  onChange={(event, newValue) => {
+                    // Handle value change
+                    setCountryCode(newValue)
+                  }}
+                />)}
+              {countryCode && (
+                <CitySelect
+                  id="city-id"
+                  label="City (Optional)"
+                  getValue="cityId"
+                  placeholder="Choose a City"
+                  onChange={(event, newValue) => {
+                    // Handle value change
+                    setCityId(newValue)
+                  }}
+                  countryCode={countryCode}
+                />
+              )}
+              {!currentStudent ? (
+                <Tooltip
+                  title={!countryCode ? 'Please select a country first' : ''}
+                  disableHoverListener={!!countryCode}
+                  placement="top-start"
+                >
+                  <span style={{ gridColumn: 'span 2', display: 'block' }}>
 
-              <Tooltip
-                title={!watchUniversityId ? 'Select University first' : ''}
-                disableHoverListener={!!watchUniversityId}
-                placement="top-start"
-              >
-                <span style={{ gridColumn: 'span 2', display: 'block' }}>
-                  <Field.Select
-                    name="courseId"
-                    label="Course"
-                    fullWidth
-                    disabled={!watchUniversityId}
-                    helperText="Only courses associated to the selected university will be shown."
-                  >
-                    {associations
-                      .filter((i) => i.universityId === watchUniversityId)
-                      .map((opt) => (
-                        <MenuItem key={opt.courseId} value={opt.courseId}>
-                          {opt.courseName}
+                    <Field.Select
+                      name="universityId"
+                      label="University"
+                      sx={{ gridColumn: 'span 2' }}
+                      disabled={!countryCode}
+                      helperText={'Only universities that are associated to courses will be shown here.'}
+                    >
+                      {Array.from(
+                        new Map(associations.map((item) => [item.universityId, item])).values()
+                      ).map((opt) => (
+                        <MenuItem key={opt.universityId} value={opt.universityId}>
+                          {opt.universityName}
                         </MenuItem>
                       ))}
-                  </Field.Select>
-                </span>
-              </Tooltip>
+                    </Field.Select>
+                  </span></Tooltip>
 
-              <Field.Select name="intakeId" label="Intake" sx={{ gridColumn: 'span 2' }}>
-                {intakes.map((opt) => (
-                  <MenuItem key={opt.id} value={opt.id}>
-                    {opt.name}
-                  </MenuItem>
-                ))}
-              </Field.Select>
+              ) : <></>}
+              {!currentStudent ?
+                (<Tooltip
+                  title={!watchUniversityId ? 'Select University first' : ''}
+                  disableHoverListener={!!watchUniversityId}
+                  placement="top-start"
+                >
+                  <span style={{ gridColumn: 'span 2', display: 'block' }}>
+                    <Field.Select
+                      name="courseId"
+                      label="Course"
+                      fullWidth
+                      disabled={!watchUniversityId}
+                      helperText="Only courses associated to the selected university will be shown."
+                    >
+                      {associations
+                        .filter((i) => i.universityId === watchUniversityId)
+                        .map((opt) => (
+                          <MenuItem key={opt.courseId} value={opt.courseId}>
+                            {opt.courseName}
+                          </MenuItem>
+                        ))}
+                    </Field.Select>
+                  </span>
+                </Tooltip>) : <></>}
+
+              {!currentStudent ? (
+                <Field.Select name="intakeId" label="Intake" sx={{ gridColumn: 'span 2' }}>
+                  {intakes.map((opt) => (
+                    <MenuItem key={opt.id} value={opt.id}>
+                      {opt.name}
+                    </MenuItem>
+                  ))}
+                </Field.Select>
+              ) : <></>}
             </Box>
-
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 {!currentStudent ? 'Create Student' : 'Save changes'}
