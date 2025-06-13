@@ -260,11 +260,6 @@ export function CoursesTableRow({
         />
       </TableCell> */}
       <TableCell>
-        <Box component="span" sx={{ color: 'text.disabled' }}>
-          {row.code}
-        </Box>
-      </TableCell>
-      <TableCell>
         <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
           {/* <Avatar alt={row.name} src={row?.logoUrl} /> */}
 
@@ -275,7 +270,7 @@ export function CoursesTableRow({
               color="inherit"
               sx={{ cursor: 'pointer' }}
             >
-              {row.name}
+              {row.code ? `${row.name} (${row.code})` : row.name}
             </Link>
           </Stack>
         </Box>
@@ -472,9 +467,6 @@ export function CoursesTableRow({
                         >
                           {university.universityName}
                         </Link>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          {university.courseCode}
-                        </Typography>
                       </Box>
                       {/* Tuition Fee - 20% width */}
                       <Box sx={{ width: '20%', display: 'flex', alignItems: 'center' }}>

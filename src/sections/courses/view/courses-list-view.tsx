@@ -57,11 +57,10 @@ import { fetchUniversities } from 'src/services/universities/fetchUniversities';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...COURSES_STATUS_OPTIONS];
 
 const TABLE_HEAD: TableHeadCellProps[] = [
-  { id: 'code', label: 'Code', width: '10%' },
-  { id: 'name', label: 'Courses Name', width: '25%' },
+  { id: 'name', label: 'Courses Name', width: '30%' },
   { id: 'description', label: 'Description', width: '40%' },
-  { id: 'duration', label: 'Duration', width: '12%' },
-  { id: 'status', label: 'Status', width: '08%' },
+  { id: 'duration', label: 'Duration', width: '15%' },
+  { id: 'status', label: 'Status', width: '10%' },
   { id: '', width: '5%' },
 ];
 
