@@ -1,10 +1,17 @@
 import { useState } from 'react';
+import {
+  Box,
+  Card,
+  Typography,
+  MenuItem,
+  Select,
+  FormControl,
+  Button,
+  useTheme,
+} from '@mui/material';
 import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import { toast } from 'src/components/snackbar';
-import { Box, Card, Typography, MenuItem, Select, FormControl, Button } from '@mui/material';
 import { IStudentsItem, IStudentStatus } from 'src/types/students';
-
-// ----------------------------------------------------------------------
 
 type Props = {
   student: IStudentsItem;
@@ -12,36 +19,37 @@ type Props = {
   onRefresh: () => void;
 };
 
-const STATUS_COLORS = {
+const STATUS_COLORS: Record<IStudentStatus, 'success' | 'error' | 'warning'> = {
   Enrolled: 'success',
-  Withdrawn: 'error',
   Deferred: 'warning',
-  Unafilliated: 'error',
-  UnEnrolled: 'error',
-} as const;
+  Withdrawn: 'error',
+  // Unaffiliated: 'error',
+  // UnEnrolled: 'error',
+  // All: 'success',
+};
 
 export function StudentProgressView({ student, status, onRefresh }: Props) {
   const [currentStatus, setCurrentStatus] = useState<IStudentStatus>(status);
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
+
+  const statusColor = STATUS_COLORS[currentStatus];
+  const statusColorMain = theme.palette[statusColor].main;
 
   const handleStatusUpdate = async () => {
     setLoading(true);
-
-    const data = {
-      // studentId: student.id,
-      status: currentStatus,
-    };
-
     try {
-      const response = await authAxiosInstance.patch(endpoints.students.details(student.id), data);
+      const response = await authAxiosInstance.patch(endpoints.students.details(student.id), {
+        status: currentStatus,
+      });
 
       if (response.status === 200) {
         toast.success('Status updated successfully!');
-        onRefresh(); // Optionally refresh the data after the update
+        onRefresh();
       } else {
         toast.error('Failed to update the status');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to update status');
     } finally {
       setLoading(false);
@@ -49,40 +57,38 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
   };
 
   return (
-    <Card
-      sx={{
-        width: '100%',
-        padding: '10px',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <Typography variant="h6" gutterBottom sx={{ padding: '10px' }}>
+    <Card sx={{ p: 2 }}>
+      <Typography variant="h6" gutterBottom>
         Status
       </Typography>
-      <FormControl fullWidth sx={{ paddingX: '10px' }}>
-        <Select
-          value={currentStatus}
-          onChange={(e) => {
-            const value = e.target.value as 'Enrolled' | 'Withdrawn' | 'Deferred';
-            setCurrentStatus(value);
-          }}
-        >
-          <MenuItem value="Enrolled">Enrolled</MenuItem>
-          {/* <MenuItem value="UnEnrolled">Unenrolled</MenuItem> */}
-          <MenuItem value="Withdrawn">Withdrawn</MenuItem>
-          <MenuItem value="Deferred">Deferred</MenuItem>
-        </Select>
-      </FormControl>
 
-      <Box mt={2} sx={{ padding: '10px' }}>
+      <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} sx={{ p: 2, m: 2 }} gap={2}>
+        <FormControl sx={{ width: '70%' }}>
+          <Select
+            value={currentStatus}
+            onChange={(e) => setCurrentStatus(e.target.value as IStudentStatus)}
+            sx={{
+              '.MuiOutlinedInput-notchedOutline': { borderColor: statusColorMain },
+              '.MuiSelect-select': { color: statusColorMain, textAlign: 'center' },
+              '.MuiSelect-icon': { color: statusColorMain },
+            }}
+          >
+            {Object.keys(STATUS_COLORS).map((statusKey) => (
+              <MenuItem key={statusKey} value={statusKey} sx={{ justifyContent: 'center' }}>
+                {statusKey}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
         <Button
-          onClick={handleStatusUpdate}
           variant="soft"
-          color={STATUS_COLORS[currentStatus]}
-          disabled={loading} // Disable button when loading
+          color={statusColor}
+          onClick={handleStatusUpdate}
+          disabled={loading}
+          sx={{ width: '30%' }}
         >
-          {loading ? 'Updating...' : `Update`}
+          {loading ? 'Updating...' : 'Update'}
         </Button>
       </Box>
     </Card>
