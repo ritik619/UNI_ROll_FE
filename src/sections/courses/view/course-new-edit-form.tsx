@@ -32,7 +32,7 @@ import { Form, Field } from 'src/components/hook-form';
 export const NewCourseSchema = zod
   .object({
     name: zod.string().min(1, { message: 'Course name is required!' }),
-    code: zod.string().min(1, { message: 'Course code is required!' }),
+    code: zod.string().optional(),
     // universityId: zod.string().min(1, { message: 'University is required!' }),
     description: zod.string().optional(),
     durationYears: zod.number().min(0).max(10).optional(),
@@ -140,7 +140,7 @@ export function CourseNewEditForm({
     values: currentCourse
       ? {
           name: currentCourse.name || '',
-          code: currentCourse.code || '',
+          code: currentCourse?.code || '',
           // universityId: currentCourse.universityId || '',
           description: currentCourse.description || '',
           durationYears: initialYears,
@@ -164,7 +164,6 @@ export function CourseNewEditForm({
 
   const watchNewStartDate = watch('newStartDate');
 
-
   const createCourse = async (data: ICreateCourse) => {
     // Calculate total months from years and months
     const years = data.durationYears || 0;
@@ -174,7 +173,7 @@ export function CourseNewEditForm({
     // Create a direct payload object instead of using formData
     const payload = {
       name: data.name.trim(),
-      code: data.code.trim(),
+      code: data.code?.trim(),
       // universityId: data.universityId.trim(),
       description: data.description?.trim(),
       // Only send durationMonths to backend
@@ -197,7 +196,7 @@ export function CourseNewEditForm({
 
     const payload = {
       name: data.name.trim(),
-      code: data.code.trim(),
+      code: data.code?.trim(),
       description: data.description?.trim(),
       // Only send durationMonths to backend
       durationMonths: totalMonths,

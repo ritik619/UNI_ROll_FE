@@ -16,7 +16,7 @@ export type ICourse = {
   countryName: string;
   id: string;
   name: string;
-  code: string;
+  code?: string;
   universityId: string;
   universityName: string;
   description?: string;
