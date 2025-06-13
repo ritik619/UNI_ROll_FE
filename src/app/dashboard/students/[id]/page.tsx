@@ -87,6 +87,7 @@ export default function StudentDetailsPage({ params }: Props) {
   if (!student) {
     return <></>;
   }
+  console.log(student, 'student');
 
   return (
     <DashboardContent>
@@ -152,30 +153,64 @@ export default function StudentDetailsPage({ params }: Props) {
           )}
 
           <Stack spacing={1.5} flexGrow={1}>
-            <Typography variant="h5">
+            {/* Heading */}
+            <Typography variant="h3">
               {student.firstName} {student.lastName}
             </Typography>
-
+            {/* uni&courses details */}
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 3 }}
+              sx={{ color: 'text.secoundry', typography: 'body1' }}
+            >
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Iconify icon="eva:book-fill" width={16} />
+                <span>{student.universityName}</span>
+              </Stack>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Iconify icon="eva:book-open-fill" width={16} />
+                <span>{student.courseName}</span>
+              </Stack>
+              {student.intakeName ? (
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Iconify icon="eva:bookmark-fill" width={16} />
+                  <span>{student.intakeName}</span>
+                </Stack>
+              ) : (
+                <></>
+              )}
+            </Stack>
+            {/* basic details */}
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secondary', typography: 'body2' }}
             >
               <Stack direction="row" spacing={1} alignItems="center">
+                {/* <Iconify icon="eva:calendar-fill" width={16} /> */}
+                <span>{student.sex}</span>
+              </Stack>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Iconify icon="eva:calendar-fill" width={16} />
+                <span>{student.dateOfBirth}</span>
+              </Stack>
+              <Stack direction="row" spacing={1} alignItems="center">
                 <Iconify icon="eva:email-fill" width={16} />
                 <span>{student.email}</span>
               </Stack>
-
               <Stack direction="row" spacing={1} alignItems="center">
                 <Iconify icon="eva:phone-fill" width={16} />
                 <span>{student.phoneNumber}</span>
               </Stack>
-
               <Stack direction="row" spacing={1} alignItems="center">
                 <Iconify icon="eva:pin-fill" width={16} />
                 <span>
                   {student.address}, {student.postCode}
                 </span>
+              </Stack>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Iconify icon="eva:map-fill" width={16} />
+                <span>{student.nationality}</span>
               </Stack>
             </Stack>
           </Stack>
