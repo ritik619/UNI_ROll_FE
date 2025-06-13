@@ -15,7 +15,7 @@ export const fetchIntakes = async (
       params.status = status;
     }
     if (page) {
-      params.page = page;
+      params.page = page+1;
     }
     if (limit) {
       params.limit = limit;

@@ -202,7 +202,7 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
     // table.setRowsPerPage(2);
     fetchPaginatedIntakes();
   }, [fetchPaginatedIntakes]);
-
+  
   return (
     <>
       <DashboardContent>
@@ -212,10 +212,10 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
             earning
               ? []
               : [
-                  { name: 'Dashboard', href: paths.dashboard.root },
-                  { name: 'Intakes', href: paths.dashboard.intakes.list },
-                  { name: 'List' },
-                ]
+                { name: 'Dashboard', href: paths.dashboard.root },
+                { name: 'Intakes', href: paths.dashboard.intakes.list },
+                { name: 'List' },
+              ]
           }
           action={
             isAdmin &&
@@ -250,19 +250,19 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
                 iconPosition="end"
                 value={tab.value}
                 label={tab.label}
-                // icon={
-                //   <Label
-                //     variant={
-                //       ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
-                //       'soft'
-                //     }
-                //     color={(tab.value === 'Active' && 'success') || 'default'}
-                //   >
-                //     {['active', 'inactive'].includes(tab.value)
-                //       ? tableData.filter((agent) => agent.status === tab.value).length
-                //       : tableData.length}
-                //   </Label>
-                // }
+              // icon={
+              //   <Label
+              //     variant={
+              //       ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
+              //       'soft'
+              //     }
+              //     color={(tab.value === 'Active' && 'success') || 'default'}
+              //   >
+              //     {['active', 'inactive'].includes(tab.value)
+              //       ? tableData.filter((agent) => agent.status === tab.value).length
+              //       : tableData.length}
+              //   </Label>
+              // }
               />
             ))}
           </Tabs>
@@ -342,12 +342,12 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(
-                  //     checked,
-                  //     dataFiltered.map((row) => row.id)
-                  //   )
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(
+                //     checked,
+                //     dataFiltered.map((row) => row.id)
+                //   )
+                // }
                 />
 
                 <TableBody>
@@ -355,53 +355,29 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
                     <TableSkeleton rowCount={table.rowsPerPage} cellCount={TABLE_HEAD.length} />
                   ) : (
                     <>
-                      {dataFiltered
-                        .slice(
-                          table.page * table.rowsPerPage,
-                          table.page * table.rowsPerPage + table.rowsPerPage
-                        )
-                        .map((row) => (
-                          <IntakeTableRow
-                            key={row.id}
-                            row={row}
-                            selected={table.selected.includes(row.id)}
-                            onSelectRow={() => table.onSelectRow(row.id)}
-                            onDeleteRow={() => handleDeleteRow(row.id)}
-                            onToggleStatus={handleToggleStatus as any}
-                            editHref={paths.dashboard.intakes.new}
-                          />
-                        ))}
+                      {tableData.map((row) => (
+                        <IntakeTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id)}
+                          onSelectRow={() => table.onSelectRow(row.id)}
+                          onDeleteRow={() => handleDeleteRow(row.id)}
+                          onToggleStatus={handleToggleStatus as any}
+                          editHref={paths.dashboard.intakes.new}
+                        />
+                      ))}
 
-                      <TableEmptyRows
-                        height={table.dense ? 56 : 56 + 20}
-                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                      />
-
-                      <TableNoData notFound={notFound && !loading} />
+                      {!loading && tableData.length === 0 && <TableNoData notFound={notFound} />}
+                      {!loading && tableData.length > 0 && tableData.length < table.rowsPerPage && (
+                        <TableEmptyRows
+                          height={table.dense ? 56 : 56 + 20}
+                          emptyRows={table.rowsPerPage - tableData.length}
+                        />
+                      )}
                     </>
                   )}
                 </TableBody>
-                {/* <TableFooter style={{backgroundColor:'yellow',flex:1,}}>
-                  <TableRow >
-                    <TablePagination
-                      rowsPerPageOptions={[1, 5, 10, 25, { label: 'All', value: -1 }]}
-                      colSpan={6}
-                      count={tableData.length}
-                      rowsPerPage={table.rowsPerPage}
-                      page={table.page}
-                      slotProps={{
-                        select: {
-                          inputProps: {
-                            'aria-label': 'Rows per page',
-                          },
-                          native: true,
-                        },
-                      }}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                  </TableRow>
-                </TableFooter> */}
+
               </Table>
             </Scrollbar>
           </Box>
@@ -410,9 +386,9 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={loading ? () => {} : table.onChangePage}
-            onChangeDense={loading ? () => {} : table.onChangeDense}
-            onRowsPerPageChange={loading ? () => {} : table.onChangeRowsPerPage}
+            onPageChange={loading ? () => { } : table.onChangePage}
+            onChangeDense={loading ? () => { } : table.onChangeDense}
+            onRowsPerPageChange={loading ? () => { } : table.onChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>

@@ -19,11 +19,11 @@ type Props = {
   onRefresh: () => void;
 };
 
-const STATUS_COLORS: Record<IStudentStatus, 'success' | 'error' | 'warning'> = {
-  Enrolled: 'success',
-  Deferred: 'warning',
-  Withdrawn: 'error',
-  // Unaffiliated: 'error',
+const STATUS_COLORS: Record<IStudentStatus, string> = {
+  Enrolled: 'green',
+  Deferred: '#DAA520',
+  Withdrawn: 'red',
+  // Unaffiliated: 'red',
   // UnEnrolled: 'error',
   // All: 'success',
 };
@@ -34,7 +34,7 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
   const theme = useTheme();
 
   const statusColor = STATUS_COLORS[currentStatus];
-  const statusColorMain = theme.palette[statusColor].main;
+  // const statusColorMain = theme.palette[statusColor].main;
 
   const handleStatusUpdate = async () => {
     setLoading(true);
@@ -67,14 +67,17 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
           <Select
             value={currentStatus}
             onChange={(e) => setCurrentStatus(e.target.value as IStudentStatus)}
-            sx={{
-              '.MuiOutlinedInput-notchedOutline': { borderColor: statusColorMain },
-              '.MuiSelect-select': { color: statusColorMain, textAlign: 'center' },
-              '.MuiSelect-icon': { color: statusColorMain },
-            }}
+            sx={{background:'white'}}
+            // sx={{
+            //   '.MuiOutlinedInput-notchedOutline': { borderColor: statusColorMain },
+            //   '.MuiSelect-select': { color: statusColorMain, textAlign: 'center' },
+            //   '.MuiSelect-icon': { color: statusColorMain },
+            // }}
           >
             {Object.keys(STATUS_COLORS).map((statusKey) => (
-              <MenuItem key={statusKey} value={statusKey} sx={{ justifyContent: 'center' }}>
+              <MenuItem key={statusKey} value={statusKey} sx={{ justifyContent: 'center',color:STATUS_COLORS[statusKey],border:`2px ${STATUS_COLORS[statusKey]} solid`,background:'white'}}
+                color={STATUS_COLORS[currentStatus]}
+              >
                 {statusKey}
               </MenuItem>
             ))}
@@ -83,7 +86,7 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
 
         <Button
           variant="soft"
-          color={statusColor}
+          // color={statusColor}
           onClick={handleStatusUpdate}
           disabled={loading}
           sx={{ width: '30%' }}

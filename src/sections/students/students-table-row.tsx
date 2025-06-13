@@ -244,7 +244,7 @@ export function StudentsTableRow({
 
   const renderAssociationRow = () => (
     <TableRow>
-      <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
+      <TableCell sx={{ p: 0, border: 'none' }} colSpan={9}>
         <Collapse
           in={collapseRow.value}
           timeout="auto"
@@ -331,7 +331,7 @@ export function StudentsTableRow({
                 </Box>
 
                 <Stack spacing={2}>
-                  {payments.map((payment,index) => (
+                  {payments.map((payment, index) => (
                     <Box
                       key={payment.id}
                       sx={(theme) => ({
@@ -417,7 +417,7 @@ export function StudentsTableRow({
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                   No payments found
                 </Typography>
-                {isAdmin&&<Button
+                {isAdmin && <Button
                   variant="outlined"
                   size="small"
                   onClick={quickAddPayment.onTrue}
@@ -550,7 +550,7 @@ export function StudentsTableRow({
     />
   );
 
-  const handleDeletePayment=()=>{
+  const handleDeletePayment = () => {
 
   }
 
@@ -598,7 +598,7 @@ export function StudentsTableRow({
           open={index === menuId && paymentMenuActions.open}
           anchorEl={paymentMenuActions.anchorEl}
           onClose={handleMenuClose}
-          slotProps={{ 
+          slotProps={{
             arrow: { placement: 'right-top' },
             paper: {
               onClick: (e) => e.stopPropagation()

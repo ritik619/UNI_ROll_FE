@@ -32,7 +32,7 @@ export function EarningView() {
   const [earningsByUniversity, setEarningsByUniversity] = useState<
     EarningsSummaryResponse['earningsByUniversity']
   >([]);
-  const [currencyCode, setCurrencyCode] = useState<string>('EURO');
+  const [currencyCode, setCurrencyCode] = useState<string>('GBP');
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const loadStats = async () => {
@@ -78,7 +78,7 @@ export function EarningView() {
             <AppRecentIntakeEarnings
               title="Recent Intake Earnings"
               list={earningsByIntake}
-              currencyCode="EUR"
+              currencyCode="GBP"
             />
           </Grid>
 
@@ -86,7 +86,7 @@ export function EarningView() {
             <AppTopUniversityEarnings
               title="Top Earning Universities"
               list={earningsByUniversity}
-              currencyCode={currencyCode}
+              currencyCode={"GBP"}
             />
           </Grid>
         </Grid>

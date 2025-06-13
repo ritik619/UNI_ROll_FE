@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import { toast } from 'src/components/snackbar';
 import { Box, Card, Stack, Typography, MenuItem, Select, FormControl, Button } from '@mui/material';
-import { IStudentsItem } from 'src/types/students';
+import { IFinanceStatus, IStudentsItem } from 'src/types/students';
 
 // ----------------------------------------------------------------------
 
@@ -12,7 +12,7 @@ type Props = {
   onRefresh: () => void;
 };
 
-const FINANCE_STATUS_COLORS = {
+const STATUS_COLORS = {
   Applied: 'info',
   Approved: 'success',
 } as const;
@@ -66,9 +66,11 @@ export function StudentFinanceView({ student, finance, onRefresh }: Props) {
             const value = e.target.value as 'Applied' | 'Approved'; // Type assertion
             setCurrentFinance(value);
           }}
+          sx={{background:'white'}}
+          
         >
-          <MenuItem value="Applied">Applied</MenuItem>
-          <MenuItem value="Approved">Approved</MenuItem>
+          <MenuItem value="Applied" sx={{ justifyContent: 'center',color:'green',border:`2px green solid`,background:'white'}}>Applied</MenuItem>
+          <MenuItem value="Approved" sx={{ justifyContent: 'center',color:'steelblue',border:`2px steelblue solid`,background:'white'}}>Approved</MenuItem>
         </Select>
       </FormControl>
 

@@ -64,7 +64,7 @@ export function CourseQuickAssociationForm({ open, onClose, courseId, universiti
     // endDate: '',
     applicationDeadline: '',
     price: 0,
-    currency: 'EUR',
+    currency: 'GBP',
     requirementsDescription: '',
     // languageOfInstruction: 'English',
     // maxStudents: 30,
