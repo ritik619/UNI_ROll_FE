@@ -214,7 +214,7 @@ export function CoursesTableRow({
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        {isAdmin ? (
+        {/* {isAdmin ? (
           <MenuItem
             onClick={() => {
               setCourseToDelete(row.id);
@@ -228,7 +228,7 @@ export function CoursesTableRow({
           </MenuItem>
         ) : (
           <></>
-        )}
+        )} */}
       </MenuList>
     </CustomPopover>
   );

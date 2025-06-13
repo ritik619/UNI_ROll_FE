@@ -194,7 +194,7 @@ export function UniversityTableRow({
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        {isAdmin && (
+        {/* {isAdmin && (
           <MenuItem
             onClick={() => {
               setUniversityToDelete(row.id);
@@ -206,7 +206,7 @@ export function UniversityTableRow({
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
-        )}
+        )} */}
       </MenuList>
     </CustomPopover>
   );
