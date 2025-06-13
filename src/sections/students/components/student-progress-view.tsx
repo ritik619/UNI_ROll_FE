@@ -33,10 +33,7 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
     };
 
     try {
-      const response = await authAxiosInstance.patch(
-        endpoints.students.details(student.id),
-        data
-      );
+      const response = await authAxiosInstance.patch(endpoints.students.details(student.id), data);
 
       if (response.status === 200) {
         toast.success('Status updated successfully!');
@@ -72,9 +69,9 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
           }}
         >
           <MenuItem value="Enrolled">Enrolled</MenuItem>
-          <MenuItem value="UnEnrolled">Unenrolled</MenuItem>
-          {/* <MenuItem value="Withdrawn">Withdrawn</MenuItem> */}
-          {/* <MenuItem value="Deferred">Deferred</MenuItem> */}
+          {/* <MenuItem value="UnEnrolled">Unenrolled</MenuItem> */}
+          <MenuItem value="Withdrawn">Withdrawn</MenuItem>
+          <MenuItem value="Deferred">Deferred</MenuItem>
         </Select>
       </FormControl>
 
