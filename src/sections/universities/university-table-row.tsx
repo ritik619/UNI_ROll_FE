@@ -111,7 +111,6 @@ export function UniversityTableRow({
     }
   }, [collapseRow.value, row.id, earning]);
 
-
   const handleDeleteAssociation = async () => {
     if (!associationToDelete) return;
 
@@ -219,10 +218,14 @@ export function UniversityTableRow({
       title="Delete"
       content="Are you sure want to delete?"
       action={
-        <Button variant="contained" color="error" onClick={()=>{
-          confirmDialog.onFalse()
-          onDeleteRow()
-          }}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => {
+            confirmDialog.onFalse();
+            onDeleteRow();
+          }}
+        >
           Delete
         </Button>
       }
@@ -310,10 +313,14 @@ export function UniversityTableRow({
               <Iconify icon="eva:arrow-ios-downward-fill" />
             </IconButton>
           )}
-
-          <IconButton color={menuActions.open ? 'inherit' : 'default'} onClick={menuActions.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          {isAdmin && (
+            <IconButton
+              color={menuActions.open ? 'inherit' : 'default'}
+              onClick={menuActions.onOpen}
+            >
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          )}
         </Box>
       </TableCell>
     </TableRow>
@@ -387,7 +394,7 @@ export function UniversityTableRow({
                     </Typography>
                   </Box>
 
-                  <Box sx={{ flex: 1 }}>
+                  <Box sx={{ width: '10%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       Status
                     </Typography>
@@ -433,72 +440,70 @@ export function UniversityTableRow({
                       </Box>
 
                       {/* Start Date - 20% width */}
-                      <Box sx={{ width: '20%' }}>
-                        <Box
+                      <Box
+                        sx={{
+                          width: '20%',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: 0.75,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
                           sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 0.75,
-                            alignItems: 'center',
+                            color: 'text.primary',
+                            bgcolor: 'action.selected',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontWeight: 500,
                           }}
                         >
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: 'text.primary',
-                              bgcolor: 'action.selected',
-                              px: 1,
-                              py: 0.5,
-                              borderRadius: 1,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {new Date(course.startDate).toLocaleDateString('en-GB', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </Typography>
-                        </Box>
+                          {new Date(course.startDate).toLocaleDateString('en-GB', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </Typography>
                       </Box>
 
                       {/* Deadline Date - 20% width */}
-                      <Box sx={{ width: '20%' }}>
-                        <Box
+                      <Box
+                        sx={{
+                          width: '20%',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: 0.75,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
                           sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 0.75,
-                            alignItems: 'center',
+                            color: 'text.primary',
+                            bgcolor: 'action.selected',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontWeight: 500,
                           }}
                         >
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: 'text.primary',
-                              bgcolor: 'action.selected',
-                              px: 1,
-                              py: 0.5,
-                              borderRadius: 1,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {toDMY(course.applicationDeadline).toLocaleDateString('en-GB', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </Typography>
-                        </Box>
+                          {toDMY(course.applicationDeadline).toLocaleDateString('en-GB', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </Typography>
                       </Box>
 
                       {/* Status and Actions - remainder width */}
                       <Box
                         sx={{
-                          flex: 1,
+                          width: '10%',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'flex-end',
+                          justifyContent: 'space-between',
                         }}
                       >
                         <Label
@@ -512,19 +517,21 @@ export function UniversityTableRow({
                         >
                           {course.status}
                         </Label>
-                        <IconButton
-                          size="small"
-                          color="default"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setAssociationToDelete(index);
-                            // Create a unique popover ID for each course
-                            const courseMenuId = `course-menu-${course.id}`;
-                            universityMenuActions.onOpen(event);
-                          }}
-                        >
-                          <Iconify icon="eva:more-vertical-fill" width={18} />
-                        </IconButton>
+                        {isAdmin && (
+                          <IconButton
+                            size="small"
+                            color="default"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setAssociationToDelete(index);
+                              // Create a unique popover ID for each course
+                              const courseMenuId = `course-menu-${course.id}`;
+                              universityMenuActions.onOpen(event);
+                            }}
+                          >
+                            <Iconify icon="eva:more-vertical-fill" width={18} />
+                          </IconButton>
+                        )}
                         {/* Course Actions Popover */}
                         <CustomPopover
                           open={associationToDelete === index && universityMenuActions.open}

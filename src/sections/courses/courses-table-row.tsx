@@ -119,7 +119,7 @@ export function CoursesTableRow({
       // Make API call to delete the course
       await authAxiosInstance.delete(`${endpoints.courses.details(courseToDelete)}`);
       // Remove the deleted course from the local state
-      onDeleteRow()
+      onDeleteRow();
 
       // Show success message
       toast.success('Course deleted successfully');
@@ -153,7 +153,7 @@ export function CoursesTableRow({
       courseDeleteDialog.onFalse();
     } catch (error) {
       console.error('Failed to delete association:', error);
-      toast.error('Failed to delete association'+ error?.message);
+      toast.error('Failed to delete association' + error?.message);
     }
   };
 
@@ -217,7 +217,7 @@ export function CoursesTableRow({
         {isAdmin ? (
           <MenuItem
             onClick={() => {
-              setCourseToDelete(row.id)
+              setCourseToDelete(row.id);
               confirmDialog.onTrue();
               menuActions.onClose();
             }}
@@ -358,10 +358,14 @@ export function CoursesTableRow({
           >
             <Iconify icon="eva:arrow-ios-downward-fill" />
           </IconButton>
-
-          <IconButton color={menuActions.open ? 'inherit' : 'default'} onClick={menuActions.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          {isAdmin && (
+            <IconButton
+              color={menuActions.open ? 'inherit' : 'default'}
+              onClick={menuActions.onOpen}
+            >
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          )}
         </Box>
       </TableCell>
     </TableRow>
@@ -435,7 +439,7 @@ export function CoursesTableRow({
                     </Typography>
                   </Box>
 
-                  <Box sx={{ flex: 1 }}>
+                  <Box sx={{ width: '10%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       Status
                     </Typography>
@@ -479,71 +483,69 @@ export function CoursesTableRow({
                         </Typography>
                       </Box>
                       {/* Start Date - 20% width */}
-                      <Box sx={{ width: '20%' }}>
-                        <Box
+                      <Box
+                        sx={{
+                          width: '20%',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: 0.75,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
                           sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 0.75,
-                            alignItems: 'center',
+                            color: 'text.primary',
+                            bgcolor: 'action.selected',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontWeight: 500,
                           }}
                         >
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: 'text.primary',
-                              bgcolor: 'action.selected',
-                              px: 1,
-                              py: 0.5,
-                              borderRadius: 1,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {new Date(university.startDate).toLocaleDateString('en-GB', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </Typography>
-                        </Box>
+                          {new Date(university.startDate).toLocaleDateString('en-GB', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </Typography>
                       </Box>
                       {/* Start applicationDeadline - 20% width */}
-                      <Box sx={{ width: '20%' }}>
-                        <Box
+                      <Box
+                        sx={{
+                          width: '20%',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: 0.75,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
                           sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 0.75,
-                            alignItems: 'center',
+                            color: 'text.primary',
+                            bgcolor: 'action.selected',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontWeight: 500,
                           }}
                         >
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: 'text.primary',
-                              bgcolor: 'action.selected',
-                              px: 1,
-                              py: 0.5,
-                              borderRadius: 1,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {toDMY(university.applicationDeadline).toLocaleDateString('en-GB', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </Typography>
-                        </Box>
+                          {toDMY(university.applicationDeadline).toLocaleDateString('en-GB', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </Typography>
                       </Box>
 
                       {/* Status and Actions - remainder width */}
                       <Box
                         sx={{
-                          flex: 1,
+                          width: '10%',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'flex-end',
+                          justifyContent: 'space-between',
                         }}
                       >
                         <Label
@@ -558,19 +560,21 @@ export function CoursesTableRow({
                           {university.status}
                         </Label>
                         {/* Course Actions Menu */}
-                        <IconButton
-                          size="small"
-                          color="default"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setAssociationToDelete(index);
-                            // Create a unique popover ID for each course
-                            const courseMenuId = `course-menu-${university.id}`;
-                            courseMenuActions.onOpen(event);
-                          }}
-                        >
-                          <Iconify icon="eva:more-vertical-fill" width={18} />
-                        </IconButton>
+                        {isAdmin && (
+                          <IconButton
+                            size="small"
+                            color="default"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setAssociationToDelete(index);
+                              // Create a unique popover ID for each course
+                              const courseMenuId = `course-menu-${university.id}`;
+                              courseMenuActions.onOpen(event);
+                            }}
+                          >
+                            <Iconify icon="eva:more-vertical-fill" width={18} />
+                          </IconButton>
+                        )}
                         {/* Course Actions Popover */}
                         <CustomPopover
                           open={associationToDelete === index && courseMenuActions.open}
