@@ -59,7 +59,7 @@ export interface IConsent {
 
 export interface IStudentsItem {
   id: string;
-  leadNumber: string;
+  leadNumber?: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
@@ -69,8 +69,8 @@ export interface IStudentsItem {
   nationality: string;
   coverPhoto: string;
   sex: ISex;
-  address: string;
-  postCode: string;
+  address?: string;
+  postCode?: string;
   agentId: string;
   universityId?: string;
   universityName?: string;
@@ -84,6 +84,9 @@ export interface IStudentsItem {
   consent?: IConsent;
   createdAt: Date;
   updatedAt: Date;
+  emergencyName?: string;
+  emergencyNumber?: string;
+  insuranceNumber?: string;
 }
 
 export interface ICreateStudent {

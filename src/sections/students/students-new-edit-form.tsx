@@ -36,7 +36,7 @@ import { CitySelect, CountrySelect } from 'src/components/select';
 // ----------------------------------------------------------------------
 
 export const NewStudentsSchema = zod.object({
-  leadNo: zod.string().min(1, { message: 'Lead Number is required!' }),
+  leadNo: zod.string().optional(),
   fName: zod.string().min(1, { message: 'First Name is required!' }),
   lName: zod.string().min(1, { message: 'Last Name is required!' }),
   dob: zod.string().min(1, { message: 'Date of Birth is required!' }),
@@ -49,13 +49,14 @@ export const NewStudentsSchema = zod.object({
   emergencyName: zod.string().optional(),
   nationality: zod.string().min(1, { message: 'Nationality is required!' }),
   sex: zod.string().min(1, { message: 'Sex is required!' }),
-  address: zod.string().min(1, { message: 'Address is required!' }),
-  postCode: zod.string().min(1, { message: 'Post Code is required!' }),
+  address: zod.string().optional(),
+  postCode: zod.string().optional(),
   coverPhoto: zod.any().optional(),
   // Enrollment fields
   universityId: zod.string().optional(),
   courseId: zod.string().optional(),
   intakeId: zod.string().optional(),
+  insuranceNumber: zod.string().optional(),
 });
 
 export type NewStudentsSchemaType = zod.infer<typeof NewStudentsSchema>;
@@ -70,9 +71,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
   const router = useRouter();
   const [associations, setAssociations] = useState<ICourseAssociation[]>([]);
   const [intakes, setIntakes] = useState<IIntake[]>([]);
-  const [countryCode, setCountryCode] = useState('')
-  const [cityId, setCityId] = useState('')
-
+  const [countryCode, setCountryCode] = useState('');
+  const [cityId, setCityId] = useState('');
 
   const defaultValues: NewStudentsSchemaType = {
     leadNo: currentStudent?.leadNumber || '',
@@ -91,6 +91,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     universityId: '',
     courseId: '',
     intakeId: '',
+    insuranceNumber: zod.string().optional(),
   };
 
   const methods = useForm<NewStudentsSchemaType>({
@@ -111,7 +112,15 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     const fetchData = async () => {
       try {
         const [associationsData, intakesData] = await Promise.all([
-          fetchAssociations('active', undefined, undefined, undefined, undefined, cityId, countryCode),
+          fetchAssociations(
+            'active',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            cityId,
+            countryCode
+          ),
           fetchIntakes('active'),
         ]);
         setAssociations(associationsData.courseAssociations);
@@ -139,7 +148,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     }
     const payload = {
       coverPhoto: data.coverPhoto,
-      leadNumber: data.leadNo.trim(),
+      leadNumber: data.leadNo?.trim(),
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
       dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
@@ -152,13 +161,17 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       sex: data.sex.trim(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
+      insuranceNumber: zod.string().optional(),
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.students.list, payload);
     return response;
   };
 
-  const enrollStudent = async (studentId: string, data: { universityId: string; courseId: string; intakeId: string }) => {
+  const enrollStudent = async (
+    studentId: string,
+    data: { universityId: string; courseId: string; intakeId: string }
+  ) => {
     await authAxiosInstance.patch(endpoints.students.enroll(studentId), data);
   };
 
@@ -173,7 +186,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     }
     const payload = {
       coverPhoto: data.coverPhoto,
-      leadNumber: data.leadNo.trim(),
+      leadNumber: data.leadNo?.trim(),
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
       dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
@@ -186,6 +199,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       sex: data.sex.trim(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
+      insuranceNumber: zod.string().optional(),
     };
 
     const response = await authAxiosInstance.patch<{ id: string }>(
@@ -213,7 +227,6 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
           toast.success('Student created successfully!');
         }
         router.push(paths.dashboard.students.details(studentId));
-
       } else {
         await updateStudent(data);
         toast.success('Update success!');
@@ -225,8 +238,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     }
   });
   useEffect(() => {
-    setCityId('')
-  }, [countryCode])
+    setCityId('');
+  }, [countryCode]);
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
@@ -271,15 +284,11 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
               <Field.Text name="email" label="Email Address" />
               <Field.CountrySelect
                 name="nationality"
-                label="Country"
+                label="Nationality"
                 getValue="name"
                 id="nationality"
               />
-              <Field.Text
-                name="phoneNumber"
-                label="Phone Number"
-                id="phoneNumber"
-              />
+              <Field.Text name="phoneNumber" label="Phone Number" id="phoneNumber" />
               <Field.Select name="sex" label="Sex">
                 {[
                   { label: 'Male', value: 'Male' },
@@ -291,34 +300,38 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   </MenuItem>
                 ))}
               </Field.Select>
-              <Field.Text
-                name="emergencyNumber"
-                label="Emergency Contact Number (Optional)"
-                id="emergencyNumber"
-              />
+              <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
+              <Field.Text name="postCode" label="Post Code" />
+              <Field.Text name="insuranceNumber" label="National Insurance Number" />
+
               <Field.Text
                 name="emergencyName"
                 label="Emergency Contact Name (Optional)"
                 id="emergencyName"
               />
-              <Field.Text name="postCode" label="Post Code" />
-              <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
+              <Field.Text
+                name="emergencyNumber"
+                label="Emergency Contact Number (Optional)"
+                id="emergencyNumber"
+              />
               {/* Enrollment Fields */}
               {!currentStudent && (
                 <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 2 }}>
                   Enrollment Information
-                </Typography>)}
-              {!currentStudent &&
-                (<CountrySelect
+                </Typography>
+              )}
+              {!currentStudent && (
+                <CountrySelect
                   id="country-id"
                   label="Country"
                   getValue="code"
                   placeholder="Choose a Country"
                   onChange={(event, newValue) => {
                     // Handle value change
-                    setCountryCode(newValue)
+                    setCountryCode(newValue);
                   }}
-                />)}
+                />
+              )}
               {countryCode && (
                 <CitySelect
                   id="city-id"
@@ -327,7 +340,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   placeholder="Choose a City"
                   onChange={(event, newValue) => {
                     // Handle value change
-                    setCityId(newValue)
+                    setCityId(newValue);
                   }}
                   countryCode={countryCode}
                 />
@@ -339,13 +352,14 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   placement="top-start"
                 >
                   <span style={{ gridColumn: 'span 2', display: 'block' }}>
-
                     <Field.Select
                       name="universityId"
                       label="University"
                       sx={{ gridColumn: 'span 2' }}
                       disabled={!countryCode}
-                      helperText={'Only universities that are associated to courses will be shown here.'}
+                      helperText={
+                        'Only universities that are associated to courses will be shown here.'
+                      }
                     >
                       {Array.from(
                         new Map(associations.map((item) => [item.universityId, item])).values()
@@ -355,11 +369,13 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                         </MenuItem>
                       ))}
                     </Field.Select>
-                  </span></Tooltip>
-
-              ) : <></>}
-              {!currentStudent ?
-                (<Tooltip
+                  </span>
+                </Tooltip>
+              ) : (
+                <></>
+              )}
+              {!currentStudent ? (
+                <Tooltip
                   title={!watchUniversityId ? 'Select University first' : ''}
                   disableHoverListener={!!watchUniversityId}
                   placement="top-start"
@@ -381,8 +397,10 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                         ))}
                     </Field.Select>
                   </span>
-                </Tooltip>) : <></>}
-
+                </Tooltip>
+              ) : (
+                <></>
+              )}
               {!currentStudent ? (
                 <Field.Select name="intakeId" label="Intake" sx={{ gridColumn: 'span 2' }}>
                   {intakes.map((opt) => (
@@ -391,7 +409,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                     </MenuItem>
                   ))}
                 </Field.Select>
-              ) : <></>}
+              ) : (
+                <></>
+              )}
             </Box>
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

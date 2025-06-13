@@ -187,6 +187,7 @@ export default function StudentDetailsPage({ params }: Props) {
               <InfoItem icon="eva:calendar-fill" label={student.dateOfBirth} />
               <InfoItem icon="eva:phone-fill" label={student.phoneNumber} />
               <InfoItem icon="eva:email-fill" label={student.email} />
+              <InfoItem icon="healthicons:insurance-card" label={student.insuranceNumber} />
               <InfoItem
                 icon="eva:pin-fill"
                 label={[student.address, student.postCode].filter(Boolean).join(', ')}
