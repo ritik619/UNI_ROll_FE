@@ -91,7 +91,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     universityId: '',
     courseId: '',
     intakeId: '',
-    insuranceNumber: zod.string().optional(),
+    insuranceNumber: '',
   };
 
   const methods = useForm<NewStudentsSchemaType>({
@@ -159,9 +159,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       ...(data.emergencyName && { emergencyName: data.emergencyName.trim() }),
       nationality: data.nationality.trim(),
       sex: data.sex.trim(),
-      address: data.address.trim(),
-      postCode: data.postCode.trim(),
-      insuranceNumber: zod.string().optional(),
+      address: data.address?.trim(),
+      postCode: data.postCode?.trim(),
+      insuranceNumber: data.insuranceNumber?.trim(),
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.students.list, payload);
@@ -197,9 +197,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       ...(data.emergencyName && { emergencyName: data.emergencyName.trim() }),
       nationality: data.nationality.trim(),
       sex: data.sex.trim(),
-      address: data.address.trim(),
-      postCode: data.postCode.trim(),
-      insuranceNumber: zod.string().optional(),
+      address: data.address?.trim(),
+      postCode: data.postCode?.trim(),
+      insuranceNumber: data.insuranceNumber?.trim(),
     };
 
     const response = await authAxiosInstance.patch<{ id: string }>(
