@@ -87,7 +87,17 @@ export default function StudentDetailsPage({ params }: Props) {
   if (!student) {
     return <></>;
   }
-  console.log(student, 'student');
+
+  function InfoItem({ icon, label }: { icon?: string; label?: string | number | null }) {
+    if (!label) return null;
+
+    return (
+      <Stack direction="row" spacing={1} alignItems="center">
+        {icon && <Iconify icon={icon} width={16} />}
+        <span>{label}</span>
+      </Stack>
+    );
+  }
 
   return (
     <DashboardContent>
@@ -163,22 +173,9 @@ export default function StudentDetailsPage({ params }: Props) {
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secoundry', typography: 'body1' }}
             >
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Iconify icon="eva:book-fill" width={16} />
-                <span>{student.universityName}</span>
-              </Stack>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Iconify icon="eva:book-open-fill" width={16} />
-                <span>{student.courseName}</span>
-              </Stack>
-              {student.intakeName ? (
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Iconify icon="eva:bookmark-fill" width={16} />
-                  <span>{student.intakeName}</span>
-                </Stack>
-              ) : (
-                <></>
-              )}
+              <InfoItem icon="eva:book-fill" label={student.universityName} />
+              <InfoItem icon="eva:book-open-fill" label={student.courseName} />
+              <InfoItem icon="eva:bookmark-fill" label={student.intakeName} />
             </Stack>
             {/* basic details */}
             <Stack
@@ -186,32 +183,15 @@ export default function StudentDetailsPage({ params }: Props) {
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secondary', typography: 'body2' }}
             >
-              <Stack direction="row" spacing={1} alignItems="center">
-                {/* <Iconify icon="eva:calendar-fill" width={16} /> */}
-                <span>{student.sex}</span>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Iconify icon="eva:calendar-fill" width={16} />
-                <span>{student.dateOfBirth}</span>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Iconify icon="eva:email-fill" width={16} />
-                <span>{student.email}</span>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Iconify icon="eva:phone-fill" width={16} />
-                <span>{student.phoneNumber}</span>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Iconify icon="eva:pin-fill" width={16} />
-                <span>
-                  {student.address}, {student.postCode}
-                </span>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Iconify icon="eva:map-fill" width={16} />
-                <span>{student.nationality}</span>
-              </Stack>
+              <InfoItem label={student.sex} />
+              <InfoItem icon="eva:calendar-fill" label={student.dateOfBirth} />
+              <InfoItem icon="eva:phone-fill" label={student.phoneNumber} />
+              <InfoItem icon="eva:email-fill" label={student.email} />
+              <InfoItem
+                icon="eva:pin-fill"
+                label={[student.address, student.postCode].filter(Boolean).join(', ')}
+              />
+              <InfoItem icon="eva:map-fill" label={student.nationality} />
             </Stack>
           </Stack>
         </Stack>
