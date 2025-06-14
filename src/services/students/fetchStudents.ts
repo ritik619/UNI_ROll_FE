@@ -3,8 +3,10 @@ import type { IStudentStatus } from 'src/types/students';
 import { toast } from 'sonner';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
+import { StudentsTableFiltersResult } from 'src/sections/students/students-table-filters-result';
 
 export const fetchStudents = async (
+ 
   status: IStudentStatus,
   page?: number,
   limit?: number,
@@ -13,7 +15,8 @@ export const fetchStudents = async (
   agentId?: string,
   intakeId?: string,
   countryCode?: string,
-  cityId?: string
+  cityId?: string,
+  studentName?:string
 ) => {
   try {
     const params: Record<string, any> = {};
@@ -43,6 +46,9 @@ export const fetchStudents = async (
     }
     if (courseId) {
       params.courseId = courseId;
+    }
+    if (studentName) {
+      params.search = studentName;
     }
 
     const response = await authAxiosInstance.get(endpoints.students.list, { params });

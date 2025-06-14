@@ -226,7 +226,7 @@ export default function StudentDetailsPage({ params }: Props) {
           {currentTab === 'finance' && (
             <StudentFinanceView
               student={student}
-              finance={student.finance?.status || 'Applied'} // Default to 'Applied' if undefined
+              finance={student.finance?.status} // Default to 'Applied' if undefined
               onRefresh={fetchStudent}
             />
           )}

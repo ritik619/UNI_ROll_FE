@@ -60,6 +60,7 @@ import { useAuthContext } from 'src/auth/hooks';
 
 import { StudentsTableRow } from '../students-table-row';
 import { StudentsTableFiltersResult } from '../students-table-filters-result';
+import { StudentsTableToolbar } from '../students-table-toolbar';
 
 // ----------------------------------------------------------------------
 const STATUS_OPTIONS = [
@@ -218,7 +219,8 @@ export function StudentsListView() {
         currentFilters.agentId,
         currentFilters.intakeId,
         currentFilters.countryCode,
-        currentFilters.cityId
+        currentFilters.cityId,
+        currentFilters.name
       );
       setTableData(students);
       setTotalCount(total);
@@ -237,6 +239,7 @@ export function StudentsListView() {
     currentFilters.intakeId,
     currentFilters.countryCode,
     currentFilters.cityId,
+    currentFilters.name
   ]);
 
   useEffect(() => {
@@ -264,7 +267,8 @@ export function StudentsListView() {
       currentFilters.agentId,
       currentFilters.intakeId,
       currentFilters.countryCode,
-      currentFilters.cityId
+      currentFilters.cityId,
+      currentFilters.name
     );
     const flattenObject = (obj: any, prefix = '') =>
       Object.entries(obj).reduce((acc, [k, v]) => {
@@ -387,7 +391,6 @@ export function StudentsListView() {
       toast.error('Failed to update student data');
     }
   };
-
   return (
     <>
       <DashboardContent>
@@ -540,7 +543,8 @@ export function StudentsListView() {
                 countryCode={filters.state.countryCode}
               />
             )}
-          </Box>
+          </Box>            
+          <StudentsTableToolbar filters={filters} onResetPage={()=>{}}/>
 
           {canReset && (
             <StudentsTableFiltersResult

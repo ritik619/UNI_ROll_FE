@@ -25,60 +25,22 @@ import { CustomPopover } from 'src/components/custom-popover';
 type Props = {
   onResetPage: () => void;
   filters: UseSetStateReturn<IStudentsTableFilters>;
-  options: {
-    roles: string[];
-  };
 };
 
-export function StudentsTableToolbar({ filters, options, onResetPage }: Props) {
+export function StudentsTableToolbar({ filters,  onResetPage }: Props) {
   const menuActions = usePopover();
 
   const { state: currentFilters, setState: updateFilters } = filters;
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      console.log(event.target.value)
       onResetPage();
       updateFilters({ name: event.target.value });
     },
     [onResetPage, updateFilters]
   );
 
-  const handleFilterRole = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      const newValue =
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-
-      onResetPage();
-      updateFilters({ role: newValue });
-    },
-    [onResetPage, updateFilters]
-  );
-
-  const renderMenuActions = () => (
-    <CustomPopover
-      open={menuActions.open}
-      anchorEl={menuActions.anchorEl}
-      onClose={menuActions.onClose}
-      slotProps={{ arrow: { placement: 'right-top' } }}
-    >
-      <MenuList>
-        <MenuItem onClick={() => menuActions.onClose()}>
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
-
-        <MenuItem onClick={() => menuActions.onClose()}>
-          <Iconify icon="solar:import-bold" />
-          Import
-        </MenuItem>
-
-        <MenuItem onClick={() => menuActions.onClose()}>
-          <Iconify icon="solar:export-bold" />
-          Export
-        </MenuItem>
-      </MenuList>
-    </CustomPopover>
-  );
 
   return (
     <>
@@ -87,35 +49,11 @@ export function StudentsTableToolbar({ filters, options, onResetPage }: Props) {
           p: 2.5,
           gap: 2,
           display: 'flex',
-          pr: { xs: 2.5, md: 1 },
+          // pr: { xs: 2.5, md: 1 },
           flexDirection: { xs: 'column', md: 'row' },
           alignItems: { xs: 'flex-end', md: 'center' },
         }}
       >
-        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-          <InputLabel htmlFor="filter-role-select">Role</InputLabel>
-          <Select
-            multiple
-            value={currentFilters.role}
-            onChange={handleFilterRole}
-            input={<OutlinedInput label="Role" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            inputProps={{ id: 'filter-role-select' }}
-            MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
-          >
-            {options.roles.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox
-                  disableRipple
-                  size="small"
-                  checked={currentFilters.role.includes(option)}
-                />
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
         <Box
           sx={{
             gap: 2,
@@ -140,14 +78,9 @@ export function StudentsTableToolbar({ filters, options, onResetPage }: Props) {
               },
             }}
           />
-
-          <IconButton onClick={menuActions.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
         </Box>
       </Box>
 
-      {renderMenuActions()}
     </>
   );
 }

@@ -5,7 +5,7 @@ import type { ICourseAssociation } from 'src/types/courseAssociation';
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -32,6 +32,8 @@ import { uploadFileAndGetURL } from 'src/auth/context';
 import { uuidv4 } from 'minimal-shared/utils';
 import dayjs from 'dayjs';
 import { CitySelect, CountrySelect } from 'src/components/select';
+import { IUniversity } from 'src/types/university';
+import { fetchUniversities } from 'src/services/universities/fetchUniversities';
 
 // ----------------------------------------------------------------------
 
@@ -70,6 +72,7 @@ type Props = {
 export function StudentsNewEditForm({ currentStudent }: Props) {
   const router = useRouter();
   const [associations, setAssociations] = useState<ICourseAssociation[]>([]);
+  const [universities,setUniversities]=useState<IUniversity[]>([]);
   const [intakes, setIntakes] = useState<IIntake[]>([]);
   const [countryCode, setCountryCode] = useState('');
   const [cityId, setCityId] = useState('');
@@ -107,6 +110,25 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
   } = methods;
 
   const watchUniversityId = watch('universityId');
+
+  const getUniversities = async () => {
+    try {
+      const { universities: u } = await fetchUniversities('active',0,1000,cityId,countryCode); // Update this as per your service
+      setUniversities(u);
+    } catch (e) {
+      console.error('Failed to fetch universities', e);
+      toast.error('Failed to fetch universities');
+      setUniversities([]);
+    }
+    finally{
+      methods.setValue('universityId', '');
+      methods.setValue('courseId', '');
+    }
+  };
+
+  useEffect(() => {
+    getUniversities();
+  }, [countryCode,cityId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -362,10 +384,10 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                       }
                     >
                       {Array.from(
-                        new Map(associations.map((item) => [item.universityId, item])).values()
+                        new Map(universities.map((item) => [item.id, item])).values()
                       ).map((opt) => (
-                        <MenuItem key={opt.universityId} value={opt.universityId}>
-                          {opt.universityName}
+                        <MenuItem key={opt.id} value={opt.id}>
+                          {opt.name}
                         </MenuItem>
                       ))}
                     </Field.Select>

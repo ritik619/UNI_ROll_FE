@@ -25,10 +25,10 @@ export function FiltersResult({
 }: FiltersResultProps) {
   return (
     <ResultRoot sx={sx} {...other}>
-      <ResultLabel>
+      {/* <ResultLabel>
         <strong>{totalResults}</strong>
         <span> results found</span>
-      </ResultLabel>
+      </ResultLabel> */}
 
       <ResultContent>
         {children}
