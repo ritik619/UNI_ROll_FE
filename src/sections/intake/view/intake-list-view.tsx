@@ -202,7 +202,7 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
     // table.setRowsPerPage(2);
     fetchPaginatedIntakes();
   }, [fetchPaginatedIntakes]);
-  
+
   return (
     <>
       <DashboardContent>
@@ -212,10 +212,10 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
             earning
               ? []
               : [
-                { name: 'Dashboard', href: paths.dashboard.root },
-                { name: 'Intakes', href: paths.dashboard.intakes.list },
-                { name: 'List' },
-              ]
+                  { name: 'Dashboard', href: paths.dashboard.root },
+                  { name: 'Intakes', href: paths.dashboard.intakes.list },
+                  { name: 'List' },
+                ]
           }
           action={
             isAdmin &&
@@ -250,19 +250,19 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
                 iconPosition="end"
                 value={tab.value}
                 label={tab.label}
-              // icon={
-              //   <Label
-              //     variant={
-              //       ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
-              //       'soft'
-              //     }
-              //     color={(tab.value === 'Active' && 'success') || 'default'}
-              //   >
-              //     {['active', 'inactive'].includes(tab.value)
-              //       ? tableData.filter((agent) => agent.status === tab.value).length
-              //       : tableData.length}
-              //   </Label>
-              // }
+                // icon={
+                //   <Label
+                //     variant={
+                //       ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
+                //       'soft'
+                //     }
+                //     color={(tab.value === 'Active' && 'success') || 'default'}
+                //   >
+                //     {['active', 'inactive'].includes(tab.value)
+                //       ? tableData.filter((agent) => agent.status === tab.value).length
+                //       : tableData.length}
+                //   </Label>
+                // }
               />
             ))}
           </Tabs>
@@ -342,12 +342,12 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                // onSelectAllRows={(checked) =>
-                //   table.onSelectAllRows(
-                //     checked,
-                //     dataFiltered.map((row) => row.id)
-                //   )
-                // }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>
@@ -377,7 +377,6 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
                     </>
                   )}
                 </TableBody>
-
               </Table>
             </Scrollbar>
           </Box>
@@ -386,9 +385,9 @@ export function IntakeListView({ earning }: { earning?: boolean }) {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={loading ? () => { } : table.onChangePage}
-            onChangeDense={loading ? () => { } : table.onChangeDense}
-            onRowsPerPageChange={loading ? () => { } : table.onChangeRowsPerPage}
+            onPageChange={loading ? () => {} : table.onChangePage}
+            onChangeDense={loading ? () => {} : table.onChangeDense}
+            onRowsPerPageChange={loading ? () => {} : table.onChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>

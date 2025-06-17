@@ -28,6 +28,7 @@ import { StudentFinanceView } from 'src/sections/students/components/student-fin
 import { StudentExamBookView } from 'src/sections/students/components/student-exam-booking-view';
 import { StudentConsentFormView } from 'src/sections/students/components/student-consent-form-view';
 import { StudentProgressView } from 'src/sections/students/components/student-progress-view';
+import { StudentResumeView } from 'src/sections/students/components/student-resume-view';
 
 // ----------------------------------------------------------------------
 
@@ -215,6 +216,7 @@ export default function StudentDetailsPage({ params }: Props) {
           <Tab label="Booking" value="booking" />
           <Tab label="Progress" value="progress" />
           <Tab label="Consent Form" value="consent" />
+          <Tab label="Resume" value="resume" />
         </Tabs>
 
         {/* Tab Content */}
@@ -250,6 +252,9 @@ export default function StudentDetailsPage({ params }: Props) {
 
           {currentTab === 'consent' && (
             <StudentConsentFormView student={student} onRefresh={fetchStudent} />
+          )}
+          {currentTab === 'resume' && (
+            <StudentResumeView student={student} onRefresh={fetchStudent} />
           )}
         </Box>
       </Card>

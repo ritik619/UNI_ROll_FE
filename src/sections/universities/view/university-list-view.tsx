@@ -120,7 +120,7 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
         table.onUpdatePageDeleteRow(dataInPage.length);
       } catch (error) {
         console.error(error);
-        toast.error('Failed to delete university'+error?.message);
+        toast.error('Failed to delete university' + error?.message);
       }
     },
     [tableData, dataInPage.length, table]

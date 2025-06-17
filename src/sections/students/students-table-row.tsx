@@ -62,7 +62,10 @@ type Props = {
   onToggleStatus?: (id: string, status: IStudentStatus) => void;
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
-  onEnroll?: (studentId: string, data: { universityId: string; courseId: string; intakeId: string }) => void;
+  onEnroll?: (
+    studentId: string,
+    data: { universityId: string; courseId: string; intakeId: string }
+  ) => void;
   onUnenroll?: (studentId: string) => void;
 };
 
@@ -417,14 +420,16 @@ export function StudentsTableRow({
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                   No payments found
                 </Typography>
-                {isAdmin && <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={quickAddPayment.onTrue}
-                  startIcon={<Iconify icon="mingcute:add-line" />}
-                >
-                  Add First Payment
-                </Button>}
+                {isAdmin && (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={quickAddPayment.onTrue}
+                    startIcon={<Iconify icon="mingcute:add-line" />}
+                  >
+                    Add First Payment
+                  </Button>
+                )}
               </Box>
             )}
           </Paper>
@@ -550,9 +555,7 @@ export function StudentsTableRow({
     />
   );
 
-  const handleDeletePayment = () => {
-
-  }
+  const handleDeletePayment = () => {};
 
   const renderConfirmPaymentDeleteDialog = () => (
     <ConfirmDialog
@@ -601,16 +604,15 @@ export function StudentsTableRow({
           slotProps={{
             arrow: { placement: 'right-top' },
             paper: {
-              onClick: (e) => e.stopPropagation()
-            }
+              onClick: (e) => e.stopPropagation(),
+            },
           }}
         >
           <MenuList>
             <MenuItem
               onClick={async () => {
                 try {
-                  const newStatus: PaymentStatus =
-                    payment.status === 'Paid' ? 'Pending' : 'Paid';
+                  const newStatus: PaymentStatus = payment.status === 'Paid' ? 'Pending' : 'Paid';
                   handleMenuClose();
                   if (!earning?.id) {
                     toast.error('Earning ID is missing');
@@ -638,8 +640,7 @@ export function StudentsTableRow({
                 }
               }}
               sx={{
-                color:
-                  payment.status === 'Paid' ? 'warning.main' : 'success.main',
+                color: payment.status === 'Paid' ? 'warning.main' : 'success.main',
               }}
             >
               <Iconify
@@ -662,11 +663,7 @@ export function StudentsTableRow({
               }}
               sx={{ color: 'error.main' }}
             >
-              <Iconify
-                icon="solar:trash-bin-trash-bold"
-                width={16}
-                sx={{ mr: 1 }}
-              />
+              <Iconify icon="solar:trash-bin-trash-bold" width={16} sx={{ mr: 1 }} />
               Delete Payment
             </MenuItem>
           </MenuList>

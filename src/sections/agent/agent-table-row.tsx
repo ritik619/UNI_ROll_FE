@@ -34,10 +34,18 @@ type Props = {
   onSelectRow: () => void;
   onDeleteRow: () => void;
   onToggleStatus?: (id: string, status: 'active' | 'inactive') => void;
-  triggerRefresh:()=>void
+  triggerRefresh: () => void;
 };
 
-export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRow, onToggleStatus,triggerRefresh }: Props) {
+export function AgentTableRow({
+  row,
+  selected,
+  editHref,
+  onSelectRow,
+  onDeleteRow,
+  onToggleStatus,
+  triggerRefresh,
+}: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
@@ -46,9 +54,9 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
     <AgentQuickEditForm
       currentAgent={row}
       open={quickEditForm.value}
-      onCloseandUpdate={(changed)=>{
-        quickEditForm.onFalse()
-        triggerRefresh()
+      onCloseandUpdate={(changed) => {
+        quickEditForm.onFalse();
+        triggerRefresh();
       }}
       onClose={quickEditForm.onFalse}
     />
@@ -79,7 +87,11 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
           }}
           sx={{ color: row.status === 'active' ? 'warning.main' : 'success.main' }}
         >
-          <Iconify icon={row.status === 'active' ? "material-symbols:toggle-off" : "material-symbols:toggle-on"} />
+          <Iconify
+            icon={
+              row.status === 'active' ? 'material-symbols:toggle-off' : 'material-symbols:toggle-on'
+            }
+          />
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
@@ -138,9 +150,7 @@ export function AgentTableRow({ row, selected, editHref, onSelectRow, onDeleteRo
           </Box>
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          {row.utrNumber}
-        </TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.utrNumber}</TableCell>
 
         <TableCell>
           <Stack spacing={0.5}>

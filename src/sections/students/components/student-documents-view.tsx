@@ -73,7 +73,10 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
     return null;
   };
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>, documentType: string) => {
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    documentType: string
+  ) => {
     const files = event.target.files;
     if (!files?.length) return;
 
@@ -103,7 +106,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
           await authAxiosInstance.patch(endpoints.students.details(student.id), {
             documents: {
               ...student.documents,
-              otherDocuments: [...existingDocs, ...urls]
+              otherDocuments: [...existingDocs, ...urls],
             },
           });
 
@@ -143,7 +146,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
     try {
       const zip = new JSZip();
       const documents = student.documents || {};
-      
+
       // Add each document to the zip
       for (const [docType, url] of Object.entries(documents)) {
         if (url) {
@@ -161,7 +164,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
       // Generate and download the zip file
       const content = await zip.generateAsync({ type: 'blob' });
       saveAs(content, `${student.firstName}_${student.lastName}_documents.zip`);
-      
+
       toast.success('Documents downloaded successfully!');
     } catch (error) {
       console.error('Error creating zip:', error);
@@ -173,7 +176,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
     try {
       // Update the student's documents to remove all documents
       await authAxiosInstance.patch(endpoints.students.details(student.id), {
-        documents: {}
+        documents: {},
       });
 
       toast.success('All documents deleted successfully');
@@ -205,7 +208,9 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               <Button
                 variant="outlined"
                 component="span"
-                startIcon={isUploading ? <CircularProgress size={20} /> : <Iconify icon="mdi:upload" />}
+                startIcon={
+                  isUploading ? <CircularProgress size={20} /> : <Iconify icon="mdi:upload" />
+                }
                 disabled={isUploading}
               >
                 {isUploading ? 'Uploading...' : 'Upload'}
@@ -284,42 +289,54 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Passport</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Passport
+                </Typography>
                 {renderDocumentItem('Passport', student.documents?.passport)}
               </Box>
             </Grid>
 
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Share Code</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Share Code
+                </Typography>
                 {renderDocumentItem('Share Code', student.documents?.shareCode)}
               </Box>
             </Grid>
 
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Proof of Address</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Proof of Address
+                </Typography>
                 {renderDocumentItem('Proof of Address', student.documents?.proofOfAddress)}
               </Box>
             </Grid>
 
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Diploma</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Diploma
+                </Typography>
                 {renderDocumentItem('Diploma', student.documents?.diploma)}
               </Box>
             </Grid>
 
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Personal Statement</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Personal Statement
+                </Typography>
                 {renderDocumentItem('Personal Statement', student.documents?.personalStatement)}
               </Box>
             </Grid>
 
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>CV</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  CV
+                </Typography>
                 {renderDocumentItem('CV', student.documents?.cv)}
               </Box>
             </Grid>
@@ -341,7 +358,9 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               <Button
                 variant="outlined"
                 component="span"
-                startIcon={isUploading ? <CircularProgress size={20} /> : <Iconify icon="mdi:upload" />}
+                startIcon={
+                  isUploading ? <CircularProgress size={20} /> : <Iconify icon="mdi:upload" />
+                }
                 disabled={isUploading}
               >
                 {isUploading ? 'Uploading...' : 'Upload Document'}
@@ -408,4 +427,4 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
       />
     </>
   );
-} 
+}

@@ -239,7 +239,7 @@ export function StudentsListView() {
     currentFilters.intakeId,
     currentFilters.countryCode,
     currentFilters.cityId,
-    currentFilters.name
+    currentFilters.name,
   ]);
 
   useEffect(() => {
@@ -328,12 +328,19 @@ export function StudentsListView() {
     </CustomPopover>
   );
 
-  const handleEnroll = async (studentId: string, data: { universityId: string; courseId: string; intakeId: string }) => {
+  const handleEnroll = async (
+    studentId: string,
+    data: { universityId: string; courseId: string; intakeId: string }
+  ) => {
     try {
       // Find the selected university and course from associations
-      const selectedUniversity = (associations as ICourseAssociation[]).find(a => a.universityId === data.universityId);
-      const selectedCourse = (associations as ICourseAssociation[]).find(a => a.courseId === data.courseId);
-      const selectedIntake = (intakes as IIntake[]).find(i => i.id === data.intakeId);
+      const selectedUniversity = (associations as ICourseAssociation[]).find(
+        (a) => a.universityId === data.universityId
+      );
+      const selectedCourse = (associations as ICourseAssociation[]).find(
+        (a) => a.courseId === data.courseId
+      );
+      const selectedIntake = (intakes as IIntake[]).find((i) => i.id === data.intakeId);
 
       if (!selectedUniversity || !selectedCourse || !selectedIntake) {
         toast.error('Invalid selection');
@@ -341,7 +348,7 @@ export function StudentsListView() {
       }
 
       // Update the student data in the table
-      const updatedData = tableData.map(student => {
+      const updatedData = tableData.map((student) => {
         if (student.id === studentId) {
           const updatedStudent: IStudentsItem = {
             ...student,
@@ -350,7 +357,7 @@ export function StudentsListView() {
             universityName: selectedUniversity.universityName,
             courseId: data.courseId,
             courseName: selectedCourse.courseName,
-            intakeId: data.intakeId
+            intakeId: data.intakeId,
           };
           return updatedStudent;
         }
@@ -368,7 +375,7 @@ export function StudentsListView() {
   const handleUnenroll = async (studentId: string) => {
     try {
       // Update the student data in the table
-      const updatedData = tableData.map(student => {
+      const updatedData = tableData.map((student) => {
         if (student.id === studentId) {
           const updatedStudent: IStudentsItem = {
             ...student,
@@ -377,7 +384,7 @@ export function StudentsListView() {
             universityName: undefined,
             courseId: undefined,
             courseName: undefined,
-            intakeId: undefined
+            intakeId: undefined,
           };
           return updatedStudent;
         }
@@ -437,27 +444,27 @@ export function StudentsListView() {
               ]}
             >
               {STATUS_OPTIONS.map((tab) => {
-                  return (
-                    <Tab
-                      key={tab.value}
-                      iconPosition="end"
-                      value={tab.value}
-                      label={tab.label}
-                      // icon={
-                      //   <Label
-                      //     variant={
-                      //       tab.value === 'All' || tab.value === currentFilters.status
-                      //         ? 'filled'
-                      //         : 'soft'
-                      //     }
-                      //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
-                      //   >
-                      //     {/* {statusCount} */}
-                      //   </Label>
-                      // }
-                    />
-                  );
-                })}
+                return (
+                  <Tab
+                    key={tab.value}
+                    iconPosition="end"
+                    value={tab.value}
+                    label={tab.label}
+                    // icon={
+                    //   <Label
+                    //     variant={
+                    //       tab.value === 'All' || tab.value === currentFilters.status
+                    //         ? 'filled'
+                    //         : 'soft'
+                    //     }
+                    //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
+                    //   >
+                    //     {/* {statusCount} */}
+                    //   </Label>
+                    // }
+                  />
+                );
+              })}
             </Tabs>
             <IconButton onClick={menuActions.onOpen}>
               <Iconify icon="eva:more-vertical-fill" />
@@ -543,8 +550,8 @@ export function StudentsListView() {
                 countryCode={filters.state.countryCode}
               />
             )}
-          </Box>            
-          <StudentsTableToolbar filters={filters} onResetPage={()=>{}}/>
+          </Box>
+          <StudentsTableToolbar filters={filters} onResetPage={() => {}} />
 
           {canReset && (
             <StudentsTableFiltersResult
@@ -584,12 +591,12 @@ export function StudentsListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                // onSelectAllRows={(checked) =>
-                //   table.onSelectAllRows(
-                //     checked,
-                //     dataFiltered.map((row) => row.id)
-                //   )
-                // }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>
@@ -633,9 +640,9 @@ export function StudentsListView() {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={loading ? () => { } : table.onChangePage}
-            onChangeDense={loading ? () => { } : table.onChangeDense}
-            onRowsPerPageChange={loading ? () => { } : table.onChangeRowsPerPage}
+            onPageChange={loading ? () => {} : table.onChangePage}
+            onChangeDense={loading ? () => {} : table.onChangeDense}
+            onRowsPerPageChange={loading ? () => {} : table.onChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>

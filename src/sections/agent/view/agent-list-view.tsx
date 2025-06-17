@@ -70,46 +70,51 @@ export function AgentListView({ earning }: { earning?: boolean }) {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState<IAgentItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [onRefresh, setOnRefresh] = useState(true)
+  const [onRefresh, setOnRefresh] = useState(true);
 
   const filters = useSetState<IAgentTableFilters>({ name: '', role: [], status: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
 
   const fetchPaginatedAgents = useCallback(async () => {
-   
-      try {
-        setLoading(true);
-        const { agents, total } = await fetchAgents(
-          filters.state.status,
-          table.page,
-          table.rowsPerPage
-        );
-        setTableData(agents);
-        setTotalCount(total);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-        setOnRefresh(false)
-      }
-    
+    try {
+      setLoading(true);
+      const { agents, total } = await fetchAgents(
+        filters.state.status,
+        table.page,
+        table.rowsPerPage
+      );
+      setTableData(agents);
+      setTotalCount(total);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+      setOnRefresh(false);
+    }
   }, [table.page, table.rowsPerPage, filters.state.status]);
 
   useEffect(() => {
     fetchPaginatedAgents();
-  }, [fetchPaginatedAgents, onRefresh,table.page, table.rowsPerPage, filters.state.status,]);
+  }, [fetchPaginatedAgents, onRefresh, table.page, table.rowsPerPage, filters.state.status]);
 
-  const handleChangePage = useCallback((event: unknown, newPage: number) => {
-    table.setPage(newPage);
-  }, [table]);
+  const handleChangePage = useCallback(
+    (event: unknown, newPage: number) => {
+      table.setPage(newPage);
+    },
+    [table]
+  );
 
-  const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const newRowsPerPage = parseInt(event.target.value, 10);
-    table.setRowsPerPage(newRowsPerPage);
-    table.setPage(0);
-  }, [table]);
+  const handleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newRowsPerPage = parseInt(event.target.value, 10);
+      table.setRowsPerPage(newRowsPerPage);
+      table.setPage(0);
+    },
+    [table]
+  );
 
-  const canReset = !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
+  const canReset =
+    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
   const notFound = !tableData.length;
 
   const handleDeleteRow = useCallback(
@@ -187,18 +192,22 @@ export function AgentListView({ earning }: { earning?: boolean }) {
     if (earning) {
       table.setDense(true);
     }
-  }, [earning])
+  }, [earning]);
 
   return (
     <>
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Agents"
-          links={earning ? [] : [
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Agent', href: paths.dashboard.agent.root },
-            { name: 'List' },
-          ]}
+          links={
+            earning
+              ? []
+              : [
+                  { name: 'Dashboard', href: paths.dashboard.root },
+                  { name: 'Agent', href: paths.dashboard.agent.root },
+                  { name: 'List' },
+                ]
+          }
           action={
             !earning && (
               <Button
@@ -208,7 +217,8 @@ export function AgentListView({ earning }: { earning?: boolean }) {
                 startIcon={<Iconify icon="mingcute:add-line" />}
               >
                 New Agent
-              </Button>)
+              </Button>
+            )
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
@@ -307,7 +317,7 @@ export function AgentListView({ earning }: { earning?: boolean }) {
                           onDeleteRow={() => handleDeleteRow(row.id)}
                           onToggleStatus={handleToggleStatus}
                           editHref={paths.dashboard.agent.edit(row.id)}
-                          triggerRefresh={()=>setOnRefresh(true)}
+                          triggerRefresh={() => setOnRefresh(true)}
                         />
                       ))}
 
@@ -331,9 +341,9 @@ export function AgentListView({ earning }: { earning?: boolean }) {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={loading ? () => { } : handleChangePage}
-            onChangeDense={loading ? () => { } : table.onChangeDense}
-            onRowsPerPageChange={loading ? () => { } : handleChangeRowsPerPage}
+            onPageChange={loading ? () => {} : handleChangePage}
+            onChangeDense={loading ? () => {} : table.onChangeDense}
+            onRowsPerPageChange={loading ? () => {} : handleChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>
@@ -366,9 +376,10 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
-    inputData = inputData.filter((agent) =>
-      agent.name?.toLowerCase().includes(name.toLowerCase()) ||
-      `${agent.firstName} ${agent.lastName}`.toLowerCase().includes(name.toLowerCase())
+    inputData = inputData.filter(
+      (agent) =>
+        agent.name?.toLowerCase().includes(name.toLowerCase()) ||
+        `${agent.firstName} ${agent.lastName}`.toLowerCase().includes(name.toLowerCase())
     );
   }
 
