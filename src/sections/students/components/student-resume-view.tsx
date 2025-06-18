@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Card, Stack, Button, Typography, CircularProgress } from '@mui/material';
+import { Box, Card, Stack, Button, Typography, CircularProgress, Divider } from '@mui/material';
 import { toast } from 'src/components/snackbar';
 import { IStudentsItem } from 'src/types/students';
 import { Document as DocxDocument, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
@@ -19,23 +19,35 @@ export function StudentResumeView({
   const theme = useTheme();
 
   const generateResumeTextFromStudent = (student: IStudentsItem): string => {
-    return `You are a professional resume writer. Using the information provided below, craft a clean, well-structured, one-page resume in plain text format.
+    return `You are a professional resume writer. Using the student information provided below, write or craft a clean, well-structured, one-page resume in plain text format.
 
-  Do not include any suggestions, comments, or formatting instructions. Only return the final resume content. No markdown or additional explanation.
+  Do not include suggestions, comments, notes, or any markdown or formatting instructions. Only return the final resume text. Do not include any headings like "Generated Resume".
 
-  The resume should include the following sections:
-  1. Full Name and Contact Information
-  2. Professional Summary (based on education and career goals)
-  3. Education
-  4. Skills
-  5. Additional Information (e.g., nationality, date of birth)
+  Do not include the Full Name and Contact Information section — it will be added manually.
 
-  Ensure the content fits on a single page and is appropriate for use in a formal job application.
+  Ensure the following **exact sections**, in this order:
+
+  1. Professional Summary (based on education and career goals)
+  2. Work History (Include company name, role, and dates if available)
+  3. Skills (at least 4 relevant skills)
+  4. Education
+  5. Languages
+  6. Additional Information (e.g., nationality, date of birth)
+
+  Each section **must start with its title**, and be followed by content on the next line(s). For example:
+
+  Professional Summary
+  [Your paragraph]
+
+  Work History
+  [Job Title] – [Company Name]
+  [Responsibilities, etc.]
+
   Student Profile:
   - Full Name: ${student.firstName} ${student.lastName}
   - Date of Birth: ${student.dateOfBirth}
   - Email: ${student.email}
-  - Phone: ${student.phonePrefix} ${student.phoneNumber}
+  - Phone: ${student.phoneNumber}
   - Nationality: ${student.nationality}
   - Sex: ${student.sex}
   - Address: ${student.address}
@@ -44,6 +56,7 @@ export function StudentResumeView({
   - Current Status: ${student.status}
   `;
   };
+
   const handleGenerateResume = async () => {
     setLoading(true);
     try {
@@ -87,37 +100,132 @@ export function StudentResumeView({
       .map((line: string) => line.trim())
       .filter(Boolean);
 
+    const sectionTitles = [
+      'Professional Summary',
+      'Work History',
+      'Skills',
+      'Education',
+      'Languages',
+      'References',
+      'Additional Information',
+    ];
+
+    const isSectionTitle = (line: string) =>
+      sectionTitles.some((section) => line.toLowerCase().startsWith(section.toLowerCase()));
+
+    const documentChildren: Paragraph[] = [];
+
+    // ✅ Manually add name and contact info at the top
+    documentChildren.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `${student.firstName} ${student.lastName}`,
+            bold: true,
+            size: 36,
+            font: 'Arial',
+          }),
+        ],
+        alignment: 'center',
+        spacing: { after: 100 },
+      })
+    );
+
+    documentChildren.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `${student.phoneNumber}  ${student.email}`,
+            italics: true,
+            size: 24,
+            font: 'Arial',
+          }),
+        ],
+        alignment: 'center',
+        spacing: { after: 100 },
+      })
+    );
+
+    if (student.address) {
+      documentChildren.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: student.address,
+              size: 24,
+              font: 'Arial',
+            }),
+          ],
+          alignment: 'center',
+          spacing: { after: 300 },
+        })
+      );
+    }
+
+    // 🔄 Process AI-generated lines
+    lines.forEach((line) => {
+      if (line === '---' || line === '––––') return;
+
+      if (isSectionTitle(line)) {
+        // Title
+        documentChildren.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: line,
+                bold: false,
+                size: 28,
+                font: 'Arial',
+              }),
+            ],
+            spacing: { before: 300, after: 150 },
+            indent: { left: 300 },
+          })
+        );
+
+        // Divider
+        documentChildren.push(
+          new Paragraph({
+            border: {
+              bottom: {
+                color: 'auto',
+                space: 1,
+                style: 'single',
+                size: 6,
+              },
+            },
+            spacing: { after: 150 },
+          })
+        );
+      } else {
+        // Normal content
+        documentChildren.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: line,
+                size: 24,
+                font: 'Arial',
+              }),
+            ],
+            spacing: { after: 100 },
+            indent: { left: 300 },
+          })
+        );
+      }
+    });
+
     const doc = new DocxDocument({
       sections: [
         {
-          children: lines.map((line: string) => {
-            if (line.match(/^[A-Za-z\s]+:$/)) {
-              const formattedLine = line
-                .replace(':', '')
-                .replace(/\b\w/g, (char) => char.toUpperCase());
-              return new Paragraph({
-                children: [
-                  new TextRun({
-                    text: formattedLine,
-                    bold: true,
-                    underline: {},
-                    size: 28,
-                  }),
-                ],
-                spacing: { after: 150 },
-              });
-            }
-            return new Paragraph({
-              children: [new TextRun({ text: line, font: 'Calibri', size: 24 })],
-              spacing: { after: 100 },
-            });
-          }),
+          children: documentChildren,
         },
       ],
     });
 
+    const safeName = `${student.firstName}_${student.lastName}`.replace(/[^a-zA-Z0-9_]/g, '');
     const blob = await Packer.toBlob(doc);
-    saveAs(blob, `${student.firstName}_${student.lastName}_Resume.docx`);
+    saveAs(blob, `${safeName}_Resume.docx`);
   };
 
   return (
@@ -155,9 +263,61 @@ export function StudentResumeView({
             </Typography>
 
             <Card sx={{ p: 2, mt: 2, backgroundColor: theme.palette.background.default }}>
-              <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                {resumeText}
-              </Typography>
+              <Box
+                sx={{
+                  border: '1px solid #ccc',
+                  borderRadius: 2,
+                  padding: 2,
+                  overflowY: 'auto',
+                  fontFamily: 'Arial',
+                  fontSize: '14px',
+                  lineHeight: 1.8,
+                }}
+              >
+                {/* ✅ Manually inserted name + contact */}
+                <Box sx={{ textAlign: 'center', mb: 3 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {`${student.firstName} ${student.lastName}`}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                    {`${student.phoneNumber}  ${student.email}`}
+                  </Typography>
+                  {student.address && <Typography variant="body2">{student.address}</Typography>}
+                </Box>
+
+                {/* 🔄 AI-generated resume preview */}
+                {resumeText.split('\n').map((line, index) => {
+                  const trimmed = line.trim();
+
+                  const isSectionTitle = [
+                    'Professional Summary',
+                    'Work History',
+                    'Skills',
+                    'Education',
+                    'Languages',
+                    'References',
+                    'Additional Information',
+                  ].some((section) => trimmed.toLowerCase().startsWith(section.toLowerCase()));
+
+                  return (
+                    <Box key={index} sx={{ mb: 2 }}>
+                      {isSectionTitle && (
+                        <>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                            {trimmed}
+                          </Typography>
+                          <Divider sx={{ my: 1 }} />
+                        </>
+                      )}
+                      {!isSectionTitle && (
+                        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                          {trimmed}
+                        </Typography>
+                      )}
+                    </Box>
+                  );
+                })}
+              </Box>
             </Card>
           </Stack>
         </Card>
