@@ -1,4 +1,5 @@
 import type { IStudentsItem } from 'src/types/students';
+import { gradeResultOptions } from 'src/types/students';
 import type { IIntake } from 'src/types/intake';
 import type { ICourseAssociation } from 'src/types/courseAssociation';
 
@@ -34,6 +35,7 @@ import dayjs from 'dayjs';
 import { CitySelect, CountrySelect } from 'src/components/select';
 import { IUniversity } from 'src/types/university';
 import { fetchUniversities } from 'src/services/universities/fetchUniversities';
+// import { STUDENTS_STATUS_OPTIONS } from 'src/_mock';
 
 // ----------------------------------------------------------------------
 
@@ -59,6 +61,16 @@ export const NewStudentsSchema = zod.object({
   courseId: zod.string().optional(),
   intakeId: zod.string().optional(),
   insuranceNumber: zod.string().optional(),
+  highestQualification: zod
+    .object({
+      startDate: zod.string().optional(),
+      endDate: zod.string().optional(),
+      gradeResult: zod.string().optional(),
+      institutionName: zod.string().optional(),
+      countryOfIssue: zod.string().optional(),
+    })
+    .optional(),
+  // status: zod.string(),
 });
 
 export type NewStudentsSchemaType = zod.infer<typeof NewStudentsSchema>;
@@ -72,7 +84,7 @@ type Props = {
 export function StudentsNewEditForm({ currentStudent }: Props) {
   const router = useRouter();
   const [associations, setAssociations] = useState<ICourseAssociation[]>([]);
-  const [universities,setUniversities]=useState<IUniversity[]>([]);
+  const [universities, setUniversities] = useState<IUniversity[]>([]);
   const [intakes, setIntakes] = useState<IIntake[]>([]);
   const [countryCode, setCountryCode] = useState('');
   const [cityId, setCityId] = useState('');
@@ -95,6 +107,14 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     courseId: '',
     intakeId: '',
     insuranceNumber: '',
+    highestQualification: {
+      startDate: toDMY(currentStudent?.highestQualification?.startDate).toDateString(),
+      endDate: toDMY(currentStudent?.highestQualification?.endDate).toDateString(),
+      gradeResult: currentStudent?.highestQualification?.gradeResult || '',
+      institutionName: currentStudent?.highestQualification?.institutionName || '',
+      countryOfIssue: currentStudent?.highestQualification?.countryOfIssue || '',
+    },
+    // status: currentStudent?.status || '',
   };
 
   const methods = useForm<NewStudentsSchemaType>({
@@ -108,19 +128,17 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     formState: { isSubmitting },
     watch,
   } = methods;
-
   const watchUniversityId = watch('universityId');
 
   const getUniversities = async () => {
     try {
-      const { universities: u } = await fetchUniversities('active',0,1000,cityId,countryCode); // Update this as per your service
+      const { universities: u } = await fetchUniversities('active', 0, 1000, cityId, countryCode); // Update this as per your service
       setUniversities(u);
     } catch (e) {
       console.error('Failed to fetch universities', e);
       toast.error('Failed to fetch universities');
       setUniversities([]);
-    }
-    finally{
+    } finally {
       methods.setValue('universityId', '');
       methods.setValue('courseId', '');
     }
@@ -128,7 +146,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
 
   useEffect(() => {
     getUniversities();
-  }, [countryCode,cityId]);
+  }, [countryCode, cityId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -184,6 +202,14 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       address: data.address?.trim(),
       postCode: data.postCode?.trim(),
       insuranceNumber: data.insuranceNumber?.trim(),
+      highestQualification: {
+        startDate: formatDateToDDMMYYYY(new Date(data?.highestQualification?.startDate)),
+        endDate: formatDateToDDMMYYYY(new Date(data?.highestQualification?.endDate)),
+        gradeResult: data.highestQualification?.gradeResult,
+        institutionName: data.highestQualification?.institutionName?.trim(),
+        countryOfIssue: data.highestQualification?.countryOfIssue?.trim(),
+      },
+      // status: data.status,
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.students.list, payload);
@@ -222,6 +248,14 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       address: data.address?.trim(),
       postCode: data.postCode?.trim(),
       insuranceNumber: data.insuranceNumber?.trim(),
+      highestQualification: {
+        startDate: formatDateToDDMMYYYY(new Date(data?.highestQualification?.startDate)),
+        endDate: formatDateToDDMMYYYY(new Date(data?.highestQualification?.endDate)),
+        gradeResult: data.highestQualification?.gradeResult?.trim(),
+        institutionName: data.highestQualification?.institutionName?.trim(),
+        countryOfIssue: data.highestQualification?.countryOfIssue?.trim(),
+      },
+      // status: data.status,
     };
 
     const response = await authAxiosInstance.patch<{ id: string }>(
@@ -266,7 +300,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
   return (
     <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>
             <Field.UploadAvatar
               name="coverPhoto"
@@ -291,148 +325,201 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
         </Grid>
         <Grid size={{ xs: 12, md: 8 }}>
           <Card sx={{ p: 3 }}>
-            <Box
-              sx={{
-                rowGap: 3,
-                columnGap: 2,
-                display: 'grid',
-                gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
-              }}
-            >
-              <Field.Text name="leadNo" label="Lead Number" />
-              <Field.Text name="fName" label="First Name" />
-              <Field.Text name="lName" label="Last Name" />
-              <Field.DatePicker name="dob" label="Date of Birth" maxDate={dayjs()} />
-              <Field.Text name="email" label="Email Address" />
-              <Field.CountrySelect
-                name="nationality"
-                label="Nationality"
-                getValue="name"
-                id="nationality"
-              />
-              <Field.Text name="phoneNumber" label="Phone Number" id="phoneNumber" />
-              <Field.Select name="sex" label="Sex">
-                {[
-                  { label: 'Male', value: 'Male' },
-                  { label: 'Female', value: 'Female' },
-                  { label: 'Other', value: 'Other' },
-                ].map((status) => (
-                  <MenuItem key={status.value} value={status.value}>
-                    {status.label}
-                  </MenuItem>
-                ))}
-              </Field.Select>
-              <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
-              <Field.Text name="postCode" label="Post Code" />
-              <Field.Text name="insuranceNumber" label="National Insurance Number" />
-
-              <Field.Text
-                name="emergencyName"
-                label="Emergency Contact Name (Optional)"
-                id="emergencyName"
-              />
-              <Field.Text
-                name="emergencyNumber"
-                label="Emergency Contact Number (Optional)"
-                id="emergencyNumber"
-              />
-              {/* Enrollment Fields */}
-              {!currentStudent && (
+            <Box>
+              <Box
+                sx={{
+                  rowGap: 3,
+                  columnGap: 2,
+                  display: 'grid',
+                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                }}
+              >
                 <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 2 }}>
-                  Enrollment Information
+                  Student Profile
                 </Typography>
-              )}
-              {!currentStudent && (
-                <CountrySelect
-                  id="country-id"
-                  label="Country"
-                  getValue="code"
-                  placeholder="Choose a Country"
-                  onChange={(event, newValue) => {
-                    // Handle value change
-                    setCountryCode(newValue);
-                  }}
+                <Field.Text name="fName" label="First Name" />
+                <Field.Text name="lName" label="Last Name" />
+                <Field.DatePicker name="dob" label="Date of Birth" maxDate={dayjs()} />
+                <Field.Text name="leadNo" label="Lead Number" />
+                <Field.Text name="email" label="Email Address" />
+                <Field.CountrySelect
+                  name="nationality"
+                  label="Nationality"
+                  getValue="name"
+                  id="nationality"
                 />
-              )}
-              {countryCode && (
-                <CitySelect
-                  id="city-id"
-                  label="City (Optional)"
-                  getValue="cityId"
-                  placeholder="Choose a City"
-                  onChange={(event, newValue) => {
-                    // Handle value change
-                    setCityId(newValue);
-                  }}
-                  countryCode={countryCode}
-                />
-              )}
-              {!currentStudent ? (
-                <Tooltip
-                  title={!countryCode ? 'Please select a country first' : ''}
-                  disableHoverListener={!!countryCode}
-                  placement="top-start"
-                >
-                  <span style={{ gridColumn: 'span 2', display: 'block' }}>
-                    <Field.Select
-                      name="universityId"
-                      label="University"
-                      sx={{ gridColumn: 'span 2' }}
-                      disabled={!countryCode}
-                      helperText={
-                        'Only universities that are associated to courses will be shown here.'
-                      }
-                    >
-                      {Array.from(
-                        new Map(universities.map((item) => [item.id, item])).values()
-                      ).map((opt) => (
-                        <MenuItem key={opt.id} value={opt.id}>
-                          {opt.name}
-                        </MenuItem>
-                      ))}
-                    </Field.Select>
-                  </span>
-                </Tooltip>
-              ) : (
-                <></>
-              )}
-              {!currentStudent ? (
-                <Tooltip
-                  title={!watchUniversityId ? 'Select University first' : ''}
-                  disableHoverListener={!!watchUniversityId}
-                  placement="top-start"
-                >
-                  <span style={{ gridColumn: 'span 2', display: 'block' }}>
-                    <Field.Select
-                      name="courseId"
-                      label="Course"
-                      fullWidth
-                      disabled={!watchUniversityId}
-                      helperText="Only courses associated to the selected university will be shown."
-                    >
-                      {associations
-                        .filter((i) => i.universityId === watchUniversityId)
-                        .map((opt) => (
-                          <MenuItem key={opt.courseId} value={opt.courseId}>
-                            {opt.courseName}
-                          </MenuItem>
-                        ))}
-                    </Field.Select>
-                  </span>
-                </Tooltip>
-              ) : (
-                <></>
-              )}
-              {!currentStudent ? (
-                <Field.Select name="intakeId" label="Intake" sx={{ gridColumn: 'span 2' }}>
-                  {intakes.map((opt) => (
-                    <MenuItem key={opt.id} value={opt.id}>
-                      {opt.name}
+                <Field.Text name="phoneNumber" label="Phone Number" id="phoneNumber" />
+                <Field.Select name="sex" label="Sex">
+                  {[
+                    { label: 'Male', value: 'Male' },
+                    { label: 'Female', value: 'Female' },
+                    { label: 'Other', value: 'Other' },
+                  ].map((status) => (
+                    <MenuItem key={status.value} value={status.value}>
+                      {status.label}
                     </MenuItem>
                   ))}
                 </Field.Select>
-              ) : (
-                <></>
+                <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
+                <Field.Text name="postCode" label="Post Code" />
+                <Field.Text name="insuranceNumber" label="National Insurance Number" />
+              </Box>
+              <Box
+                sx={{
+                  rowGap: 3,
+                  columnGap: 2,
+                  display: 'grid',
+                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                }}
+              >
+                <Typography variant="subtitle2" sx={{ gridColumn: 'span 2', mt: 2 }}>
+                  Highest Qualification
+                </Typography>
+                <Field.Text name="highestQualification.institutionName" label="Institution Name" />
+                <Field.Select name="highestQualification.gradeResult" label="Grade Result">
+                  {gradeResultOptions.map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Field.Select>
+                <Field.DatePicker
+                  name="highestQualification.startDate"
+                  label="Start Date"
+                  maxDate={dayjs()}
+                />
+                <Field.DatePicker
+                  name="highestQualification.endDate"
+                  label="End Date"
+                  maxDate={dayjs()}
+                />
+                <Field.CountrySelect
+                  name="highestQualification.countryOfIssue"
+                  label="Country Of Issue"
+                  getValue="name"
+                  id="countryOfIssue"
+                />
+              </Box>
+              <Box
+                sx={{
+                  rowGap: 3,
+                  columnGap: 2,
+                  display: 'grid',
+                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                }}
+              >
+                <Typography variant="subtitle2" sx={{ gridColumn: 'span 2', mt: 2 }}>
+                  Emergency Contact
+                </Typography>
+                <Field.Text
+                  name="emergencyName"
+                  label="Emergency Name (Optional)"
+                  id="emergencyName"
+                />
+                <Field.Text
+                  name="emergencyNumber"
+                  label="Emergency Number (Optional)"
+                  id="emergencyNumber"
+                />
+              </Box>
+              {/* Enrollment Fields */}
+              {!currentStudent && (
+                <Box
+                  sx={{
+                    rowGap: 3,
+                    columnGap: 2,
+                    display: 'grid',
+                    gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ gridColumn: 'span 2', mt: 2 }}>
+                    Enrollment Information
+                  </Typography>
+
+                  <CountrySelect
+                    id="country-id"
+                    label="Country"
+                    getValue="code"
+                    placeholder="Choose a Country"
+                    onChange={(event, newValue) => {
+                      // Handle value change
+                      setCountryCode(newValue);
+                    }}
+                  />
+                  <CitySelect
+                    id="city-id"
+                    label="City (Optional)"
+                    getValue="cityId"
+                    placeholder="Choose a City"
+                    onChange={(event, newValue) => {
+                      // Handle value change
+                      setCityId(newValue);
+                    }}
+                    countryCode={countryCode}
+                  />
+                  <Tooltip
+                    title={!countryCode ? 'Please select a country first' : ''}
+                    disableHoverListener={!!countryCode}
+                    placement="top-start"
+                  >
+                    <span style={{ gridColumn: 'span 1', display: 'block' }}>
+                      <Field.Select
+                        name="universityId"
+                        label="University"
+                        sx={{ gridColumn: 'span 2' }}
+                        disabled={!countryCode}
+                        helperText={
+                          'Only universities that are associated to courses will be shown here.'
+                        }
+                      >
+                        {Array.from(
+                          new Map(universities.map((item) => [item.id, item])).values()
+                        ).map((opt) => (
+                          <MenuItem key={opt.id} value={opt.id}>
+                            {opt.name}
+                          </MenuItem>
+                        ))}
+                      </Field.Select>
+                    </span>
+                  </Tooltip>
+                  <Tooltip
+                    title={!watchUniversityId ? 'Select University first' : ''}
+                    disableHoverListener={!!watchUniversityId}
+                    placement="top-start"
+                  >
+                    <span style={{ gridColumn: 'span 1', display: 'block' }}>
+                      <Field.Select
+                        name="courseId"
+                        label="Course"
+                        fullWidth
+                        disabled={!watchUniversityId}
+                        helperText="Only courses associated to the selected university will be shown."
+                      >
+                        {associations
+                          .filter((i) => i.universityId === watchUniversityId)
+                          .map((opt) => (
+                            <MenuItem key={opt.courseId} value={opt.courseId}>
+                              {opt.courseName}
+                            </MenuItem>
+                          ))}
+                      </Field.Select>
+                    </span>
+                  </Tooltip>
+                  <Field.Select name="intakeId" label="Intake" sx={{ gridColumn: 'span 1' }}>
+                    {intakes.map((opt) => (
+                      <MenuItem key={opt.id} value={opt.id}>
+                        {opt.name}
+                      </MenuItem>
+                    ))}
+                  </Field.Select>
+                  {/* <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
+                    {STUDENTS_STATUS_OPTIONS.map((status) => (
+                      <MenuItem key={status.value} value={status.value}>
+                        {status.label}
+                      </MenuItem>
+                    ))}
+                  </Field.Select> */}
+                </Box>
               )}
             </Box>
             <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
