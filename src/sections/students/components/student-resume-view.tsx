@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Box, Card, Stack, Button, Typography, CircularProgress, Divider } from '@mui/material';
+import { Box, Card, Stack, Button, Typography, CircularProgress, Divider, Paper, List, ListItem, ListItemText, ListItemIcon, Grid2 } from '@mui/material';
 import { toast } from 'src/components/snackbar';
 import { IStudentsItem } from 'src/types/students';
 import { Document as DocxDocument, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
 import { saveAs } from 'file-saver';
 import { useTheme } from '@mui/material/styles';
+import { GridCheckCircleIcon } from '@mui/x-data-grid';
 
 export function StudentResumeView({
   student,
@@ -13,35 +14,31 @@ export function StudentResumeView({
   student: IStudentsItem;
   onRefresh: () => void;
 }) {
-  const [resumeText, setResumeText] = useState('');
+  const [resumeText, setResumeText] = useState("{\"summary\":\"Highly motivated Btech in CS student with international work experience seeks to leverage strong problem-solving skills and a solution-oriented mindset in the tech industry. Proficient in collaboration and adapting to diverse team dynamics.\\nSkills: Java, Python, HTML5, CSS, JavaScript, SQL, Machine Learning, Data Structures, Algorithms, Software Engineering\\nWork Experiences:\\n\\ndeqode solutions:\\n- Implemented robust solutions for complex business problems\\n- Developed high-quality software by leading a team of 5 engineers\\n- Responsibilities: Agile Methodologies, Software Design, Team Management, Quality Assurance, Client Communication\\n2022–2024\\n\\nFlam:\\n- Designed and developed user-friendly web applications\\n- Collaborated with a dynamic team to create a robust, scalable platform\\n- Key Responsibilities: Front-End Development, Back-End Development, Full Stack Architecture, Testing\\n2020–2022\\n\",\"skills\":[\"Java\", \"Python\", \"HTML5\", \"CSS\", \"JavaScript\", \"SQL\", \"Machine Learning\", \"Data Structures\", \"Algorithms\", \"Software Engineering\"],\"workExperinces\":[{\n    \"name\":\"deqode solutions\",\n    \"jobResponsiblity\":[\"Agile Methodologies\", \"Software Design\", \"Team Management\", \"Quality Assurance\", \"Client Communication\"],\n    \"startDate\":\"2022\",\n    \"endDate\":\"2024\"\n    },{\n    \"name\":\"Flam\",\n    \"jobResponsiblity\":[\"Front-End Development\", \"Back-End Development\", \"Full Stack Architecture\", \"Testing\"],\n    \"startDate\":\"2020\",\n    \"endDate\":\"2022\"\n    }]\n}");
   const [loading, setLoading] = useState(false);
   const [resumeStatus, setResumeStatus] = useState<'NotGenerated' | 'Generated'>('NotGenerated');
   const theme = useTheme();
 
   const generateResumeTextFromStudent = (student: IStudentsItem): string => {
-    return `You are a professional resume writer. Using the student information provided below, write or craft a clean, well-structured, one-page resume in plain text format.
+    return `You are a professional resume writer. Using the student information provided below, write or craft a clean, well-structured, in JSON stringified.
 
-  Do not include suggestions, comments, notes, or any markdown or formatting instructions. Only return the final resume text. Do not include any headings like "Generated Resume".
+  Do not include suggestions, comments, notes, or any markdown or formatting instructions. Only return the final resume json in string. Do not include any headings like "Generated Resume".
 
   Do not include the Full Name and Contact Information section — it will be added manually.
 
-  Ensure the following **exact sections**, in this order:
-
-  1. Professional Summary (based on education and career goals)
-  2. Work History (Include company name, role, and dates if available)
-  3. Skills (at least 4 relevant skills)
-  4. Education
-  5. Languages
-  6. Additional Information (e.g., nationality, date of birth)
-
-  Each section **must start with its title**, and be followed by content on the next line(s). For example:
-
-  Professional Summary
-  [Your paragraph]
-
-  Work History
-  [Job Title] – [Company Name]
-  [Responsibilities, etc.]
+  Ensure the following **exact sections**, in this json structure:
+   {
+    summary:"", / 50-60 words
+    skills: [], 
+    workExperinces:[
+      {
+      name : job1,
+      jobResponsiblity:[], max 5 for each job should each be 5-10 words.
+      startDate:''
+      endDate:''
+      }
+    ]
+   } 
 
   Student Profile:
   - Full Name: ${student.firstName} ${student.lastName}
@@ -52,8 +49,9 @@ export function StudentResumeView({
   - Sex: ${student.sex}
   - Address: ${student.address}
   - University: ${student.universityName}
-  - Course: ${student.courseName}
-  - Current Status: ${student.status}
+  - Course : Btech in CS
+  - work ex 1 - deqode solutions - solution engineer 
+  - work ex 2 - Flam - full stack developer 
   `;
   };
 
@@ -227,6 +225,80 @@ export function StudentResumeView({
     const blob = await Packer.toBlob(doc);
     saveAs(blob, `${safeName}_Resume.docx`);
   };
+  const Resume = ({ json }) => {
+    const resumeData = json;
+    // return <></>
+    return (
+      <Paper elevation={3} sx={{ mt: 4, p: 4, borderRadius: 3 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: "#1976d2" }}>
+            Resume
+          </Typography>
+
+          <Divider sx={{ mb: 2 }} />
+
+          <Box>
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              Professional Summary
+            </Typography>
+            <Typography variant="body1" paragraph sx={{ fontSize: "15px" }}>
+              {resumeData.summary}
+            </Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box>
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              Skills
+            </Typography>
+            <Grid2 container spacing={2}>
+              {resumeData.skills.map((skill, index) => (
+                <Grid2 item xs={6} sm={4} md={3} key={index}>
+                  <Box
+                    sx={{
+                      fontSize: "14px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <GridCheckCircleIcon sx={{ fontSize: 6, mr: 1 }} /> {skill}
+                  </Box>
+                </Grid2>
+              ))}
+            </Grid2>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box>
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              Work Experience
+            </Typography>
+
+            {resumeData.workExperinces.map((exp, i) => (
+              <Box key={i} sx={{ mt: 2 }}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {exp.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  {exp.startDate} – {exp.endDate}
+                </Typography>
+                <List dense disablePadding>
+                  {exp.jobResponsiblity.map((item, j) => (
+                    <ListItem key={j} sx={{ py: 0 }}>
+                      <ListItemIcon sx={{ minWidth: "24px" }}>
+                        <GridCheckCircleIcon sx={{ fontSize: 6 }} />
+                      </ListItemIcon>
+                      <ListItemText primary={item} primaryTypographyProps={{ fontSize: 14 }} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            ))}
+          </Box>
+        </Paper>
+        )
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -254,6 +326,7 @@ export function StudentResumeView({
           )}
         </Stack>
       </Card>
+      {resumeText && <Resume json={JSON.parse(resumeText)} />}
 
       {resumeStatus === 'Generated' && (
         <Card sx={{ p: 2, mt: 2 }}>
@@ -284,7 +357,6 @@ export function StudentResumeView({
                   </Typography>
                   {student.address && <Typography variant="body2">{student.address}</Typography>}
                 </Box>
-
                 {/* 🔄 AI-generated resume preview */}
                 {resumeText.split('\n').map((line, index) => {
                   const trimmed = line.trim();
