@@ -8,7 +8,29 @@ export type IStudentStatus =
   | 'Deferred'
   | 'Unaffiliated'
   | 'All';
+
 export type IFinanceStatus = 'Applied' | 'Approved';
+// constants.ts
+export const gradeResultOptions = [
+  'First Class',
+  'Second Class Upper',
+  'Second Class Lower',
+  'Third Class',
+  'Pass',
+  'Distinction',
+  'Merit',
+  'A+',
+  'A',
+  'B+',
+  'B',
+  'C+',
+  'C',
+  'D',
+  'F',
+  'Other',
+] as const;
+
+export type GradeResult = (typeof gradeResultOptions)[number];
 
 export interface IDocuments {
   passport?: string;
@@ -56,6 +78,7 @@ export interface IConsent {
   signed: boolean;
   accepted: boolean;
 }
+export const cohereKey = 'vvgzF4u0WV2sVc2rAEOa4vSLzSkCxzaWLvmkdZ6h'; // Add your Cohere API Key
 
 export interface IStudentsItem {
   id: string;
@@ -87,6 +110,13 @@ export interface IStudentsItem {
   emergencyName?: string;
   emergencyNumber?: string;
   insuranceNumber?: string;
+  highestQualification?: {
+    startDate?: string;
+    endDate?: string;
+    gradeResult?: GradeResult;
+    institutionName?: string;
+    countryOfIssue?: string;
+  };
 }
 
 export interface ICreateStudent {

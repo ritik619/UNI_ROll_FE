@@ -35,7 +35,7 @@ import dayjs from 'dayjs';
 import { CitySelect, CountrySelect } from 'src/components/select';
 import { IUniversity } from 'src/types/university';
 import { fetchUniversities } from 'src/services/universities/fetchUniversities';
-// import { STUDENTS_STATUS_OPTIONS } from 'src/_mock';
+import { STUDENTS_STATUS_OPTIONS } from 'src/_mock';
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ export const NewStudentsSchema = zod.object({
       countryOfIssue: zod.string().optional(),
     })
     .optional(),
-  // status: zod.string(),
+  status: zod.string(),
 });
 
 export type NewStudentsSchemaType = zod.infer<typeof NewStudentsSchema>;
@@ -114,7 +114,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       institutionName: currentStudent?.highestQualification?.institutionName || '',
       countryOfIssue: currentStudent?.highestQualification?.countryOfIssue || '',
     },
-    // status: currentStudent?.status || '',
+    status: currentStudent?.status || '',
   };
 
   const methods = useForm<NewStudentsSchemaType>({
@@ -209,7 +209,6 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
         institutionName: data.highestQualification?.institutionName?.trim(),
         countryOfIssue: data.highestQualification?.countryOfIssue?.trim(),
       },
-      // status: data.status,
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.students.list, payload);
@@ -218,7 +217,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
 
   const enrollStudent = async (
     studentId: string,
-    data: { universityId: string; courseId: string; intakeId: string }
+    data: { universityId: string; courseId: string; intakeId: string; status: string }
   ) => {
     await authAxiosInstance.patch(endpoints.students.enroll(studentId), data);
   };
@@ -277,6 +276,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
             universityId: data.universityId,
             courseId: data.courseId,
             intakeId: data.intakeId,
+            status: data.status,
           });
           toast.success('Student created and enrolled successfully!');
         } else {
@@ -341,14 +341,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                 <Field.Text name="lName" label="Last Name" />
                 <Field.DatePicker name="dob" label="Date of Birth" maxDate={dayjs()} />
                 <Field.Text name="leadNo" label="Lead Number" />
-                <Field.Text name="email" label="Email Address" />
-                <Field.CountrySelect
-                  name="nationality"
-                  label="Nationality"
-                  getValue="name"
-                  id="nationality"
-                />
                 <Field.Text name="phoneNumber" label="Phone Number" id="phoneNumber" />
+                <Field.Text name="email" label="Email Address" />
                 <Field.Select name="sex" label="Sex">
                   {[
                     { label: 'Male', value: 'Male' },
@@ -360,6 +354,12 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                     </MenuItem>
                   ))}
                 </Field.Select>
+                <Field.CountrySelect
+                  name="nationality"
+                  label="Nationality"
+                  getValue="name"
+                  id="nationality"
+                />
                 <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
                 <Field.Text name="postCode" label="Post Code" />
                 <Field.Text name="insuranceNumber" label="National Insurance Number" />
@@ -512,13 +512,13 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                       </MenuItem>
                     ))}
                   </Field.Select>
-                  {/* <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
+                  <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
                     {STUDENTS_STATUS_OPTIONS.map((status) => (
                       <MenuItem key={status.value} value={status.value}>
                         {status.label}
                       </MenuItem>
                     ))}
-                  </Field.Select> */}
+                  </Field.Select>
                 </Box>
               )}
             </Box>
