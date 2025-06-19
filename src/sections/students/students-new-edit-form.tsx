@@ -1,5 +1,5 @@
 import type { IStudentsItem } from 'src/types/students';
-import { gradeResultOptions } from 'src/types/students';
+import { gradeResultOptions, studentStatusOptions } from 'src/types/students';
 import type { IIntake } from 'src/types/intake';
 import type { ICourseAssociation } from 'src/types/courseAssociation';
 
@@ -35,7 +35,6 @@ import dayjs from 'dayjs';
 import { CitySelect, CountrySelect } from 'src/components/select';
 import { IUniversity } from 'src/types/university';
 import { fetchUniversities } from 'src/services/universities/fetchUniversities';
-import { STUDENTS_STATUS_OPTIONS } from 'src/_mock';
 
 // ----------------------------------------------------------------------
 
@@ -513,7 +512,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                     ))}
                   </Field.Select>
                   <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
-                    {STUDENTS_STATUS_OPTIONS.map((status) => (
+                    {studentStatusOptions.map((status) => (
                       <MenuItem key={status.value} value={status.value}>
                         {status.label}
                       </MenuItem>
