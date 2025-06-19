@@ -9,6 +9,15 @@ export type IStudentStatus =
   | 'Unaffiliated'
   | 'All';
 
+export const studentStatusOptions = [
+  { label: 'Enrolled', value: 'Enrolled' },
+  { label: 'UnEnrolled', value: 'UnEnrolled' },
+  { label: 'Withdrawn', value: 'Withdrawn' },
+  { label: 'Deferred', value: 'Deferred' },
+  { label: 'Unaffiliated', value: 'Unaffiliated' },
+  // { label: 'All', value: 'All' },
+] as const;
+
 export type IFinanceStatus = 'Applied' | 'Approved';
 // constants.ts
 export const gradeResultOptions = [
