@@ -16,6 +16,8 @@ import {
   IconButton,
   Grid,
   MenuItem,
+  Chip,
+  TextField,
 } from '@mui/material';
 import { toast } from 'src/components/snackbar';
 import { cohereKey, gradeResultOptions, IStudentsItem } from 'src/types/students';
@@ -115,8 +117,8 @@ export function StudentResumeView({
       },
     ],
     summary: '',
-    skills: [{ value: '' }],
-    languages: [{ value: '' }],
+    skills: [],
+    languages: [],
   };
 
   function ResumeBuilderForm({ defaultValues }: { defaultValues: ResumeFormValues }) {
@@ -147,19 +149,47 @@ export function StudentResumeView({
       fields: skillFields,
       append: appendSkill,
       remove: removeSkill,
-    } = useFieldArray<ResumeFormValues, 'skills', 'id'>({
+    } = useFieldArray({
       control,
       name: 'skills',
     });
+
+    const [inputSkillValue, setInputSkillValue] = useState('');
+
+    const handleAddSkill = () => {
+      const trimmed = inputSkillValue.trim();
+      if (trimmed && !skillFields.some((s) => s.value === trimmed)) {
+        appendSkill({ value: trimmed });
+        setInputSkillValue('');
+      }
+    };
+
+    const handleDeleteSkill = (index: number) => {
+      removeSkill(index);
+    };
 
     const {
       fields: languageFields,
       append: appendLanguage,
       remove: removeLanguage,
-    } = useFieldArray<ResumeFormValues, 'languages', 'id'>({
+    } = useFieldArray({
       control,
       name: 'languages',
     });
+
+    const [inputLanguageValue, setInputLanguageValue] = useState('');
+
+    const handleAddLanguage = () => {
+      const trimmed = inputLanguageValue.trim();
+      if (trimmed && !languageFields.some((s) => s.value === trimmed)) {
+        appendLanguage({ value: trimmed });
+        setInputLanguageValue('');
+      }
+    };
+
+    const handleDeleteLanguage = (index: number) => {
+      removeLanguage(index);
+    };
 
     const onSubmit = async (data: ResumeFormValues) => {
       setFormData(data);
@@ -190,18 +220,19 @@ export function StudentResumeView({
             <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 2 }}>
               Personal Information
             </Typography>
-            <Field.Text name="firstName" label="First Name" />
-            <Field.Text name="lastName" label="Last Name" />
-            <Field.Text name="email" label="Email" />
-            <Field.Text name="phoneNumber" label="Phone Number" />
-            <Field.DatePicker name="dateOfBirth" label="Date of Birth" />
+            <Field.Text name="firstName" label="First Name" disabled />
+            <Field.Text name="lastName" label="Last Name" disabled />
+            <Field.Text name="email" label="Email" disabled />
+            <Field.Text name="phoneNumber" label="Phone Number" disabled />
+            <Field.DatePicker name="dateOfBirth" label="Date of Birth" disabled />
             <Field.CountrySelect
               name="nationality"
               label="Nationality"
               getValue="name"
               id="nationality"
+              disabled
             />
-            <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
+            <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} disabled />
           </Box>
           <Box
             sx={{
@@ -388,17 +419,37 @@ export function StudentResumeView({
             <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 4 }}>
               Skills
             </Typography>
-            {skillFields.map((item, index) => (
-              <Box key={item.id} sx={{ display: 'flex', gap: 1, gridColumn: 'span 2' }}>
-                <Field.Text name={`skills.${index}.value`} label={`Skill ${index + 1}`} />
-                <IconButton onClick={() => removeSkill(index)}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
+            <Box sx={{ gridColumn: 'span 2' }}>
+              <TextField
+                fullWidth
+                label="Add Skill"
+                value={inputSkillValue}
+                onChange={(e) => setInputSkillValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddSkill();
+                  }
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton onClick={handleAddSkill}>
+                      <Iconify icon="mdi:plus" />
+                    </IconButton>
+                  ),
+                }}
+              />
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2 }}>
+                {skillFields.map((item, index) => (
+                  <Chip
+                    key={item.id}
+                    label={item.value}
+                    onDelete={() => handleDeleteSkill(index)}
+                    color="primary"
+                  />
+                ))}
               </Box>
-            ))}
-            <Button onClick={() => appendSkill({ value: '' })} sx={{ gridColumn: 'span 2' }}>
-              Add Skill
-            </Button>
+            </Box>
           </Box>
           <Box
             sx={{
@@ -411,17 +462,37 @@ export function StudentResumeView({
             <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 4 }}>
               Languages
             </Typography>
-            {languageFields.map((item, index) => (
-              <Box key={item.id} sx={{ display: 'flex', gap: 1, gridColumn: 'span 2' }}>
-                <Field.Text name={`languages.${index}.value`} label={`Language ${index + 1}`} />
-                <IconButton onClick={() => removeLanguage(index)}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
+            <Box sx={{ gridColumn: 'span 2' }}>
+              <TextField
+                fullWidth
+                label="Add Language"
+                value={inputLanguageValue}
+                onChange={(e) => setInputLanguageValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddLanguage();
+                  }
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton onClick={handleAddLanguage}>
+                      <Iconify icon="mdi:plus" />
+                    </IconButton>
+                  ),
+                }}
+              />
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2 }}>
+                {languageFields.map((item, index) => (
+                  <Chip
+                    key={item.id}
+                    label={item.value}
+                    onDelete={() => handleDeleteLanguage(index)}
+                    color="primary"
+                  />
+                ))}
               </Box>
-            ))}
-            <Button onClick={() => appendLanguage({ value: '' })} sx={{ gridColumn: 'span 2' }}>
-              Add Language
-            </Button>
+            </Box>
           </Box>
 
           <Box>
