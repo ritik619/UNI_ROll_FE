@@ -289,7 +289,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       }
     } catch (error: any) {
       console.error(error);
-      toast.error('Operation failed!');
+      toast.error(error?.message);
     }
   });
   useEffect(() => {
