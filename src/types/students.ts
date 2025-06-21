@@ -87,7 +87,6 @@ export interface IConsent {
   signed: boolean;
   accepted: boolean;
 }
-export const cohereKey = 'vvgzF4u0WV2sVc2rAEOa4vSLzSkCxzaWLvmkdZ6h'; // Add your Cohere API Key
 
 export interface IStudentsItem {
   id: string;
@@ -126,6 +125,18 @@ export interface IStudentsItem {
     institutionName?: string;
     countryOfIssue?: string;
   };
+  experiences?: {
+    jobTitle?: string;
+    companyName?: string;
+    companyAddress?: string;
+    startDate?: string;
+    endDate?: string;
+    jobResponsibilities?: { value: string }[];
+    isPresentlyWorking?: boolean;
+  };
+  briefSummary?: string;
+  skills?: { value: string }[];
+  languages?: { value: string }[];
 }
 
 export interface ICreateStudent {
