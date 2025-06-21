@@ -1133,7 +1133,7 @@ export function StudentResumeView({
   };
 
   const Resume = ({ resumeData }: { resumeData: IStudentsItem }) => {
-    console.log(resumeData);
+    console.log('resumeData', resumeData);
     try {
       return (
         <Paper elevation={3} sx={{ m: 2, p: 2, borderRadius: 3 }}>
@@ -1222,23 +1222,26 @@ export function StudentResumeView({
             )}
             <Divider sx={{ my: 2 }} />
             {/* Skills */}
-            {resumeData?.professionalSummary?.skills.length > 0 && (
-              <Box sx={{ m: 1 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  Skills
-                </Typography>
-                <Grid container spacing={2}>
-                  {resumeData.professionalSummary?.skills.map((skill: any, index: number) => (
-                    <Grid item xs={6} sm={4} md={3} key={index}>
-                      <Box sx={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
-                        <GridCheckCircleIcon sx={{ fontSize: 14, mr: 1, color: 'success.main' }} />
-                        {typeof skill === 'string' ? skill : skill?.value}
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            )}
+            {Array.isArray(resumeData?.professionalSummary?.skills) &&
+              resumeData.professionalSummary.skills.length > 0 && (
+                <Box sx={{ m: 1 }}>
+                  <Typography variant="h6" sx={{ mb: 1 }}>
+                    Skills
+                  </Typography>
+                  <Grid container spacing={2}>
+                    {resumeData.professionalSummary?.skills.map((skill: any, index: number) => (
+                      <Grid item xs={6} sm={4} md={3} key={index}>
+                        <Box sx={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                          <GridCheckCircleIcon
+                            sx={{ fontSize: 14, mr: 1, color: 'success.main' }}
+                          />
+                          {typeof skill === 'string' ? skill : skill?.value}
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
             <Divider sx={{ my: 2 }} />
             {/* Education */}
             {resumeData && (

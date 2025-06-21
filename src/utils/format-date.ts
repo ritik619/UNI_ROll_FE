@@ -15,7 +15,7 @@ export const formatDateToDDMMYYYY = (date: string | Date) => {
  *      ─ sdk instance   → has .toDate()
  *      ─ plain object   → {seconds, nanoseconds}
  */
-function toDate(input) {
+export function toDate(input) {
   // 0) Firebase Timestamp (SDK instance)
   if (input && typeof input.toDate === 'function') {
     return input.toDate();
