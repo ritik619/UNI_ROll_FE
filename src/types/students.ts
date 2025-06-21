@@ -125,19 +125,23 @@ export interface IStudentsItem {
     institutionName?: string;
     countryOfIssue?: string;
   };
+  professionalSummary?: ProfessionalSummaryDto;
   experiences?: {
     jobTitle?: string;
     companyName?: string;
     companyAddress?: string;
     startDate?: string;
     endDate?: string;
-    jobResponsibilities?: { value: string }[];
+    jobResponsibilities: string[];
     isPresentlyWorking?: boolean;
-  };
-  briefSummary?: string;
-  skills?: { value: string }[];
-  languages?: { value: string }[];
+  }[];
 }
+export interface ProfessionalSummaryDto {
+  briefSummary: string;
+  skills: string[];
+  languages: string[];
+}
+
 
 export interface ICreateStudent {
   leadNumber?: string;

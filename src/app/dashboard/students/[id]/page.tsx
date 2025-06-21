@@ -43,7 +43,7 @@ export default function StudentDetailsPage({ params }: Props) {
   const router = useRouter();
   const [student, setStudent] = useState<IStudentsItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState('documents');
+  const [currentTab, setCurrentTab] = useState('resume');
 
   const fetchStudent = useCallback(async () => {
     setLoading(true);

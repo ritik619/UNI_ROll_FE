@@ -126,7 +126,8 @@ export const endpoints = {
     profilePhoto: (id: string) => `students/${id}/profile-photo`,
     status: (id: string) => `students/${id}/status`,
     removeIntakeLink: (id: string) => `students/${id}/remove-intake-link`,
-    information:(id:string)=>`students/${id}/work-history`
+    information:(id:string)=>`students/${id}/work-history`,
+    aiAssist:(id:string)=>`students/${id}/ai-assist`
   },
   universities: {
     list: 'universities',
