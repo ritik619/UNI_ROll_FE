@@ -19,7 +19,7 @@ import { Document, Packer, Paragraph, TextRun, AlignmentType } from 'docx';
 import { saveAs } from 'file-saver';
 import { useTheme } from '@mui/material/styles';
 import { GridCheckCircleIcon } from '@mui/x-data-grid';
-import { toDMY } from 'src/utils/format-date';
+import { formatDateToDDMMYYYY, toDate, toDMY } from 'src/utils/format-date';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { Form, Field } from 'src/components/hook-form';
 import { Iconify } from 'src/components/iconify';
@@ -36,79 +36,87 @@ export function StudentResumeView({
   onRefresh: () => void;
 }) {
   const [resumeJSON, setResumeJSON] = useState<{
-    briefSummary: string, skills: string[], experiences: any[],
+    briefSummary: string;
+    skills: string[];
+    experiences: any[];
   }>();
   const [loading, setLoading] = useState(false);
   const [resumeStatus, setResumeStatus] = useState<'NotGenerated' | 'Generated'>('NotGenerated');
   const theme = useTheme();
   const student = {
-    "id": "6zWYs4KMDeqzHCxVXBmJ",
-    "leadNumber": "STU-20250620-8859",
-    "firstName": "Ritik",
-    "firstNameLower": "ritik",
-    "lastNameLower": "saini",
-    "insuranceNumber": "",
-    "lastName": "Saini",
-    "dateOfBirth": "01/06/2025",
-    "email": "ritiksaini61977665@gmail.com",
-    "coverPhoto": "https://firebasestorage.googleapis.com/v0/b/uni-enroll-e95e7.firebasestorage.app/o/students%2Ffunction%20V()%7Breturn%22xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx%22.replace(%2F%5Bxy%5D%2Fg%2Cr%3D%3E%7Blet%20e%3DMath.random()*16%7C0%3Breturn(r%3D%3D%3D%22x%22%3Fe%3Ae%263%7C8).toString(16)%7D)%7D.jpeg?alt=media&token=5d382e77-3cee-408c-9dd9-370d0a338c4e",
-    "phoneNumber": "08823873121",
-    "phonePrefix": "+91",
-    "nationality": "Afghanistan",
-    "sex": "Male",
-    "address": "S-518",
-    "postCode": "462003",
-    "agentId": "ZvR2fN4SvphN40XsEpOGYGJubD93",
-    "highestQualification": {
-      "startDate": {
-        "_seconds": 1751673600,
-        "_nanoseconds": 0
+    id: '6zWYs4KMDeqzHCxVXBmJ',
+    leadNumber: 'STU-20250620-8859',
+    firstName: 'Ritik',
+    firstNameLower: 'ritik',
+    lastNameLower: 'saini',
+    insuranceNumber: '',
+    lastName: 'Saini',
+    dateOfBirth: '01/06/2025',
+    email: 'ritiksaini61977665@gmail.com',
+    coverPhoto:
+      'https://firebasestorage.googleapis.com/v0/b/uni-enroll-e95e7.firebasestorage.app/o/students%2Ffunction%20V()%7Breturn%22xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx%22.replace(%2F%5Bxy%5D%2Fg%2Cr%3D%3E%7Blet%20e%3DMath.random()*16%7C0%3Breturn(r%3D%3D%3D%22x%22%3Fe%3Ae%263%7C8).toString(16)%7D)%7D.jpeg?alt=media&token=5d382e77-3cee-408c-9dd9-370d0a338c4e',
+    phoneNumber: '08823873121',
+    phonePrefix: '+91',
+    nationality: 'Afghanistan',
+    sex: 'Male',
+    address: 'S-518',
+    postCode: '462003',
+    agentId: 'ZvR2fN4SvphN40XsEpOGYGJubD93',
+    highestQualification: {
+      startDate: {
+        _seconds: 1751673600,
+        _nanoseconds: 0,
       },
-      "endDate": {
-        "_seconds": 1762387200,
-        "_nanoseconds": 0
+      endDate: {
+        _seconds: 1762387200,
+        _nanoseconds: 0,
       },
-      "gradeResult": "First Class",
-      "institutionName": "LNCT",
-      "countryOfIssue": "Afghanistan"
+      gradeResult: 'First Class',
+      institutionName: 'LNCT',
+      countryOfIssue: 'Afghanistan',
     },
-    "documents": {},
-    "createdAt": {
-      "_seconds": 1750393750,
-      "_nanoseconds": 404000000
+    documents: {},
+    createdAt: {
+      _seconds: 1750393750,
+      _nanoseconds: 404000000,
     },
-    "universityName": "Maulana Azad National Institute of Technology",
-    "universityId": "L1KaHRZ8VHsx6YgUJiv0",
-    "courseName": "Master of Business Administration",
-    "intakeId": "yACQDoGsTHjKbiQcfjwO",
-    "courseId": "cvvdUJNSfoJxf4shc7nK",
-    "status": "Withdrawn",
-    "updatedAt": {
-      "_seconds": 1750393751,
-      "_nanoseconds": 393000000
+    universityName: 'Maulana Azad National Institute of Technology',
+    universityId: 'L1KaHRZ8VHsx6YgUJiv0',
+    courseName: 'Master of Business Administration',
+    intakeId: 'yACQDoGsTHjKbiQcfjwO',
+    courseId: 'cvvdUJNSfoJxf4shc7nK',
+    status: 'Withdrawn',
+    updatedAt: {
+      _seconds: 1750393751,
+      _nanoseconds: 393000000,
     },
-    "professionalSummary": {
-      "skills": ['Java', 'Python','Communication'],
-      "languages": ['Spanish', 'English'],
-      "briefSummary": 'Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz'
+    professionalSummary: {
+      skills: ['Java', 'Python', 'Communication'],
+      languages: ['Spanish', 'English'],
+      briefSummary:
+        'Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz',
     },
-    "experiences": [{
-      "jobTitle": 'Solution engineer',
-      "companyName": "Deqode",
-      'companyAddress': "Indore",
-      'startDate': {
-        "_seconds": 1750393751,
-        "_nanoseconds": 393000000
+    experiences: [
+      {
+        jobTitle: 'Solution engineer',
+        companyName: 'Deqode',
+        companyAddress: 'Indore',
+        startDate: {
+          _seconds: 1750393751,
+          _nanoseconds: 393000000,
+        },
+        endDate: {
+          _seconds: 1750393751,
+          _nanoseconds: 393000000,
+        },
+        isPresentlyWorking: true,
+        jobResponsibilities: [
+          'Was a important person in the fiedld doing xyz',
+          'Was a important person in the fiedld doing xyz',
+        ],
       },
-      'endDate': {
-        "_seconds": 1750393751,
-        "_nanoseconds": 393000000
-      },
-      'isPresentlyWorking': true,
-      'jobResponsibilities': ['Was a important person in the fiedld doing xyz', 'Was a important person in the fiedld doing xyz'],
-    }],
-
-  }
+    ],
+  };
 
   const ResumeSchema = zod.object({
     // highestQualification: zod
@@ -129,9 +137,7 @@ export function StudentResumeView({
           startDate: zod.any().optional(),
           endDate: zod.any().optional(),
           isPresentlyWorking: zod.boolean(),
-          jobResponsibilities: zod
-            .array(zod.object({ value: zod.string().optional() }))
-            .optional(),
+          jobResponsibilities: zod.array(zod.object({ value: zod.string().optional() })).optional(),
         })
       )
       .optional(),
@@ -160,24 +166,27 @@ export function StudentResumeView({
       institutionName: student?.highestQualification?.institutionName || '',
       countryOfIssue: student?.highestQualification?.countryOfIssue || '',
     },
-    experiences: student?.experiences ? student?.experiences?.map(i => ({ ...i, 
-      jobResponsibilities: i.jobResponsibilities.map(j => ({ value: j })),
-      startDate:dayjs(toDMY(i.startDate)),
-      ...(i?.endDate &&{endDate:dayjs(toDMY(i.endDate))}) 
-    })) : [
-      {
-        jobTitle: '',
-        companyName: '',
-        companyAddress: '',
-        startDate: '',
-        endDate: '',
-        jobResponsibilities: [],
-        isPresentlyWorking: false,
-      },
-    ],
+    experiences: student?.experiences
+      ? student?.experiences?.map((i) => ({
+          ...i,
+          jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
+          startDate: dayjs(toDMY(i.startDate)),
+          ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
+        }))
+      : [
+          {
+            jobTitle: '',
+            companyName: '',
+            companyAddress: '',
+            startDate: '',
+            endDate: '',
+            jobResponsibilities: [],
+            isPresentlyWorking: false,
+          },
+        ],
     briefSummary: student?.professionalSummary?.briefSummary || '',
-    skills: student?.professionalSummary?.skills?.map(i => ({ value: i })) || [],
-    languages: student?.professionalSummary?.languages?.map(i => ({ value: i })) || [],
+    skills: student?.professionalSummary?.skills?.map((i) => ({ value: i })) || [],
+    languages: student?.professionalSummary?.languages?.map((i) => ({ value: i })) || [],
   };
   function ExperiencesItem({
     control,
@@ -244,26 +253,29 @@ export function StudentResumeView({
             <Field.DatePicker name={`experiences.${index}.endDate`} label="End Date" />
           )}
 
-          <Field.Checkbox sx={{
-            p: 1,
-            border: '1px solid',
-            // color: 'rgba(0, 0, 0, 0.20)', // same as TextField
-            borderColor: 'rgba(0, 0, 0, 0.20)', // same as TextField
-            borderRadius: '10px', // same as TextField
-            transition: 'border-color 0.2s ease',
-            width: "100%",
-            '&:hover': {
-              borderColor: 'rgba(0, 0, 0, 0.80)',
-              color: 'rgba(0, 0, 0, 0.80)',// darker on hover
-            },
-            '&:focus-within': {
-              borderColor: 'black',
-              color: 'black', // same as TextField
-              // full black when an input is focused inside
-            },
-            gridColumn: "spam 1",
-          }}
-            name={`experiences.${index}.isPresentlyWorking`} label="Working Here" />
+          <Field.Checkbox
+            sx={{
+              p: 1,
+              border: '1px solid',
+              // color: 'rgba(0, 0, 0, 0.20)', // same as TextField
+              borderColor: 'rgba(0, 0, 0, 0.20)', // same as TextField
+              borderRadius: '10px', // same as TextField
+              transition: 'border-color 0.2s ease',
+              width: '100%',
+              '&:hover': {
+                borderColor: 'rgba(0, 0, 0, 0.80)',
+                color: 'rgba(0, 0, 0, 0.80)', // darker on hover
+              },
+              '&:focus-within': {
+                borderColor: 'black',
+                color: 'black', // same as TextField
+                // full black when an input is focused inside
+              },
+              gridColumn: 'spam 1',
+            }}
+            name={`experiences.${index}.isPresentlyWorking`}
+            label="Working Here"
+          />
           <Box sx={{ gridColumn: 'span 2', mt: 2 }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               Job Responsibilities
@@ -275,13 +287,12 @@ export function StudentResumeView({
                   label={`Responsibility ${k + 1}`}
                   sx={{ flexGrow: 1 }}
                 />
-                <IconButton onClick={() => removeResponsibility(k)}  >
+                <IconButton onClick={() => removeResponsibility(k)}>
                   <Iconify icon="solar:trash-bin-trash-bold" />
                 </IconButton>
               </Box>
             ))}
-            <Button startIcon={<Iconify icon="mdi:plus" />} onClick={() => append({ value: '' })}
-            >
+            <Button startIcon={<Iconify icon="mdi:plus" />} onClick={() => append({ value: '' })}>
               Add Responsibility
             </Button>
           </Box>
@@ -301,11 +312,11 @@ export function StudentResumeView({
     const {
       control,
       handleSubmit,
-      formState: { isSubmitting ,errors},
+      formState: { isSubmitting, errors },
       setValue,
-      watch
+      watch,
     } = methods;
-    console.log(JSON.stringify(errors),'error')
+    console.log(JSON.stringify(errors), 'error');
     const {
       fields: experienceFields,
       append: appendExperience,
@@ -363,20 +374,24 @@ export function StudentResumeView({
 
     const onSubmit = handleSubmit(async (data: any) => {
       try {
-
         console.log('resume data', data); // ✅ Store updated values
 
-        await handleSaveInformation(data.briefSummary, data.experiences, data.skills, data.languages)
+        await handleSaveInformation(
+          data.briefSummary,
+          data.experiences,
+          data.skills,
+          data.languages
+        );
         // const prompt = generateResumeTextFromStudent(data);
 
         // setResumeStatus('Generated');
 
         toast.success('Resume saved! Click "Generate Resume" to preview.');
       } catch (e) {
-        console.error(e)
+        console.error(e);
         toast.error((e as Error)?.message);
       }
-    })
+    });
     return (
       <Form methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Box
@@ -396,9 +411,15 @@ export function StudentResumeView({
               Experiences
             </Typography>
             {experienceFields.map((item, index) => (
-              <ExperiencesItem key={item.id} control={control} index={index} remove={removeExperience} />
+              <ExperiencesItem
+                key={item.id}
+                control={control}
+                index={index}
+                remove={removeExperience}
+              />
             ))}
-            <Button variant="outlined"
+            <Button
+              variant="outlined"
               onClick={() =>
                 appendExperience({
                   jobTitle: '',
@@ -411,8 +432,9 @@ export function StudentResumeView({
                 })
               }
               sx={{
-                gridColumn: 'span 2', width: '150px',        // or any custom fixed width
-                justifySelf: 'start'
+                gridColumn: 'span 2',
+                width: '150px', // or any custom fixed width
+                justifySelf: 'start',
               }}
             >
               Add Experience
@@ -527,7 +549,7 @@ export function StudentResumeView({
         <Box>
           {loading ? (
             <CircularProgress size={24} color="inherit" />
-          ) :
+          ) : (
             <Card
               sx={{
                 display: 'flex',
@@ -540,7 +562,12 @@ export function StudentResumeView({
                 backgroundColor: theme.palette.background.default,
               }}
             >
-              <Button type="submit" variant="outlined" disabled={isSubmitting} onClick={() => generateResumeTextFromStudent(watch)}>
+              <Button
+                type="submit"
+                variant="outlined"
+                disabled={isSubmitting}
+                onClick={() => generateResumeTextFromStudent(watch)}
+              >
                 Update Resume via AI
               </Button>
               <Button type="submit" variant="outlined" disabled={isSubmitting} color="secondary">
@@ -549,7 +576,8 @@ export function StudentResumeView({
               <Button variant="outlined" color="success" onClick={handleDownloadDocx}>
                 Download Resume (DOCX)
               </Button>
-            </Card>}
+            </Card>
+          )}
         </Box>
       </Form>
     );
@@ -557,30 +585,40 @@ export function StudentResumeView({
 
   const generateResumeTextFromStudent = async (data) => {
     try {
-      console.log(data())
-      const res = await authAxiosInstance.post(endpoints.students.aiAssist(student?.id), data())
-      toast.success("Updated Information with AI")
-      onRefresh()
+      console.log(data());
+      const res = await authAxiosInstance.post(endpoints.students.aiAssist(student?.id), data());
+      toast.success('Updated Information with AI');
+      onRefresh();
     } catch (e) {
-      console.error(e)
-      toast.error(e?.message)
+      console.error(e);
+      toast.error(e?.message);
     }
   };
 
-  const handleSaveInformation = async (briefSummary: string, experiences: any[], skills: any[], languages: any[]) => {
+  const handleSaveInformation = async (
+    briefSummary: string,
+    experiences: any[],
+    skills: any[],
+    languages: any[]
+  ) => {
     setLoading(true);
-    console.log('hcansadmksm')
+    console.log('hcansadmksm');
     try {
       const payload = {
-        experiences: experiences.map(i=>({...i,jobResponsibilities: i.jobResponsibilities.map(j => j.value ),
-      })),
+        experiences: experiences.map((i) => ({
+          ...i,
+          jobResponsibilities: i.jobResponsibilities.map((j) => j.value),
+        })),
         professionalSummary: {
           briefSummary: briefSummary,
-          skills: skills?.map(l => l?.value),
-          languages: languages?.map(l => l?.value)
-        }
-      }
-      const response = await authAxiosInstance.patch(endpoints.students.information(student?.id), payload)
+          skills: skills?.map((l) => l?.value),
+          languages: languages?.map((l) => l?.value),
+        },
+      };
+      const response = await authAxiosInstance.patch(
+        endpoints.students.information(student?.id),
+        payload
+      );
     } catch (error) {
       console.error(error);
       toast.error('An error occurred while generating the resume.');
@@ -731,7 +769,7 @@ export function StudentResumeView({
     if (Array.isArray(resumeData.experiences) && resumeData.experiences.length > 0) {
       const exp = resumeData.experiences;
 
-      console.log("resumeData.experiences",exp);
+      console.log('resumeData.experiences', exp);
       documentChildren.push(
         new Paragraph({
           children: [
@@ -760,7 +798,7 @@ export function StudentResumeView({
         })
       );
       exp.forEach((job: any) => {
-        console.log("exp job",job);
+        console.log('exp job', job);
 
         documentChildren.push(
           new Paragraph({
@@ -776,20 +814,25 @@ export function StudentResumeView({
             indent: { left: 300 },
           })
         );
+        const present = job.isPresentlyWorking;
+
         documentChildren.push(
           new Paragraph({
             children: [
               new TextRun({
-                text: `${new Date(toDMY(job.startDate))} – ${new Date(toDMY(job.endDate))} | ${job.companyAddress}`,
-                size: 22, // Smaller for dates/location
+                text: `${formatDateToDDMMYYYY(toDMY(job.startDate))} – ${
+                  present ? 'Present' : formatDateToDDMMYYYY(toDMY(job.endDate))
+                } | ${job.companyAddress}`,
+                size: 22,
                 font: 'Arial',
-                color: '888888', // Grey out text for dates
+                color: '888888',
               }),
             ],
             spacing: { after: 100 },
             indent: { left: 300 },
           })
         );
+
         if (Array.isArray(job.jobResponsibilities) && job.jobResponsibilities.length > 0) {
           job.jobResponsibilities.forEach((responsibility: any) => {
             documentChildren.push(
@@ -812,7 +855,10 @@ export function StudentResumeView({
     }
 
     // --- Skills ---
-    if (Array.isArray(resumeData.professionalSummary.skills) && resumeData.professionalSummary.skills.length > 0) {
+    if (
+      Array.isArray(resumeData.professionalSummary.skills) &&
+      resumeData.professionalSummary.skills.length > 0
+    ) {
       documentChildren.push(
         new Paragraph({
           children: [
@@ -889,7 +935,7 @@ export function StudentResumeView({
 
       if (resumeData.highestQualification) {
         const hq = resumeData.highestQualification;
-        console.log("hq",hq);
+        console.log('hq', hq);
         documentChildren.push(
           new Paragraph({
             children: [
@@ -917,7 +963,7 @@ export function StudentResumeView({
           new Paragraph({
             children: [
               new TextRun({
-                text: `Duration: ${new Date(toDMY(hq.startDate))} – ${new Date(toDMY(hq.endDate))}`,
+                text: `Duration: ${formatDateToDDMMYYYY(toDMY(hq.startDate))} – ${formatDateToDDMMYYYY(toDMY(hq.endDate))}`,
                 size: 24,
                 font: 'Arial',
               }),
@@ -946,7 +992,10 @@ export function StudentResumeView({
     }
 
     // --- Languages ---
-    if (Array.isArray(resumeData.professionalSummary.languages) && resumeData.professionalSummary.languages.length > 0) {
+    if (
+      Array.isArray(resumeData.professionalSummary.languages) &&
+      resumeData.professionalSummary.languages.length > 0
+    ) {
       documentChildren.push(
         new Paragraph({
           children: [
@@ -1076,13 +1125,15 @@ export function StudentResumeView({
       ],
     });
 
-    const safeName = `${resumeData.firstName}_${resumeData.lastName}`.replace(/[^a-zA-Z0-9_ ]/g, '').replace(/ /g, '_'); // Use fullName for filename, make it safer
+    const safeName = `${resumeData.firstName}_${resumeData.lastName}`
+      .replace(/[^a-zA-Z0-9_ ]/g, '')
+      .replace(/ /g, '_'); // Use fullName for filename, make it safer
     const blob = await Packer.toBlob(doc);
     saveAs(blob, `${safeName}_Resume.docx`);
   };
 
-  const Resume = ( {resumeData}:{resumeData:IStudentsItem} ) => {
-    console.log(resumeData)
+  const Resume = ({ resumeData }: { resumeData: IStudentsItem }) => {
+    console.log(resumeData);
     try {
       return (
         <Paper elevation={3} sx={{ m: 2, p: 2, borderRadius: 3 }}>
@@ -1151,15 +1202,19 @@ export function StudentResumeView({
                       {exp.jobTitle} at {exp.companyName}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      {toDMY(exp.startDate).toString()} – {toDMY(exp.endDate).toString()} | {exp.companyAddress}
+                      {formatDateToDDMMYYYY(toDate(exp.startDate))} –{' '}
+                      {exp.isPresentlyWorking === true
+                        ? 'Present'
+                        : formatDateToDDMMYYYY(toDate(exp.endDate))}{' '}
+                      | {exp.companyAddress}
                     </Typography>
+
                     <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
                       Responsibilities:
                       <br />
                       {exp.jobResponsibilities.map((item: string, index: number) => (
-                          <li key={index}>{item}</li>
-                        ))
-                       }
+                        <li key={index}>{item}</li>
+                      ))}
                     </Typography>
                   </Box>
                 ))}
@@ -1167,13 +1222,13 @@ export function StudentResumeView({
             )}
             <Divider sx={{ my: 2 }} />
             {/* Skills */}
-            {resumeData?.professionalSummary.skills.length > 0 && (
+            {resumeData?.professionalSummary?.skills.length > 0 && (
               <Box sx={{ m: 1 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   Skills
                 </Typography>
                 <Grid container spacing={2}>
-                  {resumeData.professionalSummary.skills.map((skill: any, index: number) => (
+                  {resumeData.professionalSummary?.skills.map((skill: any, index: number) => (
                     <Grid item xs={6} sm={4} md={3} key={index}>
                       <Box sx={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
                         <GridCheckCircleIcon sx={{ fontSize: 14, mr: 1, color: 'success.main' }} />
@@ -1189,7 +1244,7 @@ export function StudentResumeView({
             {resumeData && (
               <Box sx={{ m: 1 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
-                  Education
+                  Highest Qualification
                 </Typography>
                 {resumeData.highestQualification && (
                   <Box sx={{ mt: 1 }}>
@@ -1197,8 +1252,10 @@ export function StudentResumeView({
                       {/* **Highest Qualification:** */}
                       Institution: {resumeData.highestQualification.institutionName}
                       <br />
-                      Duration: {toDMY(resumeData.highestQualification.startDate).toString()} –{' '}
-                      {toDMY(resumeData.highestQualification.endDate).toString()}
+                      Duration:{' '}
+                      {formatDateToDDMMYYYY(
+                        toDate(resumeData?.highestQualification?.startDate)
+                      )} – {formatDateToDDMMYYYY(toDate(resumeData.highestQualification.endDate))}
                       <br />
                       Grade: {resumeData.highestQualification.gradeResult}
                       <br />
@@ -1210,26 +1267,27 @@ export function StudentResumeView({
             )}
             <Divider sx={{ my: 2 }} />
             {/* Languages */}
-            {Array.isArray(resumeData?.professionalSummary?.languages) && resumeData.professionalSummary.languages.length > 0 && (
-              <Box sx={{ m: 1 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  Languages
-                </Typography>
-                <Grid container spacing={2}>
-                  {resumeData.professionalSummary.languages.map((lang: any, index: number) => (
-                    <Grid item key={index}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                        <GridCheckCircleIcon sx={{ fontSize: 14, m: 1, color: 'success.main' }} />
-                        {typeof lang === 'string' ? lang : lang?.value}
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            )}
+            {Array.isArray(resumeData?.professionalSummary?.languages) &&
+              resumeData.professionalSummary.languages.length > 0 && (
+                <Box sx={{ m: 1 }}>
+                  <Typography variant="h6" sx={{ mb: 1 }}>
+                    Languages
+                  </Typography>
+                  <Grid container spacing={2}>
+                    {resumeData.professionalSummary.languages.map((lang: any, index: number) => (
+                      <Grid item key={index}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                          <GridCheckCircleIcon sx={{ fontSize: 14, m: 1, color: 'success.main' }} />
+                          {typeof lang === 'string' ? lang : lang?.value}
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
             <Divider sx={{ my: 2 }} />
             {/* Personal Details - Updated for better appearance */}
-            {resumeData&& (
+            {resumeData && (
               <Box sx={{ m: 1 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   Personal Details
@@ -1261,7 +1319,8 @@ export function StudentResumeView({
               </Box>
             )}
             <Divider sx={{ my: 2 }} />
-          </Box> </Paper>
+          </Box>{' '}
+        </Paper>
       );
     } catch (e) {
       return <Typography color="error">Invalid resume data</Typography>;
@@ -1275,21 +1334,21 @@ export function StudentResumeView({
           <Box>
             <Typography variant="h4">Resume Builder</Typography>
             <ResumeBuilderForm defaultValues={defaultValues} />
-            
-              <Card
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignContent: 'center',
-                  alignItems: 'center',
-                  height: 'auto',
-                  justifyContent: 'space-around',
-                  padding: 2,
-                  backgroundColor: theme.palette.grey[50],
-                }}
-              >
-                  <Resume resumeData={student} /> 
-              </Card>
+
+            <Card
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignContent: 'center',
+                alignItems: 'center',
+                height: 'auto',
+                justifyContent: 'space-around',
+                padding: 2,
+                backgroundColor: theme.palette.grey[50],
+              }}
+            >
+              <Resume resumeData={student} />
+            </Card>
           </Box>
         </Stack>
       </Card>
