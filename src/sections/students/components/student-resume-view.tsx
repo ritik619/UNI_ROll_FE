@@ -38,97 +38,14 @@ export function StudentResumeView({
   const [resumeJSON, setResumeJSON] = useState<{
     briefSummary: string;
     skills: string[];
-    experiences: any[];
+    workHistory: any[];
   }>();
   const [loading, setLoading] = useState(false);
   const [resumeStatus, setResumeStatus] = useState<'NotGenerated' | 'Generated'>('NotGenerated');
   const theme = useTheme();
-  // const student = {
-  //   id: '6zWYs4KMDeqzHCxVXBmJ',
-  //   leadNumber: 'STU-20250620-8859',
-  //   firstName: 'Ritik',
-  //   firstNameLower: 'ritik',
-  //   lastNameLower: 'saini',
-  //   insuranceNumber: '',
-  //   lastName: 'Saini',
-  //   dateOfBirth: '01/06/2025',
-  //   email: 'ritiksaini61977665@gmail.com',
-  //   coverPhoto:
-  //     'https://firebasestorage.googleapis.com/v0/b/uni-enroll-e95e7.firebasestorage.app/o/students%2Ffunction%20V()%7Breturn%22xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx%22.replace(%2F%5Bxy%5D%2Fg%2Cr%3D%3E%7Blet%20e%3DMath.random()*16%7C0%3Breturn(r%3D%3D%3D%22x%22%3Fe%3Ae%263%7C8).toString(16)%7D)%7D.jpeg?alt=media&token=5d382e77-3cee-408c-9dd9-370d0a338c4e',
-  //   phoneNumber: '08823873121',
-  //   phonePrefix: '+91',
-  //   nationality: 'Afghanistan',
-  //   sex: 'Male',
-  //   address: 'S-518',
-  //   postCode: '462003',
-  //   agentId: 'ZvR2fN4SvphN40XsEpOGYGJubD93',
-  //   highestQualification: {
-  //     startDate: {
-  //       _seconds: 1751673600,
-  //       _nanoseconds: 0,
-  //     },
-  //     endDate: {
-  //       _seconds: 1762387200,
-  //       _nanoseconds: 0,
-  //     },
-  //     gradeResult: 'First Class',
-  //     institutionName: 'LNCT',
-  //     countryOfIssue: 'Afghanistan',
-  //   },
-  //   documents: {},
-  //   createdAt: {
-  //     _seconds: 1750393750,
-  //     _nanoseconds: 404000000,
-  //   },
-  //   universityName: 'Maulana Azad National Institute of Technology',
-  //   universityId: 'L1KaHRZ8VHsx6YgUJiv0',
-  //   courseName: 'Master of Business Administration',
-  //   intakeId: 'yACQDoGsTHjKbiQcfjwO',
-  //   courseId: 'cvvdUJNSfoJxf4shc7nK',
-  //   status: 'Withdrawn',
-  //   updatedAt: {
-  //     _seconds: 1750393751,
-  //     _nanoseconds: 393000000,
-  //   },
-  //   professionalSummary: {
-  //     skills: ['Java', 'Python', 'Communication'],
-  //     languages: ['Spanish', 'English'],
-  //     briefSummary:
-  //       'Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz',
-  //   },
-  //   experiences: [
-  //     {
-  //       jobTitle: 'Solution engineer',
-  //       companyName: 'Deqode',
-  //       companyAddress: 'Indore',
-  //       startDate: {
-  //         _seconds: 1750393751,
-  //         _nanoseconds: 393000000,
-  //       },
-  //       endDate: {
-  //         _seconds: 1750393751,
-  //         _nanoseconds: 393000000,
-  //       },
-  //       isPresentlyWorking: true,
-  //       jobResponsibilities: [
-  //         'Was a important person in the fiedld doing xyz',
-  //         'Was a important person in the fiedld doing xyz',
-  //       ],
-  //     },
-  //   ],
-  // };
   const [student, setStudent] = useState(currentStudent);
   const ResumeSchema = zod.object({
-    // highestQualification: zod
-    //   .object({
-    //     startDate: zod.any().optional(),
-    //     endDate: zod.any().optional(),
-    //     gradeResult: zod.string().optional(),
-    //     institutionName: zod.string().optional(),
-    //     countryOfIssue: zod.string().optional(),
-    //   })
-    //   .optional(),
-    experiences: zod
+    workHistory: zod
       .array(
         zod.object({
           jobTitle: zod.string().min(1, 'Job Title cannot be empty'),
@@ -149,16 +66,16 @@ export function StudentResumeView({
   type ResumeFormValues = zod.infer<typeof ResumeSchema>;
 
   const defaultValues = {
-    firstName: student.firstName,
-    lastName: student.lastName,
-    dateOfBirth: toDMY(student?.dateOfBirth).toDateString(),
-    sex: student.sex,
-    phoneNumber: student.phoneNumber,
-    email: student.email,
-    address: student.address,
-    nationality: student.nationality,
-    universityName: student.universityName,
-    courseName: student.courseName,
+    // firstName: student.firstName,
+    // lastName: student.lastName,
+    // dateOfBirth: toDMY(student?.dateOfBirth).toDateString(),
+    // sex: student.sex,
+    // phoneNumber: student.phoneNumber,
+    // email: student.email,
+    // address: student.address,
+    // nationality: student.nationality,
+    // universityName: student.universityName,
+    // courseName: student.courseName,
     highestQualification: {
       startDate: dayjs(toDMY(student?.highestQualification?.startDate)),
       endDate: dayjs(toDMY(student?.highestQualification?.endDate)),
@@ -166,24 +83,24 @@ export function StudentResumeView({
       institutionName: student?.highestQualification?.institutionName || '',
       countryOfIssue: student?.highestQualification?.countryOfIssue || '',
     },
-    experiences: student?.experiences
-      ? student?.experiences?.map((i) => ({
-          ...i,
-          jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
-          startDate: dayjs(toDMY(i.startDate)),
-          ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
-        }))
+    workHistory: student?.workHistory
+      ? student?.workHistory?.map((i) => ({
+        ...i,
+        jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
+        startDate: dayjs(toDMY(i.startDate)),
+        ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
+      }))
       : [
-          {
-            jobTitle: '',
-            companyName: '',
-            companyAddress: '',
-            startDate: '',
-            endDate: '',
-            jobResponsibilities: [],
-            isPresentlyWorking: false,
-          },
-        ],
+        {
+          jobTitle: '',
+          companyName: '',
+          companyAddress: '',
+          startDate: '',
+          endDate: '',
+          jobResponsibilities: [],
+          isPresentlyWorking: false,
+        },
+      ],
     briefSummary: student?.professionalSummary?.briefSummary || '',
     skills: student?.professionalSummary?.skills?.map((i) => ({ value: i })) || [],
     languages: student?.professionalSummary?.languages?.map((i) => ({ value: i })) || [],
@@ -203,11 +120,11 @@ export function StudentResumeView({
       remove: removeResponsibility,
     } = useFieldArray({
       control,
-      name: `experiences.${index}.jobResponsibilities`,
+      name: `workHistory.${index}.jobResponsibilities`,
     });
     const isWorking = useWatch({
       control,
-      name: `experiences.${index}.isPresentlyWorking`,
+      name: `workHistory.${index}.isPresentlyWorking`,
     });
     return (
       <Box
@@ -256,10 +173,10 @@ export function StudentResumeView({
             },
           }}
         >
-          <Field.Text name={`experiences.${index}.jobTitle`} label="Job Title" />
-          <Field.Text name={`experiences.${index}.companyName`} label="Company Name" />
+          <Field.Text name={`workHistory.${index}.jobTitle`} label="Job Title" />
+          <Field.Text name={`workHistory.${index}.companyName`} label="Company Name" />
           <Field.Text
-            name={`experiences.${index}.companyAddress`}
+            name={`workHistory.${index}.companyAddress`}
             label="Company Address"
             sx={{ gridColumn: 'span 2' }}
           />
@@ -272,12 +189,12 @@ export function StudentResumeView({
               gridColumn: 'span 2',
             }}
           >
-            <Field.DatePicker name={`experiences.${index}.startDate`} label="Start Date" />
+            <Field.DatePicker name={`workHistory.${index}.startDate`} label="Start Date" />
             {!isWorking && (
-              <Field.DatePicker name={`experiences.${index}.endDate`} label="End Date" />
+              <Field.DatePicker name={`workHistory.${index}.endDate`} label="End Date" />
             )}
             <Field.Checkbox
-              name={`experiences.${index}.isPresentlyWorking`}
+              name={`workHistory.${index}.isPresentlyWorking`}
               label="Working Here"
               sx={{
                 p: 1.5,
@@ -313,7 +230,7 @@ export function StudentResumeView({
               }}
             >
               <Field.Text
-                name={`experiences.${index}.jobResponsibilities.${k}.value`}
+                name={`workHistory.${index}.jobResponsibilities.${k}.value`}
                 label={`Responsibility ${k + 1}`}
                 sx={{ flexGrow: 1 }}
               />
@@ -356,7 +273,7 @@ export function StudentResumeView({
       remove: removeExperience,
     } = useFieldArray({
       control,
-      name: 'experiences',
+      name: 'workHistory',
     });
 
     const {
@@ -407,12 +324,12 @@ export function StudentResumeView({
 
     const onSubmit = handleSubmit(async (data: any) => {
       try {
-        await handleSaveInformation(
-          data.briefSummary,
-          data.experiences,
-          data.skills,
-          data.languages
-        );
+        // await handleSaveInformation(
+        //   data.briefSummary,
+        //   data.workHistory,
+        //   data.skills,
+        //   data.languages
+        // );
         toast.success('Resume saved! Click "Generate Resume" to preview.');
       } catch (e) {
         console.error(e);
@@ -595,7 +512,7 @@ export function StudentResumeView({
                 variant="outlined"
                 disabled={isSubmitting}
                 color="secondary"
-                onClick={() => generateResumeTextFromStudent(watch)}
+                onClick={() => generateResumeTextFromStudent(watch, setValue)}
                 fullWidth
               >
                 Update Resume via AI
@@ -635,8 +552,8 @@ export function StudentResumeView({
     }
 
     // 3. Job Responsibilities
-    if (Array.isArray(updated.experiences)) {
-      updated.experiences = updated.experiences.map((exp: any) => ({
+    if (Array.isArray(updated.workHistory)) {
+      updated.workHistory = updated.workHistory.map((exp: any) => ({
         ...exp,
         jobResponsibilities: Array.isArray(exp.jobResponsibilities)
           ? exp.jobResponsibilities.map((resp: any) => resp.value)
@@ -647,7 +564,7 @@ export function StudentResumeView({
     return updated;
   };
 
-  const generateResumeTextFromStudent = async (watch: any) => {
+  const generateResumeTextFromStudent = async (watch: any, setValue: any) => {
     try {
       const watcher = watch();
       const formatted = formateData(watcher);
@@ -660,8 +577,15 @@ export function StudentResumeView({
       );
 
       toast.success('Updated Information with AI');
-
-      setStudent({ ...student, ...formatted }); // 👈 this must be the transformed one
+      setValue('workHistory', data?.workHistory?.map((i) => ({
+        ...i,
+        jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
+        startDate: dayjs(toDMY(i.startDate)),
+        ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
+      })))
+      setValue('briefSummary',data.professionalSummary?.briefSummary)
+      setValue('skills',data.professionalSummary?.skills?.map((i) => ({ value: i })))
+      setValue('languages',data.professionalSummary?.languages?.map((i) => ({ value: i })))
     } catch (e) {
       console.error(e);
       toast.error((e instanceof Error && e.message) || 'Something went wrong');
@@ -670,7 +594,7 @@ export function StudentResumeView({
 
   const handleSaveInformation = async (
     briefSummary: string,
-    experiences: any[],
+    workHistory: any[],
     skills: any[],
     languages: any[]
   ) => {
@@ -678,7 +602,7 @@ export function StudentResumeView({
     console.log('hcansadmksm');
     try {
       const payload = {
-        experiences: experiences.map((i) => ({
+        workHistory: workHistory.map((i) => ({
           ...i,
           jobResponsibilities: i.jobResponsibilities.map((j) => j.value),
         })),
@@ -688,10 +612,10 @@ export function StudentResumeView({
           languages: languages?.map((l) => l?.value),
         },
       };
-      const response = await authAxiosInstance.patch(
-        endpoints.students.information(student?.id),
-        payload
-      );
+      // const response = await authAxiosInstance.patch(
+      //   endpoints.students.information(student?.id),
+      //   payload
+      // );
     } catch (error) {
       console.error(error);
       toast.error('An error occurred while generating the resume.');
@@ -703,7 +627,7 @@ export function StudentResumeView({
   // const handleUpdate = async () => {
   //   try {
   //       // const payload = {
-  //   //   experiences: [
+  //   //   workHistory: [
   //   //     {
   //   //       jobTitle: "Software Developer",
   //   //       companyName: "Tech Corp Ltd",
@@ -839,10 +763,9 @@ export function StudentResumeView({
     }
 
     // --- Experiences ---
-    if (Array.isArray(resumeData.experiences) && resumeData.experiences.length > 0) {
-      const exp = resumeData.experiences;
+    if (Array.isArray(resumeData.workHistory) && resumeData.workHistory.length > 0) {
+      const exp = resumeData.workHistory;
 
-      console.log('resumeData.experiences', exp);
       documentChildren.push(
         new Paragraph({
           children: [
@@ -893,9 +816,8 @@ export function StudentResumeView({
           new Paragraph({
             children: [
               new TextRun({
-                text: `${formatDateToDDMMYYYY(toDMY(job.startDate))} – ${
-                  present ? 'Present' : formatDateToDDMMYYYY(toDMY(job.endDate))
-                } | ${job.companyAddress}`,
+                text: `${formatDateToDDMMYYYY(toDMY(job.startDate))} – ${present ? 'Present' : formatDateToDDMMYYYY(toDMY(job.endDate))
+                  } | ${job.companyAddress}`,
                 size: 22,
                 font: 'Arial',
                 color: '888888',
@@ -1269,12 +1191,12 @@ export function StudentResumeView({
             )}
 
             {/* Experiences */}
-            {Array.isArray(resumeData?.experiences) && resumeData.experiences.length > 0 && (
+            {Array.isArray(resumeData?.workHistory) && resumeData.workHistory.length > 0 && (
               <Box sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   Experiences
                 </Typography>
-                {resumeData.experiences.map((exp: any, i: number) => (
+                {resumeData.workHistory.map((exp: any, i: number) => (
                   <Box key={i} sx={{ mb: 2 }}>
                     <Typography variant="subtitle1" fontWeight="bold">
                       {exp.jobTitle} at {exp.companyName}
