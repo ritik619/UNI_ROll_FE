@@ -126,7 +126,7 @@ export interface IStudentsItem {
     countryOfIssue?: string;
   };
   professionalSummary?: ProfessionalSummaryDto;
-  experiences?: {
+  workHistory?: {
     jobTitle?: string;
     companyName?: string;
     companyAddress?: string;

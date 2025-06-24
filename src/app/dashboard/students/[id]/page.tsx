@@ -44,11 +44,16 @@ export default function StudentDetailsPage({ params }: Props) {
   const [student, setStudent] = useState<IStudentsItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState('resume');
+  const [university, setUniversity] = useState({})
 
   const fetchStudent = useCallback(async () => {
     setLoading(true);
     try {
       const response = await authAxiosInstance.get(`${endpoints.students.details(id)}`);
+      if (response?.data?.universityId) {
+        const { data } = await authAxiosInstance.get(endpoints.universities.details(response.data.universityId))
+        setUniversity(data )
+      }
       setStudent(response.data);
     } catch (error) {
       console.error('Failed to fetch student details:', error);
@@ -177,6 +182,7 @@ export default function StudentDetailsPage({ params }: Props) {
               <InfoItem icon="eva:book-fill" label={student.universityName} />
               <InfoItem icon="eva:book-open-fill" label={student.courseName} />
               <InfoItem icon="eva:bookmark-fill" label={student.intakeName} />
+              <InfoItem icon="eva:globe-outline" label={`${university?.cityName} (${university?.countryName})`} />
             </Stack>
             {/* basic details */}
             <Stack

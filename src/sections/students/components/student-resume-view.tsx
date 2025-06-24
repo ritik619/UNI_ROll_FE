@@ -29,106 +29,23 @@ import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
 import dayjs from 'dayjs';
 
 export function StudentResumeView({
-  // student,
+  student: currentStudent,
   onRefresh,
 }: {
-  // student: IStudentsItem;
+  student: IStudentsItem;
   onRefresh: () => void;
 }) {
   const [resumeJSON, setResumeJSON] = useState<{
     briefSummary: string;
     skills: string[];
-    experiences: any[];
+    workHistory: any[];
   }>();
   const [loading, setLoading] = useState(false);
   const [resumeStatus, setResumeStatus] = useState<'NotGenerated' | 'Generated'>('NotGenerated');
   const theme = useTheme();
-  const student = {
-    id: '6zWYs4KMDeqzHCxVXBmJ',
-    leadNumber: 'STU-20250620-8859',
-    firstName: 'Ritik',
-    firstNameLower: 'ritik',
-    lastNameLower: 'saini',
-    insuranceNumber: '',
-    lastName: 'Saini',
-    dateOfBirth: '01/06/2025',
-    email: 'ritiksaini61977665@gmail.com',
-    coverPhoto:
-      'https://firebasestorage.googleapis.com/v0/b/uni-enroll-e95e7.firebasestorage.app/o/students%2Ffunction%20V()%7Breturn%22xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx%22.replace(%2F%5Bxy%5D%2Fg%2Cr%3D%3E%7Blet%20e%3DMath.random()*16%7C0%3Breturn(r%3D%3D%3D%22x%22%3Fe%3Ae%263%7C8).toString(16)%7D)%7D.jpeg?alt=media&token=5d382e77-3cee-408c-9dd9-370d0a338c4e',
-    phoneNumber: '08823873121',
-    phonePrefix: '+91',
-    nationality: 'Afghanistan',
-    sex: 'Male',
-    address: 'S-518',
-    postCode: '462003',
-    agentId: 'ZvR2fN4SvphN40XsEpOGYGJubD93',
-    highestQualification: {
-      startDate: {
-        _seconds: 1751673600,
-        _nanoseconds: 0,
-      },
-      endDate: {
-        _seconds: 1762387200,
-        _nanoseconds: 0,
-      },
-      gradeResult: 'First Class',
-      institutionName: 'LNCT',
-      countryOfIssue: 'Afghanistan',
-    },
-    documents: {},
-    createdAt: {
-      _seconds: 1750393750,
-      _nanoseconds: 404000000,
-    },
-    universityName: 'Maulana Azad National Institute of Technology',
-    universityId: 'L1KaHRZ8VHsx6YgUJiv0',
-    courseName: 'Master of Business Administration',
-    intakeId: 'yACQDoGsTHjKbiQcfjwO',
-    courseId: 'cvvdUJNSfoJxf4shc7nK',
-    status: 'Withdrawn',
-    updatedAt: {
-      _seconds: 1750393751,
-      _nanoseconds: 393000000,
-    },
-    professionalSummary: {
-      skills: ['Java', 'Python', 'Communication'],
-      languages: ['Spanish', 'English'],
-      briefSummary:
-        'Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz.Was a important person in the fiedld doing xyz',
-    },
-    experiences: [
-      {
-        jobTitle: 'Solution engineer',
-        companyName: 'Deqode',
-        companyAddress: 'Indore',
-        startDate: {
-          _seconds: 1750393751,
-          _nanoseconds: 393000000,
-        },
-        endDate: {
-          _seconds: 1750393751,
-          _nanoseconds: 393000000,
-        },
-        isPresentlyWorking: true,
-        jobResponsibilities: [
-          'Was a important person in the fiedld doing xyz',
-          'Was a important person in the fiedld doing xyz',
-        ],
-      },
-    ],
-  };
-
+  const [student, setStudent] = useState(currentStudent);
   const ResumeSchema = zod.object({
-    // highestQualification: zod
-    //   .object({
-    //     startDate: zod.any().optional(),
-    //     endDate: zod.any().optional(),
-    //     gradeResult: zod.string().optional(),
-    //     institutionName: zod.string().optional(),
-    //     countryOfIssue: zod.string().optional(),
-    //   })
-    //   .optional(),
-    experiences: zod
+    workHistory: zod
       .array(
         zod.object({
           jobTitle: zod.string().min(1, 'Job Title cannot be empty'),
@@ -149,16 +66,16 @@ export function StudentResumeView({
   type ResumeFormValues = zod.infer<typeof ResumeSchema>;
 
   const defaultValues = {
-    firstName: student.firstName,
-    lastName: student.lastName,
-    dateOfBirth: toDMY(student?.dateOfBirth).toDateString(),
-    sex: student.sex,
-    phoneNumber: student.phoneNumber,
-    email: student.email,
-    address: student.address,
-    nationality: student.nationality,
-    universityName: student.universityName,
-    courseName: student.courseName,
+    // firstName: student.firstName,
+    // lastName: student.lastName,
+    // dateOfBirth: toDMY(student?.dateOfBirth).toDateString(),
+    // sex: student.sex,
+    // phoneNumber: student.phoneNumber,
+    // email: student.email,
+    // address: student.address,
+    // nationality: student.nationality,
+    // universityName: student.universityName,
+    // courseName: student.courseName,
     highestQualification: {
       startDate: dayjs(toDMY(student?.highestQualification?.startDate)),
       endDate: dayjs(toDMY(student?.highestQualification?.endDate)),
@@ -166,24 +83,24 @@ export function StudentResumeView({
       institutionName: student?.highestQualification?.institutionName || '',
       countryOfIssue: student?.highestQualification?.countryOfIssue || '',
     },
-    experiences: student?.experiences
-      ? student?.experiences?.map((i) => ({
-          ...i,
-          jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
-          startDate: dayjs(toDMY(i.startDate)),
-          ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
-        }))
+    workHistory: student?.workHistory
+      ? student?.workHistory?.map((i) => ({
+        ...i,
+        jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
+        startDate: dayjs(toDMY(i.startDate)),
+        ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
+      }))
       : [
-          {
-            jobTitle: '',
-            companyName: '',
-            companyAddress: '',
-            startDate: '',
-            endDate: '',
-            jobResponsibilities: [],
-            isPresentlyWorking: false,
-          },
-        ],
+        {
+          jobTitle: '',
+          companyName: '',
+          companyAddress: '',
+          startDate: '',
+          endDate: '',
+          jobResponsibilities: [],
+          isPresentlyWorking: false,
+        },
+      ],
     briefSummary: student?.professionalSummary?.briefSummary || '',
     skills: student?.professionalSummary?.skills?.map((i) => ({ value: i })) || [],
     languages: student?.professionalSummary?.languages?.map((i) => ({ value: i })) || [],
@@ -203,25 +120,34 @@ export function StudentResumeView({
       remove: removeResponsibility,
     } = useFieldArray({
       control,
-      name: `experiences.${index}.jobResponsibilities`,
+      name: `workHistory.${index}.jobResponsibilities`,
     });
     const isWorking = useWatch({
       control,
-      name: `experiences.${index}.isPresentlyWorking`,
+      name: `workHistory.${index}.isPresentlyWorking`,
     });
-
     return (
       <Box
         sx={{
-          p: 2,
-          mb: 2,
+          p: { xs: 2, sm: 3 },
+          mb: 3,
           border: '1px solid',
           borderColor: 'divider',
-          borderRadius: 1,
+          borderRadius: 2,
           gridColumn: 'span 2',
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        {/* Header */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 1,
+            mb: 2,
+          }}
+        >
           <Typography variant="subtitle2">Experience #{index + 1}</Typography>
           {index > 0 && (
             <Button
@@ -234,79 +160,104 @@ export function StudentResumeView({
             </Button>
           )}
         </Box>
+
+        {/* Fields */}
         <Box
           sx={{
             display: 'grid',
             gap: 2,
-            gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(2, 1fr)',
+            },
           }}
         >
-          <Field.Text name={`experiences.${index}.jobTitle`} label="Job Title" />
-          <Field.Text name={`experiences.${index}.companyName`} label="Company Name" />
+          <Field.Text name={`workHistory.${index}.jobTitle`} label="Job Title" />
+          <Field.Text name={`workHistory.${index}.companyName`} label="Company Name" />
           <Field.Text
-            name={`experiences.${index}.companyAddress`}
+            name={`workHistory.${index}.companyAddress`}
             label="Company Address"
             sx={{ gridColumn: 'span 2' }}
           />
-          <Field.DatePicker name={`experiences.${index}.startDate`} label="Start Date" />
-          {!isWorking && (
-            <Field.DatePicker name={`experiences.${index}.endDate`} label="End Date" />
-          )}
 
-          <Field.Checkbox
+          <Box
             sx={{
-              p: 1,
-              border: '1px solid',
-              // color: 'rgba(0, 0, 0, 0.20)', // same as TextField
-              borderColor: 'rgba(0, 0, 0, 0.20)', // same as TextField
-              borderRadius: '10px', // same as TextField
-              transition: 'border-color 0.2s ease',
-              width: '100%',
-              '&:hover': {
-                borderColor: 'rgba(0, 0, 0, 0.80)',
-                color: 'rgba(0, 0, 0, 0.80)', // darker on hover
-              },
-              '&:focus-within': {
-                borderColor: 'black',
-                color: 'black', // same as TextField
-                // full black when an input is focused inside
-              },
-              gridColumn: 'spam 1',
+              display: 'grid',
+              gap: 2,
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+              gridColumn: 'span 2',
             }}
-            name={`experiences.${index}.isPresentlyWorking`}
-            label="Working Here"
-          />
-          <Box sx={{ gridColumn: 'span 2', mt: 2 }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Job Responsibilities
-            </Typography>
-            {fields.map((field, k) => (
-              <Box key={field.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <Field.Text
-                  name={`experiences.${index}.jobResponsibilities.${k}.value`}
-                  label={`Responsibility ${k + 1}`}
-                  sx={{ flexGrow: 1 }}
-                />
-                <IconButton onClick={() => removeResponsibility(k)}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-              </Box>
-            ))}
-            <Button startIcon={<Iconify icon="mdi:plus" />} onClick={() => append({ value: '' })}>
-              Add Responsibility
-            </Button>
+          >
+            <Field.DatePicker name={`workHistory.${index}.startDate`} label="Start Date" />
+            {!isWorking && (
+              <Field.DatePicker name={`workHistory.${index}.endDate`} label="End Date" />
+            )}
+            <Field.Checkbox
+              name={`workHistory.${index}.isPresentlyWorking`}
+              label="Working Here"
+              sx={{
+                p: 1.5,
+                border: '1px solid rgba(0, 0, 0, 0.20)',
+                borderRadius: 2,
+                transition: 'border-color 0.2s ease',
+                width: '100%',
+                '&:hover': {
+                  borderColor: 'rgba(0, 0, 0, 0.6)',
+                },
+                '&:focus-within': {
+                  borderColor: 'black',
+                },
+              }}
+            />
           </Box>
+        </Box>
+
+        {/* Responsibilities */}
+        <Box sx={{ mt: 3 }}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Job Responsibilities
+          </Typography>
+          {fields.map((field, k) => (
+            <Box
+              key={field.id}
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: { sm: 'center' },
+                gap: 1,
+                mb: 1,
+              }}
+            >
+              <Field.Text
+                name={`workHistory.${index}.jobResponsibilities.${k}.value`}
+                label={`Responsibility ${k + 1}`}
+                sx={{ flexGrow: 1 }}
+              />
+              <IconButton onClick={() => removeResponsibility(k)}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </Box>
+          ))}
+
+          <Button
+            startIcon={<Iconify icon="mdi:plus" />}
+            onClick={() => append({ value: '' })}
+            sx={{ mt: 1 }}
+          >
+            Add Responsibility
+          </Button>
         </Box>
       </Box>
     );
   }
 
   function ResumeBuilderForm({ defaultValues }: { defaultValues: ResumeFormValues }) {
+    const theme = useTheme();
     const methods = useForm<ResumeFormValues>({
       resolver: zodResolver(ResumeSchema),
       defaultValues,
       mode: 'onChange',
-      // values: defaultValues, // This ensures values are synced without reset
     });
 
     const {
@@ -316,14 +267,13 @@ export function StudentResumeView({
       setValue,
       watch,
     } = methods;
-    console.log(JSON.stringify(errors), 'error');
     const {
       fields: experienceFields,
       append: appendExperience,
       remove: removeExperience,
     } = useFieldArray({
       control,
-      name: 'experiences',
+      name: 'workHistory',
     });
 
     const {
@@ -374,18 +324,12 @@ export function StudentResumeView({
 
     const onSubmit = handleSubmit(async (data: any) => {
       try {
-        console.log('resume data', data); // ✅ Store updated values
-
         await handleSaveInformation(
           data.briefSummary,
-          data.experiences,
+          data.workHistory,
           data.skills,
           data.languages
         );
-        // const prompt = generateResumeTextFromStudent(data);
-
-        // setResumeStatus('Generated');
-
         toast.success('Resume saved! Click "Generate Resume" to preview.');
       } catch (e) {
         console.error(e);
@@ -394,20 +338,17 @@ export function StudentResumeView({
     });
     return (
       <Form methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <Box
-          sx={{
-            p: 2,
-          }}
-        >
+        <Box sx={{ p: { xs: 2, sm: 3 } }}>
+          {/* Experiences Section */}
           <Box
             sx={{
               display: 'grid',
               rowGap: 3,
               columnGap: 2,
-              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
             }}
           >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 4 }}>
+            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
               Experiences
             </Typography>
             {experienceFields.map((item, index) => (
@@ -433,22 +374,25 @@ export function StudentResumeView({
               }
               sx={{
                 gridColumn: 'span 2',
-                width: '150px', // or any custom fixed width
+                width: { xs: '100%', sm: '150px' },
                 justifySelf: 'start',
               }}
             >
               Add Experience
             </Button>
           </Box>
+
+          {/* Summary */}
           <Box
             sx={{
+              mt: 4,
               display: 'grid',
               rowGap: 3,
               columnGap: 2,
-              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
             }}
           >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 4 }}>
+            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
               Professional Summary
             </Typography>
             <Field.Text
@@ -459,15 +403,17 @@ export function StudentResumeView({
             />
           </Box>
 
+          {/* Skills */}
           <Box
             sx={{
+              mt: 4,
               display: 'grid',
               rowGap: 3,
               columnGap: 2,
-              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
             }}
           >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 4 }}>
+            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
               Skills
             </Typography>
             <Box sx={{ gridColumn: 'span 2' }}>
@@ -502,15 +448,18 @@ export function StudentResumeView({
               </Box>
             </Box>
           </Box>
+
+          {/* Languages */}
           <Box
             sx={{
+              mt: 4,
               display: 'grid',
               rowGap: 3,
               columnGap: 2,
-              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
             }}
           >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2', mt: 4 }}>
+            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
               Languages
             </Typography>
             <Box sx={{ gridColumn: 'span 2' }}>
@@ -546,58 +495,106 @@ export function StudentResumeView({
             </Box>
           </Box>
         </Box>
-        <Box>
+
+        {/* Action Buttons */}
+        <Box sx={{ px: { xs: 2, sm: 3 }, mb: 4 }}>
           {loading ? (
             <CircularProgress size={24} color="inherit" />
           ) : (
-            <Card
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignContent: 'center',
-                alignItems: 'center',
-                height: 'auto',
-                justifyContent: 'space-around',
-                padding: 2,
-                backgroundColor: theme.palette.background.default,
-              }}
+            <Stack
+              spacing={2}
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="center"
+              alignItems="center"
             >
+              <Button
+                // type="submit"
+                variant="outlined"
+                disabled={isSubmitting}
+                color="secondary"
+                onClick={() => generateResumeTextFromStudent(watch, setValue)}
+                fullWidth
+              >
+                Update Resume via AI
+              </Button>
               <Button
                 type="submit"
                 variant="outlined"
                 disabled={isSubmitting}
-                onClick={() => generateResumeTextFromStudent(watch)}
+                color="info"
+                fullWidth
               >
-                Update Resume via AI
-              </Button>
-              <Button type="submit" variant="outlined" disabled={isSubmitting} color="secondary">
                 Save Information
               </Button>
-              <Button variant="outlined" color="success" onClick={handleDownloadDocx}>
+              <Button variant="outlined" color="success" onClick={handleDownloadDocx} fullWidth>
                 Download Resume (DOCX)
               </Button>
-            </Card>
+            </Stack>
           )}
         </Box>
       </Form>
     );
   }
+  const formateData = (data: any) => {
+    const updated = { ...data };
 
-  const generateResumeTextFromStudent = async (data) => {
+    // 1. Skills
+    if (Array.isArray(updated.skills)) {
+      updated.skills = updated.skills.map((skill: any) => skill.value);
+    }
+
+    // 2. Languages - capitalize first letter
+    if (Array.isArray(updated.languages)) {
+      updated.languages = updated.languages.map((lang: any) => {
+        const str = lang.value?.toString().trim();
+        return str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : '';
+      });
+    }
+
+    // 3. Job Responsibilities
+    if (Array.isArray(updated.workHistory)) {
+      updated.workHistory = updated.workHistory.map((exp: any) => ({
+        ...exp,
+        jobResponsibilities: Array.isArray(exp.jobResponsibilities)
+          ? exp.jobResponsibilities.map((resp: any) => resp.value)
+          : [],
+      }));
+    }
+
+    return updated;
+  };
+
+  const generateResumeTextFromStudent = async (watch: any, setValue: any) => {
     try {
-      console.log(data());
-      const res = await authAxiosInstance.post(endpoints.students.aiAssist(student?.id), data());
+      const watcher = watch();
+      const formatted = formateData(watcher);
+
+      console.log('Formatted:', formatted); // check here
+
+      const { data } = await authAxiosInstance.post(
+        endpoints.students.aiAssist(student?.id),
+        formatted
+      );
+
       toast.success('Updated Information with AI');
-      onRefresh();
+      setValue('workHistory', data?.workHistory?.map((i) => ({
+        ...i,
+        jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
+        startDate: dayjs(toDMY(i.startDate)),
+        ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
+      })))
+      setValue('briefSummary',data.professionalSummary?.briefSummary)
+      setValue('skills',data.professionalSummary?.skills?.map((i) => ({ value: i })))
+      setValue('languages',data.professionalSummary?.languages?.map((i) => ({ value: i })))
     } catch (e) {
       console.error(e);
-      toast.error(e?.message);
+      toast.error((e instanceof Error && e.message) || 'Something went wrong');
     }
   };
 
   const handleSaveInformation = async (
     briefSummary: string,
-    experiences: any[],
+    workHistory: any[],
     skills: any[],
     languages: any[]
   ) => {
@@ -605,7 +602,7 @@ export function StudentResumeView({
     console.log('hcansadmksm');
     try {
       const payload = {
-        experiences: experiences.map((i) => ({
+        workHistory: workHistory.map((i) => ({
           ...i,
           jobResponsibilities: i.jobResponsibilities.map((j) => j.value),
         })),
@@ -615,10 +612,10 @@ export function StudentResumeView({
           languages: languages?.map((l) => l?.value),
         },
       };
-      const response = await authAxiosInstance.patch(
-        endpoints.students.information(student?.id),
-        payload
-      );
+      // const response = await authAxiosInstance.patch(
+      //   endpoints.students.information(student?.id),
+      //   payload
+      // );
     } catch (error) {
       console.error(error);
       toast.error('An error occurred while generating the resume.');
@@ -627,49 +624,7 @@ export function StudentResumeView({
     }
   };
 
-  // const handleUpdate = async () => {
-  //   try {
-  //       // const payload = {
-  //   //   experiences: [
-  //   //     {
-  //   //       jobTitle: "Software Developer",
-  //   //       companyName: "Tech Corp Ltd",
-  //   //       companyAddress: "",
-  //   //       startDate: "07/05/2025",
-  //   //       endDate: "11/06/2025",
-  //   //       jobResponsibilities: [],
-  //   //       isPresentlyWorking: false,
-  //   //     },
-  //   //     {
-  //   //       jobTitle: "Senior Developer",
-  //   //       companyName: "Innovation Labs",
-  //   //       companyAddress: "456 Innovation Ave, Manchester, UK",
-  //   //       startDate: "01/01/2024",
-  //   //       jobResponsibilities: [
-  //   //         "Leading development team of 5 developers",
-  //   //         "Architecting scalable solutions",
-  //   //         "Mentoring junior developers",
-  //   //       ],
-  //   //       isPresentlyWorking: true,
-  //   //     },
-  //   //   ],
-  //   //   professionalSummary: {
-  //   //     briefSummary: "Experienced software developer with 5+ years in full-stack development.",
-  //   //     skills: ["JavaScript", "TypeScript", "React"],
-  //   //     languages: [],
-  //   //   },
-  //   // };
 
-  //     const response = await authAxiosInstance.patch<{ id: string }>(
-  //       endpoints.students.information(currentStudent?.id || ''),
-  //       payload
-  //     );
-
-  //     console.log('Updated Work History ID:', response.data.id);
-  //   } catch (error: any) {
-  //     console.error('Work History Update Failed:', error?.response?.data || error.message);
-  //   }
-  // };
 
   const handleDownloadDocx = async () => {
     const documentChildren = [];
@@ -722,7 +677,7 @@ export function StudentResumeView({
     }
 
     // --- Professional Summary ---
-    if (resumeData.professionalSummary.briefSummary) {
+    if (resumeData?.professionalSummary?.briefSummary) {
       documentChildren.push(
         new Paragraph({
           children: [
@@ -766,10 +721,9 @@ export function StudentResumeView({
     }
 
     // --- Experiences ---
-    if (Array.isArray(resumeData.experiences) && resumeData.experiences.length > 0) {
-      const exp = resumeData.experiences;
+    if (Array.isArray(resumeData.workHistory) && resumeData.workHistory.length > 0) {
+      const exp = resumeData.workHistory;
 
-      console.log('resumeData.experiences', exp);
       documentChildren.push(
         new Paragraph({
           children: [
@@ -820,9 +774,8 @@ export function StudentResumeView({
           new Paragraph({
             children: [
               new TextRun({
-                text: `${formatDateToDDMMYYYY(toDMY(job.startDate))} – ${
-                  present ? 'Present' : formatDateToDDMMYYYY(toDMY(job.endDate))
-                } | ${job.companyAddress}`,
+                text: `${formatDateToDDMMYYYY(toDMY(job.startDate))} – ${present ? 'Present' : formatDateToDDMMYYYY(toDMY(job.endDate))
+                  } | ${job.companyAddress}`,
                 size: 22,
                 font: 'Arial',
                 color: '888888',
@@ -856,8 +809,8 @@ export function StudentResumeView({
 
     // --- Skills ---
     if (
-      Array.isArray(resumeData.professionalSummary.skills) &&
-      resumeData.professionalSummary.skills.length > 0
+      Array.isArray(resumeData?.professionalSummary?.skills) &&
+      resumeData?.professionalSummary?.skills?.length > 0
     ) {
       documentChildren.push(
         new Paragraph({
@@ -889,7 +842,7 @@ export function StudentResumeView({
       // Combine skills into a single paragraph or use multiple for better formatting control
       const skillRuns = resumeData.professionalSummary.skills.map((skill: any, index: number) => {
         return new TextRun({
-          text: `${skill}${index < resumeData.professionalSummary.skills.length - 1 ? ', ' : ''}`, // Join with comma and space
+          text: `${skill}${index < resumeData.professionalSummary?.skills?.length - 1 ? ', ' : ''}`, // Join with comma and space
           size: 24,
           font: 'Arial',
         });
@@ -993,7 +946,7 @@ export function StudentResumeView({
 
     // --- Languages ---
     if (
-      Array.isArray(resumeData.professionalSummary.languages) &&
+      Array.isArray(resumeData.professionalSummary?.languages) &&
       resumeData.professionalSummary.languages.length > 0
     ) {
       documentChildren.push(
@@ -1136,194 +1089,186 @@ export function StudentResumeView({
     console.log('resumeData', resumeData);
     try {
       return (
-        <Paper elevation={3} sx={{ m: 2, p: 2, borderRadius: 3 }}>
-          {/* <Typography variant="h4" sx={{ color: theme.palette.text.primary }}>
-            Resume Preview
-          </Typography> */}
-          <Box>
-            {/* Full Name - Centered at the top */}
+        <Card
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            mx: 'auto',
+            my: 2,
+            borderRadius: 3,
+            p: { xs: 2, sm: 3 },
+          }}
+        >
+          <Paper
+            elevation={3}
+            sx={{
+              width: '100%',
+              p: { xs: 2, sm: 4 },
+              backgroundColor: theme.palette.background.default,
+            }}
+          >
+            {/* Full Name */}
             <Typography
               variant="h4"
               gutterBottom
-              sx={{
-                color: theme.palette.text.primary,
-                display: 'flex',
-                justifyContent: 'center',
-                mb: 1, // Reduced margin-bottom as contact details are directly below
-              }}
+              align="center"
+              sx={{ color: theme.palette.text.primary }}
             >
               {resumeData.firstName} {resumeData.lastName}
             </Typography>
-            {/* Contact Information - Centered below name */}
+
+            {/* Contact Info */}
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center', // Changed to center
-                gap: 4, // Added gap for spacing between contact details
-                mx: 3,
-                my: 1,
-                flexWrap: 'wrap', // Allows items to wrap on smaller screens
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: 2,
+                mb: 2,
               }}
             >
-              {/* Removed redundant nested Typography */}
-              <Typography variant="body1" sx={{ fontSize: '15px' }}>
-                {resumeData.phoneNumber}
-              </Typography>
-              <Typography variant="body1" sx={{ fontSize: '15px' }}>
-                {resumeData.email}
-              </Typography>
-              <Typography variant="body1" sx={{ fontSize: '15px' }}>
-                {resumeData.address}
-              </Typography>
+              <Typography variant="body2">{resumeData.phoneNumber}</Typography>
+              <Typography variant="body2">{resumeData.email}</Typography>
+              <Typography variant="body2">{resumeData.address}</Typography>
             </Box>
-            <Divider sx={{ my: 2 }} /> {/* Increased margin for better separation */}
-            {/* briefSummary */}
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* Professional Summary */}
             {resumeData?.professionalSummary?.briefSummary && (
-              <Box sx={{ m: 1 }}>
+              <Box sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   Professional Summary
                 </Typography>
-                <Typography variant="body1" paragraph sx={{ fontSize: '15px' }}>
+                <Typography variant="body2">
                   {resumeData.professionalSummary.briefSummary}
                 </Typography>
               </Box>
             )}
-            <Divider sx={{ my: 2 }} />
+
             {/* Experiences */}
-            {Array.isArray(resumeData?.experiences) && resumeData.experiences.length > 0 && (
-              <Box sx={{ m: 1 }}>
+            {Array.isArray(resumeData?.workHistory) && resumeData.workHistory.length > 0 && (
+              <Box sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   Experiences
                 </Typography>
-                {resumeData.experiences.map((exp: any, i: number) => (
-                  <Box key={i} sx={{ mt: 2 }}>
+                {resumeData.workHistory.map((exp: any, i: number) => (
+                  <Box key={i} sx={{ mb: 2 }}>
                     <Typography variant="subtitle1" fontWeight="bold">
                       {exp.jobTitle} at {exp.companyName}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                       {formatDateToDDMMYYYY(toDate(exp.startDate))} –{' '}
-                      {exp.isPresentlyWorking === true
+                      {exp.isPresentlyWorking
                         ? 'Present'
                         : formatDateToDDMMYYYY(toDate(exp.endDate))}{' '}
                       | {exp.companyAddress}
                     </Typography>
-
-                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                      Responsibilities:
-                      <br />
+                    <Box component="ul" sx={{ pl: 3 }}>
                       {exp.jobResponsibilities.map((item: string, index: number) => (
-                        <li key={index}>{item}</li>
+                        <li key={index}>
+                          <Typography variant="body2">{item}</Typography>
+                        </li>
                       ))}
-                    </Typography>
+                    </Box>
                   </Box>
                 ))}
               </Box>
             )}
-            <Divider sx={{ my: 2 }} />
+
             {/* Skills */}
             {Array.isArray(resumeData?.professionalSummary?.skills) &&
               resumeData.professionalSummary.skills.length > 0 && (
-                <Box sx={{ m: 1 }}>
+                <Box sx={{ mb: 2 }}>
                   <Typography variant="h6" sx={{ mb: 1 }}>
                     Skills
                   </Typography>
                   <Grid container spacing={2}>
-                    {resumeData.professionalSummary?.skills.map((skill: any, index: number) => (
+                    {resumeData.professionalSummary.skills.map((skill: any, index: number) => (
                       <Grid item xs={6} sm={4} md={3} key={index}>
-                        <Box sx={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <GridCheckCircleIcon
-                            sx={{ fontSize: 14, mr: 1, color: 'success.main' }}
+                            sx={{ fontSize: 16, color: 'success.main', mr: 1 }}
                           />
-                          {typeof skill === 'string' ? skill : skill?.value}
+                          <Typography variant="body2">
+                            {typeof skill === 'string' ? skill : skill?.value}
+                          </Typography>
                         </Box>
                       </Grid>
                     ))}
                   </Grid>
                 </Box>
               )}
-            <Divider sx={{ my: 2 }} />
+
             {/* Education */}
-            {resumeData && (
-              <Box sx={{ m: 1 }}>
+            {resumeData.highestQualification && (
+              <Box sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>
                   Highest Qualification
                 </Typography>
-                {resumeData.highestQualification && (
-                  <Box sx={{ mt: 1 }}>
-                    <Typography variant="body2">
-                      {/* **Highest Qualification:** */}
-                      Institution: {resumeData.highestQualification.institutionName}
-                      <br />
-                      Duration:{' '}
-                      {formatDateToDDMMYYYY(
-                        toDate(resumeData?.highestQualification?.startDate)
-                      )} – {formatDateToDDMMYYYY(toDate(resumeData.highestQualification.endDate))}
-                      <br />
-                      Grade: {resumeData.highestQualification.gradeResult}
-                      <br />
-                      Country: {resumeData.highestQualification.countryOfIssue}
-                    </Typography>
-                  </Box>
-                )}
+                <Typography variant="body2">
+                  Institution: {resumeData.highestQualification.institutionName}
+                  <br />
+                  Duration:{' '}
+                  {formatDateToDDMMYYYY(toDate(resumeData.highestQualification.startDate))} –{' '}
+                  {formatDateToDDMMYYYY(toDate(resumeData.highestQualification.endDate))}
+                  <br />
+                  Grade: {resumeData.highestQualification.gradeResult}
+                  <br />
+                  Country: {resumeData.highestQualification.countryOfIssue}
+                </Typography>
               </Box>
             )}
-            <Divider sx={{ my: 2 }} />
+
             {/* Languages */}
             {Array.isArray(resumeData?.professionalSummary?.languages) &&
               resumeData.professionalSummary.languages.length > 0 && (
-                <Box sx={{ m: 1 }}>
+                <Box sx={{ mb: 2 }}>
                   <Typography variant="h6" sx={{ mb: 1 }}>
                     Languages
                   </Typography>
                   <Grid container spacing={2}>
                     {resumeData.professionalSummary.languages.map((lang: any, index: number) => (
-                      <Grid item key={index}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                          <GridCheckCircleIcon sx={{ fontSize: 14, m: 1, color: 'success.main' }} />
-                          {typeof lang === 'string' ? lang : lang?.value}
+                      <Grid item xs={6} sm={4} key={index}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <GridCheckCircleIcon
+                            sx={{ fontSize: 16, color: 'success.main', mr: 1 }}
+                          />
+                          <Typography variant="body2">
+                            {typeof lang === 'string' ? lang : lang?.value}
+                          </Typography>
                         </Box>
                       </Grid>
                     ))}
                   </Grid>
                 </Box>
               )}
-            <Divider sx={{ my: 2 }} />
-            {/* Personal Details - Updated for better appearance */}
-            {resumeData && (
-              <Box sx={{ m: 1 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  Personal Details
+
+            {/* Personal Details */}
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Personal Details
+              </Typography>
+              {resumeData?.dateOfBirth && (
+                <Typography variant="body2" sx={{ mb: 0.5 }}>
+                  <strong>Date of Birth:</strong> {resumeData.dateOfBirth}
                 </Typography>
-                {resumeData?.dateOfBirth && (
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    <Typography component="span" fontWeight="bold">
-                      Date of Birth:
-                    </Typography>{' '}
-                    {resumeData.dateOfBirth}
-                  </Typography>
-                )}
-                {resumeData?.sex && (
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    <Typography component="span" fontWeight="bold">
-                      Sex:
-                    </Typography>{' '}
-                    {resumeData.sex}
-                  </Typography>
-                )}
-                {resumeData?.nationality && (
-                  <Typography variant="body2" sx={{ mb: 0.5 }}>
-                    <Typography component="span" fontWeight="bold">
-                      Nationality:
-                    </Typography>{' '}
-                    {resumeData.nationality}
-                  </Typography>
-                )}
-              </Box>
-            )}
-            <Divider sx={{ my: 2 }} />
-          </Box>{' '}
-        </Paper>
+              )}
+              {resumeData?.sex && (
+                <Typography variant="body2" sx={{ mb: 0.5 }}>
+                  <strong>Sex:</strong> {resumeData.sex}
+                </Typography>
+              )}
+              {resumeData?.nationality && (
+                <Typography variant="body2">
+                  <strong>Nationality:</strong> {resumeData.nationality}
+                </Typography>
+              )}
+            </Box>
+          </Paper>
+        </Card>
       );
     } catch (e) {
       return <Typography color="error">Invalid resume data</Typography>;
@@ -1331,30 +1276,17 @@ export function StudentResumeView({
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      <Card sx={{ p: 2 }}>
-        <Stack direction="column" spacing={2} maxWidth={'100%'}>
-          <Box>
-            <Typography variant="h4">Resume Builder</Typography>
-            <ResumeBuilderForm defaultValues={defaultValues} />
-
-            <Card
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignContent: 'center',
-                alignItems: 'center',
-                height: 'auto',
-                justifyContent: 'space-around',
-                padding: 2,
-                backgroundColor: theme.palette.grey[50],
-              }}
-            >
-              <Resume resumeData={student} />
-            </Card>
-          </Box>
-        </Stack>
-      </Card>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3,
+        // maxWidth: 1000,
+      }}
+    >
+      <Typography variant="h4">Resume Builder</Typography>
+      <ResumeBuilderForm defaultValues={defaultValues} />
+      <Resume resumeData={student} />
     </Box>
   );
 }
