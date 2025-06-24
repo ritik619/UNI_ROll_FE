@@ -21,7 +21,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
-import { formatDateToDDMMYYYY, toDMY } from 'src/utils/format-date';
+import { formatDateToMMDDYYYY, toDMY } from 'src/utils/format-date';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 import { fetchIntakes } from 'src/services/Intakes/fetchIntakes';
@@ -190,7 +190,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       leadNumber: data.leadNo?.trim(),
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
-      dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
+      dateOfBirth: formatDateToMMDDYYYY(new Date(data.dob)),
       email: data.email.trim(),
       phonePrefix: '+91',
       phoneNumber: data.phoneNumber.trim(),
@@ -202,8 +202,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       postCode: data.postCode?.trim(),
       insuranceNumber: data.insuranceNumber?.trim(),
       highestQualification: {
-        startDate: formatDateToDDMMYYYY(new Date(data?.highestQualification?.startDate)),
-        endDate: formatDateToDDMMYYYY(new Date(data?.highestQualification?.endDate)),
+        startDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.startDate)),
+        endDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.endDate)),
         gradeResult: data.highestQualification?.gradeResult,
         institutionName: data.highestQualification?.institutionName?.trim(),
         countryOfIssue: data.highestQualification?.countryOfIssue?.trim(),
@@ -235,7 +235,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       leadNumber: data.leadNo?.trim(),
       firstName: data.fName.trim(),
       lastName: data.lName.trim(),
-      dateOfBirth: formatDateToDDMMYYYY(new Date(data.dob)),
+      dateOfBirth: formatDateToMMDDYYYY(new Date(data.dob)),
       email: data.email.trim().toLowerCase(),
       phonePrefix: '+91',
       phoneNumber: data.phoneNumber.trim(),
@@ -247,8 +247,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       postCode: data.postCode?.trim(),
       insuranceNumber: data.insuranceNumber?.trim(),
       highestQualification: {
-        startDate: formatDateToDDMMYYYY(new Date(data?.highestQualification?.startDate)),
-        endDate: formatDateToDDMMYYYY(new Date(data?.highestQualification?.endDate)),
+        startDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.startDate)),
+        endDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.endDate)),
         gradeResult: data.highestQualification?.gradeResult?.trim(),
         institutionName: data.highestQualification?.institutionName?.trim(),
         countryOfIssue: data.highestQualification?.countryOfIssue?.trim(),

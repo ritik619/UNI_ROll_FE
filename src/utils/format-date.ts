@@ -6,6 +6,14 @@ export const formatDateToDDMMYYYY = (date: string | Date) => {
   return `${day}/${month}/${year}`;
 };
 
+export const formatDateToMMDDYYYY = (date: string | Date) => {
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${month}/${day}/${year}`;
+};
+
 /**
  * Turn just about anything into a Date instance.
  *  • JS timestamps (ms or s) or numeric strings
@@ -57,4 +65,12 @@ export function toDate(input) {
 export function toDMY(dateLike) {
   const d = dateLike instanceof Date ? dateLike : toDate(dateLike);
   return d;
+}
+
+export function toTimestamp(input: string | Date) {
+  const d = input instanceof Date ? input : toDate(input);
+  return {
+    _seconds: Math.floor(d.getTime() / 1000),
+    _nanoseconds: (d.getTime() % 1000) * 1e6,
+  };
 }

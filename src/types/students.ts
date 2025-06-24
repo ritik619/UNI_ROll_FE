@@ -113,8 +113,8 @@ export interface IStudentsItem {
   finance?: IFinance;
   booking?: IBooking;
   consent?: IConsent;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   emergencyName?: string;
   emergencyNumber?: string;
   insuranceNumber?: string;
@@ -141,7 +141,6 @@ export interface ProfessionalSummaryDto {
   skills: string[];
   languages: string[];
 }
-
 
 export interface ICreateStudent {
   leadNumber?: string;
