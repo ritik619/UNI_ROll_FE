@@ -324,12 +324,12 @@ export function StudentResumeView({
 
     const onSubmit = handleSubmit(async (data: any) => {
       try {
-        // await handleSaveInformation(
-        //   data.briefSummary,
-        //   data.workHistory,
-        //   data.skills,
-        //   data.languages
-        // );
+        await handleSaveInformation(
+          data.briefSummary,
+          data.workHistory,
+          data.skills,
+          data.languages
+        );
         toast.success('Resume saved! Click "Generate Resume" to preview.');
       } catch (e) {
         console.error(e);
@@ -508,7 +508,7 @@ export function StudentResumeView({
               alignItems="center"
             >
               <Button
-                type="submit"
+                // type="submit"
                 variant="outlined"
                 disabled={isSubmitting}
                 color="secondary"
@@ -624,49 +624,7 @@ export function StudentResumeView({
     }
   };
 
-  // const handleUpdate = async () => {
-  //   try {
-  //       // const payload = {
-  //   //   workHistory: [
-  //   //     {
-  //   //       jobTitle: "Software Developer",
-  //   //       companyName: "Tech Corp Ltd",
-  //   //       companyAddress: "",
-  //   //       startDate: "07/05/2025",
-  //   //       endDate: "11/06/2025",
-  //   //       jobResponsibilities: [],
-  //   //       isPresentlyWorking: false,
-  //   //     },
-  //   //     {
-  //   //       jobTitle: "Senior Developer",
-  //   //       companyName: "Innovation Labs",
-  //   //       companyAddress: "456 Innovation Ave, Manchester, UK",
-  //   //       startDate: "01/01/2024",
-  //   //       jobResponsibilities: [
-  //   //         "Leading development team of 5 developers",
-  //   //         "Architecting scalable solutions",
-  //   //         "Mentoring junior developers",
-  //   //       ],
-  //   //       isPresentlyWorking: true,
-  //   //     },
-  //   //   ],
-  //   //   professionalSummary: {
-  //   //     briefSummary: "Experienced software developer with 5+ years in full-stack development.",
-  //   //     skills: ["JavaScript", "TypeScript", "React"],
-  //   //     languages: [],
-  //   //   },
-  //   // };
 
-  //     const response = await authAxiosInstance.patch<{ id: string }>(
-  //       endpoints.students.information(currentStudent?.id || ''),
-  //       payload
-  //     );
-
-  //     console.log('Updated Work History ID:', response.data.id);
-  //   } catch (error: any) {
-  //     console.error('Work History Update Failed:', error?.response?.data || error.message);
-  //   }
-  // };
 
   const handleDownloadDocx = async () => {
     const documentChildren = [];
