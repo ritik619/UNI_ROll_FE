@@ -49,17 +49,24 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
       } else {
         toast.error('Failed to update the status');
       }
-    } catch(e) {
-      toast.error('Failed to update status'+e?.message);
+    } catch (e) {
+      toast.error('Failed to update status' + e?.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Status
+    <Card
+      sx={{
+        width: '100%',
+        padding: '10px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <Typography variant="h6" gutterBottom sx={{ padding: '10px' }}>
+        Progress Status
       </Typography>
 
       <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} sx={{ p: 2, m: 2 }} gap={2}>
@@ -67,7 +74,7 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
           <Select
             value={currentStatus}
             onChange={(e) => setCurrentStatus(e.target.value as IStudentStatus)}
-            sx={{background:'white'}}
+            sx={{ background: theme.palette.background.paper }}
             // sx={{
             //   '.MuiOutlinedInput-notchedOutline': { borderColor: statusColorMain },
             //   '.MuiSelect-select': { color: statusColorMain, textAlign: 'center' },
@@ -75,7 +82,15 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
             // }}
           >
             {Object.keys(STATUS_COLORS).map((statusKey) => (
-              <MenuItem key={statusKey} value={statusKey} sx={{ justifyContent: 'center',color:STATUS_COLORS[statusKey],border:`2px ${STATUS_COLORS[statusKey]} solid`,background:'white'}}
+              <MenuItem
+                key={statusKey}
+                value={statusKey}
+                sx={{
+                  justifyContent: 'center',
+                  color: STATUS_COLORS[statusKey],
+                  border: `2px ${STATUS_COLORS[statusKey]} solid`,
+                  background: theme.palette.background.paper,
+                }}
                 color={STATUS_COLORS[currentStatus]}
               >
                 {statusKey}

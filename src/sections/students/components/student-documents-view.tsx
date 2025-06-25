@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -188,7 +188,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
     }
   };
 
-  const renderDocumentItem = (title: string, url?: string) => {
+  const renderDocumentItem = (title: string, key: string, url?: string) => {
     if (!url) {
       return (
         <Card sx={{ p: 2, bgcolor: 'background.neutral' }}>
@@ -201,15 +201,20 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               <input
                 type="file"
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp"
-                onChange={(e) => handleFileSelect(e, title.toLowerCase())}
+                onChange={(e) => handleFileSelect(e, key)}
                 style={{ display: 'none' }}
                 disabled={isUploading}
               />
               <Button
                 variant="outlined"
+                color="primary"
                 component="span"
                 startIcon={
-                  isUploading ? <CircularProgress size={20} /> : <Iconify icon="mdi:upload" />
+                  isUploading ? (
+                    <CircularProgress size={20} color="warning" />
+                  ) : (
+                    <Iconify icon="mdi:upload" />
+                  )
                 }
                 disabled={isUploading}
               >
@@ -234,21 +239,21 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               href={url}
               target="_blank"
               rel="noopener"
-              variant="outlined"
-              startIcon={<Iconify icon="mdi:download" />}
+              aria-label="Download"
+              color="success"
             >
-              Download
+              <Iconify icon="mdi:download" />
             </Button>
+
             <Button
-              variant="outlined"
               color="error"
-              startIcon={<Iconify icon="mdi:delete" />}
               onClick={() => {
                 setSelectedDocument(url);
                 confirmDialog.onTrue();
               }}
+              aria-label="Delete"
             >
-              Delete
+              <Iconify icon="mdi:delete" />
             </Button>
           </Stack>
         </Stack>
@@ -265,6 +270,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
             <Stack direction="row" spacing={2}>
               <Button
                 variant="outlined"
+                color="success"
                 startIcon={<Iconify icon="mdi:download" />}
                 onClick={handleDownloadAll}
                 disabled={!student.documents || Object.keys(student.documents).length === 0}
@@ -274,6 +280,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               <Button
                 variant="outlined"
                 color="error"
+                aria-label="Delete All"
                 startIcon={<Iconify icon="mdi:delete" />}
                 onClick={() => {
                   setSelectedDocument('all');
@@ -285,61 +292,19 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               </Button>
             </Stack>
           </Stack>
-
           <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Passport
-                </Typography>
-                {renderDocumentItem('Passport', student.documents?.passport)}
-              </Box>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Share Code
-                </Typography>
-                {renderDocumentItem('Share Code', student.documents?.shareCode)}
-              </Box>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Proof of Address
-                </Typography>
-                {renderDocumentItem('Proof of Address', student.documents?.proofOfAddress)}
-              </Box>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Diploma
-                </Typography>
-                {renderDocumentItem('Diploma', student.documents?.diploma)}
-              </Box>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  Personal Statement
-                </Typography>
-                {renderDocumentItem('Personal Statement', student.documents?.personalStatement)}
-              </Box>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  CV
-                </Typography>
-                {renderDocumentItem('CV', student.documents?.cv)}
-              </Box>
-            </Grid>
+            {[
+              ['Passport', 'passport', student.documents?.passport],
+              ['Share Code', 'shareCode', student.documents?.shareCode],
+              ['Proof of Address', 'proofOfAddress', student.documents?.proofOfAddress],
+              ['Diploma', 'diploma', student.documents?.diploma],
+              ['Personal Statement', 'personalStatement', student.documents?.personalStatement],
+              ['CV', 'cv', student.documents?.cv],
+            ].map(([label, key, url]) => (
+              <Grid item xs={12} md={4} key={key as string}>
+                {renderDocumentItem(label as string, key as string, url as string | undefined)}
+              </Grid>
+            ))}
           </Grid>
         </Card>
 
@@ -357,6 +322,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               />
               <Button
                 variant="outlined"
+                color="primary"
                 component="span"
                 startIcon={
                   isUploading ? <CircularProgress size={20} /> : <Iconify icon="mdi:upload" />
@@ -382,21 +348,21 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
                       href={doc}
                       target="_blank"
                       rel="noopener"
-                      variant="outlined"
-                      startIcon={<Iconify icon="mdi:download" />}
+                      aria-label="Download"
+                      color="success"
                     >
-                      Download
+                      <Iconify icon="mdi:download" />
                     </Button>
+
                     <Button
-                      variant="outlined"
                       color="error"
-                      startIcon={<Iconify icon="mdi:delete" />}
                       onClick={() => {
                         setSelectedDocument(doc);
                         confirmDialog.onTrue();
                       }}
+                      aria-label="Delete"
                     >
-                      Delete
+                      <Iconify icon="mdi:delete" />
                     </Button>
                   </Stack>
                 </Stack>
@@ -417,7 +383,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
         }
         action={
           <Button
-            variant="contained"
+            variant="outlined"
             color="error"
             onClick={selectedDocument === 'all' ? handleDeleteAll : handleDeleteDocument}
           >
