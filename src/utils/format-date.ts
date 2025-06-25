@@ -8,11 +8,19 @@ export const formatDateToDDMMYYYY = (date: string | Date) => {
 
 export const formatDateToMMDDYYYY = (date: string | Date) => {
   const d = new Date(date);
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const year = d.getFullYear();
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const year = d.getUTCFullYear();
   return `${month}/${day}/${year}`;
 };
+export function toUTCISOString(date: string | Date | undefined) {
+  if (!date) return undefined;
+  const d = toDate(date);
+  const yyyy = d.getUTCFullYear();
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
+}
 
 /**
  * Turn just about anything into a Date instance.
@@ -74,3 +82,9 @@ export function toTimestamp(input: string | Date) {
     _nanoseconds: (d.getTime() % 1000) * 1e6,
   };
 }
+
+// For sending to backend
+export const toApiDate = (date: string | Date) => formatDateToMMDDYYYY(toDate(date));
+
+// For showing in UI
+export const toUiDate = (date: string | Date) => formatDateToDDMMYYYY(toDate(date));

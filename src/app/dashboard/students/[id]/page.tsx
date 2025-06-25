@@ -26,7 +26,7 @@ import { IStudentsItem } from 'src/types/students';
 import { StudentDocumentsView } from 'src/sections/students/components/student-documents-view';
 import { StudentFinanceView } from 'src/sections/students/components/student-finance-view';
 import { StudentExamBookView } from 'src/sections/students/components/student-exam-booking-view';
-import { StudentConsentFormView } from 'src/sections/students/components/student-consent-form-view';
+// import { StudentConsentFormView } from 'src/sections/students/components/student-consent-form-view';
 import { StudentProgressView } from 'src/sections/students/components/student-progress-view';
 import { StudentResumeView } from 'src/sections/students/components/student-resume-view';
 
@@ -44,15 +44,17 @@ export default function StudentDetailsPage({ params }: Props) {
   const [student, setStudent] = useState<IStudentsItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState('resume');
-  const [university, setUniversity] = useState({})
+  const [university, setUniversity] = useState({});
 
   const fetchStudent = useCallback(async () => {
     setLoading(true);
     try {
       const response = await authAxiosInstance.get(`${endpoints.students.details(id)}`);
       if (response?.data?.universityId) {
-        const { data } = await authAxiosInstance.get(endpoints.universities.details(response.data.universityId))
-        setUniversity(data )
+        const { data } = await authAxiosInstance.get(
+          endpoints.universities.details(response.data.universityId)
+        );
+        setUniversity(data);
       }
       setStudent(response.data);
     } catch (error) {
@@ -173,33 +175,54 @@ export default function StudentDetailsPage({ params }: Props) {
             <Typography variant="h3">
               {student.firstName} {student.lastName}
             </Typography>
-            {/* uni&courses details */}
+            {/* University & Course Details */}
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
               spacing={{ xs: 1, sm: 3 }}
-              sx={{ color: 'text.secoundry', typography: 'body1' }}
+              sx={{ color: 'text.secondary', typography: 'body1' }}
             >
-              <InfoItem icon="eva:book-fill" label={student.universityName} />
-              <InfoItem icon="eva:book-open-fill" label={student.courseName} />
-              <InfoItem icon="eva:bookmark-fill" label={student.intakeName} />
-              <InfoItem icon="eva:globe-outline" label={`${university?.cityName} (${university?.countryName})`} />
+              {student.courseName && (
+                <InfoItem icon="eva:book-open-fill" label={student.courseName} />
+              )}
+              {student.universityName && (
+                <InfoItem icon="eva:book-fill" label={student.universityName} />
+              )}
+              {student.intakeName && (
+                <InfoItem icon="eva:bookmark-fill" label={student.intakeName} />
+              )}
+              {university.cityName && university?.countryName && (
+                <InfoItem
+                  icon="eva:globe-outline"
+                  label={[university?.cityName, university?.countryName].filter(Boolean).join(', ')}
+                />
+              )}
             </Stack>
-            {/* basic details */}
+            {/* Basic Details */}
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secondary', typography: 'body2' }}
             >
-              <InfoItem label={student.sex} />
-              <InfoItem icon="eva:calendar-fill" label={student.dateOfBirth} />
-              <InfoItem icon="eva:phone-fill" label={student.phoneNumber} />
-              <InfoItem icon="eva:email-fill" label={student.email} />
-              <InfoItem icon="healthicons:insurance-card" label={student.insuranceNumber} />
-              <InfoItem
-                icon="eva:pin-fill"
-                label={[student.address, student.postCode].filter(Boolean).join(', ')}
-              />
-              <InfoItem icon="eva:map-fill" label={student.nationality} />
+              {student.sex && <InfoItem label={student.sex} />}
+              {student.dateOfBirth && (
+                <InfoItem icon="eva:calendar-fill" label={student.dateOfBirth} />
+              )}
+              {student.phoneNumber && (
+                <InfoItem icon="eva:phone-fill" label={student.phoneNumber} />
+              )}
+              {student.email && <InfoItem icon="eva:email-fill" label={student.email} />}
+              {student.insuranceNumber && (
+                <InfoItem icon="healthicons:insurance-card" label={student.insuranceNumber} />
+              )}
+              {student.address && (
+                <InfoItem
+                  icon="eva:pin-fill"
+                  label={[student.address, student.postCode && student.postCode]
+                    .filter(Boolean)
+                    .join(', ')}
+                />
+              )}
+              {student.nationality && <InfoItem icon="eva:map-fill" label={student.nationality} />}
             </Stack>
           </Stack>
         </Stack>
@@ -221,7 +244,7 @@ export default function StudentDetailsPage({ params }: Props) {
           <Tab label="Finance" value="finance" />
           <Tab label="Booking" value="booking" />
           <Tab label="Progress" value="progress" />
-          <Tab label="Consent Form" value="consent" />
+          {/* <Tab label="Consent Form" value="consent" /> */}
           <Tab label="Resume" value="resume" />
         </Tabs>
 
@@ -256,9 +279,9 @@ export default function StudentDetailsPage({ params }: Props) {
             />
           )}
 
-          {currentTab === 'consent' && (
+          {/* {currentTab === 'consent' && (
             <StudentConsentFormView student={student} onRefresh={fetchStudent} />
-          )}
+          )} */}
           {currentTab === 'resume' && (
             <StudentResumeView student={student} onRefresh={fetchStudent} />
           )}
