@@ -88,7 +88,8 @@ export function StudentResumeView({
         ...i,
         jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
         startDate: dayjs(toDMY(i.startDate)),
-        ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
+        isPresentlyWorking: i?.isPresentlyWorking ? true : false,
+        ...(i?.isPresentlyWorking ? {} : i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
       }))
       : [
         {
@@ -126,6 +127,7 @@ export function StudentResumeView({
       control,
       name: `workHistory.${index}.isPresentlyWorking`,
     });
+    console.log({ isWorking })
     return (
       <Box
         sx={{
@@ -570,10 +572,11 @@ export function StudentResumeView({
       const formatted = formateData(watcher);
 
       console.log('Formatted:', formatted); // check here
-
+      const payload = { ...formatted, experiences: formatted.workHistory }
+      delete payload.workHistory;
       const { data } = await authAxiosInstance.post(
         endpoints.students.aiAssist(student?.id),
-        formatted
+        payload
       );
 
       toast.success('Updated Information with AI');
@@ -581,11 +584,12 @@ export function StudentResumeView({
         ...i,
         jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
         startDate: dayjs(toDMY(i.startDate)),
+        isPresentlyWorking: i?.isPresentlyWorking ? true : false,
         ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
       })))
-      setValue('briefSummary',data.professionalSummary?.briefSummary)
-      setValue('skills',data.professionalSummary?.skills?.map((i) => ({ value: i })))
-      setValue('languages',data.professionalSummary?.languages?.map((i) => ({ value: i })))
+      setValue('briefSummary', data.professionalSummary?.briefSummary)
+      setValue('skills', data.professionalSummary?.skills?.map((i) => ({ value: i })))
+      setValue('languages', data.professionalSummary?.languages?.map((i) => ({ value: i })))
     } catch (e) {
       console.error(e);
       toast.error((e instanceof Error && e.message) || 'Something went wrong');
@@ -602,7 +606,7 @@ export function StudentResumeView({
     console.log('hcansadmksm');
     try {
       const payload = {
-        workHistory: workHistory.map((i) => ({
+        experiences: workHistory.map((i) => ({
           ...i,
           jobResponsibilities: i.jobResponsibilities.map((j) => j.value),
         })),
@@ -612,10 +616,11 @@ export function StudentResumeView({
           languages: languages?.map((l) => l?.value),
         },
       };
-      // const response = await authAxiosInstance.patch(
-      //   endpoints.students.information(student?.id),
-      //   payload
-      // );
+      const response = await authAxiosInstance.patch(
+        endpoints.students.information(student?.id),
+        payload
+      );
+      setStudent(response.data)
     } catch (error) {
       console.error(error);
       toast.error('An error occurred while generating the resume.');

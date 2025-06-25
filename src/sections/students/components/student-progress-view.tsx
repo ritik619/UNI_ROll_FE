@@ -49,8 +49,8 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
       } else {
         toast.error('Failed to update the status');
       }
-    } catch {
-      toast.error('Failed to update status');
+    } catch(e) {
+      toast.error('Failed to update status'+e?.message);
     } finally {
       setLoading(false);
     }
