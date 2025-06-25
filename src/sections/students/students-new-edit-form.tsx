@@ -69,7 +69,7 @@ export const NewStudentsSchema = zod.object({
       countryOfIssue: zod.string().optional(),
     })
     .optional(),
-  status: zod.string(),
+  // status: zod.string(),
 });
 
 export type NewStudentsSchemaType = zod.infer<typeof NewStudentsSchema>;
@@ -113,7 +113,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       institutionName: currentStudent?.highestQualification?.institutionName || '',
       countryOfIssue: currentStudent?.highestQualification?.countryOfIssue || '',
     },
-    status: currentStudent?.status || '',
+    // status: currentStudent?.status || '',
   };
 
   const methods = useForm<NewStudentsSchemaType>({
@@ -216,7 +216,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
 
   const enrollStudent = async (
     studentId: string,
-    data: { universityId: string; courseId: string; intakeId: string; status: string }
+    data: { universityId: string; courseId: string; intakeId: string;
+      //  status: string
+       }
   ) => {
     await authAxiosInstance.patch(endpoints.students.enroll(studentId), data);
   };
@@ -275,7 +277,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
             universityId: data.universityId,
             courseId: data.courseId,
             intakeId: data.intakeId,
-            status: data.status,
+            // status: data.status,
           });
           toast.success('Student created and enrolled successfully!');
         } else {
@@ -511,13 +513,13 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                       </MenuItem>
                     ))}
                   </Field.Select>
-                  <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
+                  {/* <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
                     {studentStatusOptions.map((status) => (
                       <MenuItem key={status.value} value={status.value}>
                         {status.label}
                       </MenuItem>
                     ))}
-                  </Field.Select>
+                  </Field.Select> */}
                 </Box>
               )}
             </Box>
