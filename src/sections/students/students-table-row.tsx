@@ -528,7 +528,7 @@ export function StudentsTableRow({
           {row.status === 'Enrolled' ? 'Deactivate' : 'Activate'}
         </MenuItem> */}
 
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirmDialog.onTrue();
             menuActions.onClose();
@@ -537,7 +537,7 @@ export function StudentsTableRow({
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
       </MenuList>
     </CustomPopover>
   );
