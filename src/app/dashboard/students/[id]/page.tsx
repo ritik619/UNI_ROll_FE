@@ -101,7 +101,7 @@ export default function StudentDetailsPage({ params }: Props) {
     if (!label) return null;
 
     return (
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack direction="row" spacing={2} alignItems="center">
         {icon && <Iconify icon={icon} width={16} />}
         <span>{label}</span>
       </Stack>
@@ -224,23 +224,41 @@ export default function StudentDetailsPage({ params }: Props) {
                 />
               )}
               {student.nationality && <InfoItem icon="eva:map-fill" label={student.nationality} />}
+            </Stack>
+            {student.emergencyName && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  color: 'text.secondary',
+                  typography: 'body2',
+                  border: '1px solid',
+                  borderColor: '#FF5630',
+                  borderRadius: 1,
+                  px: 0.5,
+                  py: 0.25,
+                  maxWidth: 'min-content',
+                  columnGap: 2,
+                }}
+              >
+                <Label sx={{ background: '#FF5630' }}>Emergency</Label>
 
-            </Stack>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={{ xs: 1, sm: 3 }}
-              sx={{ color: 'text.secondary', typography: 'body2' }}
-            >
-              {student.emergencyName &&
-                <><Label>Emergency Name:</Label>
-                  <InfoItem label={student.
-                    emergencyName
-                  } /></>}
-              {student.emergencyNumber && (
-                <><Label>Emergency Number:</Label>
-                  <InfoItem icon="eva:calendar-fill" label={student.emergencyNumber} /></>
-              )}
-            </Stack>
+                {student.emergencyName && (
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Iconify icon="eva:person-fill" color="#FF5630" width={16} />
+                    <span>{student.emergencyName}</span>
+                  </Box>
+                )}
+
+                {student.emergencyNumber && (
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Iconify icon="eva:phone-fill" color="#FF5630" width={16} />
+                    <span>{student.emergencyNumber}</span>
+                  </Box>
+                )}
+              </Box>
+            )}
           </Stack>
         </Stack>
       </Card>
