@@ -30,6 +30,7 @@ import { StudentExamBookView } from 'src/sections/students/components/student-ex
 import { StudentProgressView } from 'src/sections/students/components/student-progress-view';
 import { StudentResumeView } from 'src/sections/students/components/student-resume-view';
 import { Label } from 'src/components/label';
+import { useTheme } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +47,7 @@ export default function StudentDetailsPage({ params }: Props) {
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState('resume');
   const [university, setUniversity] = useState({});
+  const theme = useTheme();
 
   const fetchStudent = useCallback(async () => {
     setLoading(true);
@@ -230,7 +232,7 @@ export default function StudentDetailsPage({ params }: Props) {
                 sx={{
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' }, // ⬅ Responsive direction
-                  alignItems: 'center',
+                  // alignItems: 'center',
                   color: 'text.secondary',
                   typography: 'body2',
                   border: '1px solid',
@@ -240,9 +242,29 @@ export default function StudentDetailsPage({ params }: Props) {
                   py: 0.25,
                   maxWidth: 'min-content',
                   columnGap: 2,
+                  alignItems: 'flex-start',
                 }}
               >
-                <Label sx={{ background: '#FF5630' }}>Emergency</Label>
+                <Label sx={{ background: '#FF5630' }}>
+                  {' '}
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Iconify
+                      icon="eva:heart-fill"
+                      color={theme.palette.background.default}
+                      width={18}
+                    />
+                    <span
+                      style={{
+                        color: theme.palette.background.paper,
+                        fontWeight: 'bold',
+                        fontSize: '16px',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Emergency
+                    </span>
+                  </Box>{' '}
+                </Label>
 
                 {student.emergencyName && (
                   <Box display="flex" alignItems="center" gap={1}>
@@ -325,3 +347,4 @@ export default function StudentDetailsPage({ params }: Props) {
     </DashboardContent>
   );
 }
+

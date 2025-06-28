@@ -331,7 +331,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
         if (isRefferal) {
           router.push(paths.dashboard.students.list);
         } else {
-          router.push(paths.dashboard.students.details(studentId));
+          router.push(paths.dashboard.students.details(currentStudent.id));
         }
       }
     } catch (error: any) {
