@@ -68,7 +68,7 @@ const STATUS_OPTIONS = [
   { value: 'Enrolled', label: 'Enrolled' },
   // { value: 'Withdrawn', label: 'Withdrawn' },
   // { value: 'Deferred', label: 'Deferred' },
-  { value: 'UnEnrolled', label: 'Un-Enrolled' },
+  // { value: 'UnEnrolled', label: 'Un-Enrolled' },
   // { value: 'Unaffiliated', label: 'Un-Affiliated' },
 ];
 

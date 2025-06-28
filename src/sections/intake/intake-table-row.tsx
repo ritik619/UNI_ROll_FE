@@ -158,7 +158,7 @@ export function IntakeTableRow({
           {row.status === 'active' ? 'Deactivate' : 'Activate'}
         </MenuItem>
 
-        {isAdmin && (
+        {/* {isAdmin && (
           <MenuItem
             onClick={() => {
               confirmDialog.onTrue();
@@ -169,7 +169,7 @@ export function IntakeTableRow({
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
-        )}
+        )} */}
       </MenuList>
     </CustomPopover>
   );
