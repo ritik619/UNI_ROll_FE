@@ -107,7 +107,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     coverPhoto: currentStudent?.coverPhoto,
     universityId: '',
     courseId: '',
-    notes:currentStudent?.notes||'',
+    notes: currentStudent?.notes || '',
     intakeId: '',
     insuranceNumber: '',
     highestQualification: {
@@ -407,7 +407,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   getValue="name"
                   id="nationality"
                 />
-              {isRefferal&&<Field.Text name="notes" label="Notes" multiline/>}
+                {isRefferal && <Field.Text name="notes" label="Notes" multiline />}
 
                 {!isRefferal &&
                   <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />}
@@ -432,7 +432,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                 <Field.Select name="highestQualification.gradeResult" label="Grade Result">
                   {gradeResultOptions.map((value) => (
                     <MenuItem key={value} value={value}>
-                      {value}
+                      {value == "F" ? "Fail" : value}
                     </MenuItem>
                   ))}
                 </Field.Select>

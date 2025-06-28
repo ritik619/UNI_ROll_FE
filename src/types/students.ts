@@ -28,15 +28,15 @@ export const gradeResultOptions = [
   'Pass',
   'Distinction',
   'Merit',
-  'A+',
-  'A',
-  'B+',
-  'B',
-  'C+',
-  'C',
-  'D',
+  // 'A+',
+  // 'A',
+  // 'B+',
+  // 'B',
+  // 'C+',
+  // 'C',
+  // 'D',
   'F',
-  'Other',
+  // 'Other',
 ] as const;
 
 export type GradeResult = (typeof gradeResultOptions)[number];
