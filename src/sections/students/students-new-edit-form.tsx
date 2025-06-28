@@ -407,7 +407,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   getValue="name"
                   id="nationality"
                 />
-              <Field.Text name="notes" label="Notes" multiline/>
+              {isRefferal&&<Field.Text name="notes" label="Notes" multiline/>}
 
                 {!isRefferal &&
                   <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />}
