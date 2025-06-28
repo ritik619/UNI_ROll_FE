@@ -30,6 +30,7 @@ export const StudentQuickEnrollSchema = zod.object({
   universityId: zod.string().min(1, { message: 'Please select a university' }),
   courseId: zod.string().min(1, { message: 'Please select a course' }),
   intakeId: zod.string().min(1, { message: 'Please select an intake' }),
+  status: zod.string().min(1, { message: 'Please select a status' }),
 });
 
 export type StudentQuickEnrollSchemaType = zod.infer<typeof StudentQuickEnrollSchema>;
@@ -48,6 +49,14 @@ type Props = {
   ) => void;
 };
 
+const STATUS_OPTIONS = [
+  // { value: 'All', label: 'All' },
+  { value: 'Enrolled', label: 'Enrolled' },
+  { value: 'Withdrawn', label: 'Withdrawn' },
+  { value: 'Deferred', label: 'Deferred' },
+  { value: 'UnEnrolled', label: 'Un-Enrolled' },
+  // { value: 'Unaffiliated', label: 'Un-Affiliated' },
+];
 export function StudentQuickEnrollForm({
   open,
   onClose,
@@ -60,6 +69,7 @@ export function StudentQuickEnrollForm({
     universityId: '',
     courseId: '',
     intakeId: '',
+    status: STATUS_OPTIONS[0].value,
   };
 
   const methods = useForm<StudentQuickEnrollSchemaType>({
@@ -151,6 +161,13 @@ export function StudentQuickEnrollForm({
                 </MenuItem>
               ))}
             </Field.Select>
+            <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 2' }}>
+              {STATUS_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Field.Select>
           </Box>
         </DialogContent>
 
@@ -166,3 +183,4 @@ export function StudentQuickEnrollForm({
     </Dialog>
   );
 }
+

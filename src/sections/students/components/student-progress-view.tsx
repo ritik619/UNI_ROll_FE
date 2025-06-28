@@ -65,12 +65,12 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
         flexDirection: 'column',
       }}
     >
-      <Typography variant="h6" gutterBottom sx={{ padding: '10px' }}>
+      <Typography variant="h5" gutterBottom sx={{ padding: '10px' }}>
         Progress Status
       </Typography>
 
       <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} sx={{ p: 2, m: 2 }} gap={2}>
-        <FormControl sx={{ width: '70%' }}>
+        {student?.universityId ? (<><FormControl sx={{ width: '70%' }}>
           <Select
             value={currentStatus}
             onChange={(e) => setCurrentStatus(e.target.value as IStudentStatus)}
@@ -107,7 +107,11 @@ export function StudentProgressView({ student, status, onRefresh }: Props) {
           sx={{ width: '30%' }}
         >
           {loading ? 'Updating...' : 'Update'}
-        </Button>
+        </Button></>) :
+          <Typography variant="h6" gutterBottom sx={{ padding: '10px' }}>
+            Student needs to be enrolled to access this section.
+          </Typography>
+        }
       </Box>
     </Card>
   );

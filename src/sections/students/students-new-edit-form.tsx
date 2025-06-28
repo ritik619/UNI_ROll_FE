@@ -93,7 +93,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     fName: currentStudent?.firstName || '',
     lName: currentStudent?.lastName || '',
     email: currentStudent?.email || '',
-    dob: toDMY(currentStudent?.dateOfBirth).toDateString(),
+    dob: currentStudent?.highestQualification?.startDate ? toDMY(currentStudent?.dateOfBirth).toDateString() : '',
     phoneNumber: currentStudent?.phoneNumber || '',
     emergencyNumber: currentStudent?.emergencyNumber || '',
     emergencyName: currentStudent?.emergencyName || '',
@@ -107,15 +107,15 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     intakeId: '',
     insuranceNumber: '',
     highestQualification: {
-      startDate: toDMY(currentStudent?.highestQualification?.startDate).toDateString(),
-      endDate: toDMY(currentStudent?.highestQualification?.endDate).toDateString(),
+      startDate: currentStudent?.highestQualification?.startDate ? toDMY(currentStudent?.highestQualification?.startDate).toDateString() : '',
+      endDate: currentStudent?.highestQualification?.endDate ? toDMY(currentStudent?.highestQualification?.endDate).toDateString() : '',
       gradeResult: currentStudent?.highestQualification?.gradeResult || '',
       institutionName: currentStudent?.highestQualification?.institutionName || '',
       countryOfIssue: currentStudent?.highestQualification?.countryOfIssue || '',
     },
     // status: currentStudent?.status || '',
   };
-
+  console.log(defaultValues)
   const methods = useForm<NewStudentsSchemaType>({
     mode: 'onSubmit',
     resolver: zodResolver(NewStudentsSchema),
@@ -185,6 +185,23 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     } else {
       data['coverPhoto'] = data.coverPhoto as string;
     }
+    const rawHQ = {
+      ...(isValidDate(data?.highestQualification?.startDate) && {
+        startDate: formatDateToMMDDYYYY(new Date(data.highestQualification.startDate)),
+      }),
+      ...(isValidDate(data?.highestQualification?.endDate) && {
+        endDate: formatDateToMMDDYYYY(new Date(data.highestQualification.endDate)),
+      }),
+      ...(data?.highestQualification?.gradeResult && {
+        gradeResult: data.highestQualification.gradeResult,
+      }),
+      ...(data?.highestQualification?.institutionName?.trim() && {
+        institutionName: data.highestQualification.institutionName.trim(),
+      }),
+      ...(data?.highestQualification?.countryOfIssue?.trim() && {
+        countryOfIssue: data.highestQualification.countryOfIssue.trim(),
+      }),
+    };
     const payload = {
       coverPhoto: data.coverPhoto,
       leadNumber: data.leadNo?.trim(),
@@ -201,24 +218,25 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       address: data.address?.trim(),
       postCode: data.postCode?.trim(),
       insuranceNumber: data.insuranceNumber?.trim(),
-      highestQualification: {
-        startDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.startDate)),
-        endDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.endDate)),
-        gradeResult: data.highestQualification?.gradeResult,
-        institutionName: data.highestQualification?.institutionName?.trim(),
-        countryOfIssue: data.highestQualification?.countryOfIssue?.trim(),
-      },
+      ...(Object.keys(rawHQ).length > 0 && {
+        highestQualification: rawHQ,
+      }),
     };
-
+    
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.students.list, payload);
     return response;
   };
+  function isValidDate(date: any): boolean {
+    return date instanceof Date && !isNaN(date.getTime());
+  }
+  
 
   const enrollStudent = async (
     studentId: string,
-    data: { universityId: string; courseId: string; intakeId: string;
+    data: {
+      universityId: string; courseId: string; intakeId: string;
       //  status: string
-       }
+    }
   ) => {
     await authAxiosInstance.patch(endpoints.students.enroll(studentId), data);
   };
@@ -232,6 +250,23 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     } else {
       data['coverPhoto'] = data.coverPhoto as string;
     }
+    const rawHQ = {
+      ...(isValidDate(data?.highestQualification?.startDate) &&  {
+        startDate: formatDateToMMDDYYYY(new Date(data.highestQualification.startDate)),
+      }),
+      ...(isValidDate(data?.highestQualification?.endDate) && {
+        endDate: formatDateToMMDDYYYY(new Date(data.highestQualification.endDate)),
+      }),
+      ...(data?.highestQualification?.gradeResult && {
+        gradeResult: data.highestQualification.gradeResult,
+      }),
+      ...(data?.highestQualification?.institutionName?.trim() && {
+        institutionName: data.highestQualification.institutionName.trim(),
+      }),
+      ...(data?.highestQualification?.countryOfIssue?.trim() && {
+        countryOfIssue: data.highestQualification.countryOfIssue.trim(),
+      }),
+    };
     const payload = {
       coverPhoto: data.coverPhoto,
       leadNumber: data.leadNo?.trim(),
@@ -248,13 +283,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       address: data.address?.trim(),
       postCode: data.postCode?.trim(),
       insuranceNumber: data.insuranceNumber?.trim(),
-      highestQualification: {
-        startDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.startDate)),
-        endDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.endDate)),
-        gradeResult: data.highestQualification?.gradeResult?.trim(),
-        institutionName: data.highestQualification?.institutionName?.trim(),
-        countryOfIssue: data.highestQualification?.countryOfIssue?.trim(),
-      },
+      ...(Object.keys(rawHQ).length > 0 && {
+        highestQualification: rawHQ,
+      }),
       // status: data.status,
     };
 

@@ -106,7 +106,7 @@ export function StudentsListView() {
   const filters = useSetState<IStudentsTableFilters>({
     name: '',
     role: [],
-    status: 'All',
+    status: 'Enrolled',
     countryCode: '',
     cityId: '',
     agentId: isAgent ? userId : '',

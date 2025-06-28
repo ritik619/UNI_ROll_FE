@@ -526,7 +526,7 @@ export function StudentResumeView({
                 color="info"
                 fullWidth
               >
-                Save Information
+                Save Information & Preview
               </Button>
               <Button variant="outlined" color="success" onClick={handleDownloadDocx} fullWidth>
                 Download Resume (DOCX)
@@ -571,25 +571,36 @@ export function StudentResumeView({
       const watcher = watch();
       const formatted = formateData(watcher);
 
+
       console.log('Formatted:', formatted); // check here
       const payload = { ...formatted, experiences: formatted.workHistory }
       delete payload.workHistory;
+      if (!payload?.highestQualification?.institutionName) {
+        delete payload?.highestQualification;
+      }
       const { data } = await authAxiosInstance.post(
         endpoints.students.aiAssist(student?.id),
         payload
       );
 
       toast.success('Updated Information with AI');
-      setValue('workHistory', data?.workHistory?.map((i) => ({
+      const languages = data.professionalSummary?.languages?.map((i) => ({ value: i }))
+      const workHistory = data?.workHistory?.map((i) => ({
         ...i,
         jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
         startDate: dayjs(toDMY(i.startDate)),
         isPresentlyWorking: i?.isPresentlyWorking ? true : false,
         ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
-      })))
-      setValue('briefSummary', data.professionalSummary?.briefSummary)
-      setValue('skills', data.professionalSummary?.skills?.map((i) => ({ value: i })))
-      setValue('languages', data.professionalSummary?.languages?.map((i) => ({ value: i })))
+      }))
+      setValue('workHistory', workHistory)
+      const proffessionalSummary = {
+        briefSummary: data.professionalSummary?.briefSummary,
+        skills: data.professionalSummary?.skills?.map((i) => ({ value: i }))
+        , languages
+      }
+      setValue('briefSummary', proffessionalSummary?.briefSummary)
+      setValue('skills', proffessionalSummary.skills)
+      setValue('languages',proffessionalSummary.languages)
     } catch (e) {
       console.error(e);
       toast.error((e instanceof Error && e.message) || 'Something went wrong');
@@ -602,7 +613,7 @@ export function StudentResumeView({
     skills: any[],
     languages: any[]
   ) => {
-    setLoading(true);
+    // setLoading(true);
     console.log('hcansadmksm');
     try {
       const payload = {
@@ -625,7 +636,7 @@ export function StudentResumeView({
       console.error(error);
       toast.error('An error occurred while generating the resume.');
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -1290,6 +1301,8 @@ export function StudentResumeView({
       }}
     >
       <Typography variant="h4">Resume Builder</Typography>
+      {student?.highestQualification?.institutionName ? null : <Typography variant="caption">You've not added any highest qualification.Please add them by editing student**</Typography>}
+
       <ResumeBuilderForm defaultValues={defaultValues} />
       <Resume resumeData={student} />
     </Box>
