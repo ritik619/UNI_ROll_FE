@@ -29,6 +29,7 @@ import { StudentExamBookView } from 'src/sections/students/components/student-ex
 // import { StudentConsentFormView } from 'src/sections/students/components/student-consent-form-view';
 import { StudentProgressView } from 'src/sections/students/components/student-progress-view';
 import { StudentResumeView } from 'src/sections/students/components/student-resume-view';
+import { Label } from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
@@ -223,6 +224,22 @@ export default function StudentDetailsPage({ params }: Props) {
                 />
               )}
               {student.nationality && <InfoItem icon="eva:map-fill" label={student.nationality} />}
+
+            </Stack>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 3 }}
+              sx={{ color: 'text.secondary', typography: 'body2' }}
+            >
+              {student.emergencyName &&
+                <><Label>Emergency Name:</Label>
+                  <InfoItem label={student.
+                    emergencyName
+                  } /></>}
+              {student.emergencyNumber && (
+                <><Label>Emergency Number:</Label>
+                  <InfoItem icon="eva:calendar-fill" label={student.emergencyNumber} /></>
+              )}
             </Stack>
           </Stack>
         </Stack>
