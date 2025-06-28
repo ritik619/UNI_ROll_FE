@@ -48,6 +48,7 @@ export interface IDocuments {
   diploma?: string;
   personalStatement?: string;
   cv?: string;
+  consentForm?:string;
   otherDocuments?: string[];
 }
 export type IStudentsTableFilters = {

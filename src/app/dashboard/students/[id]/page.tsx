@@ -45,7 +45,7 @@ export default function StudentDetailsPage({ params }: Props) {
   const router = useRouter();
   const [student, setStudent] = useState<IStudentsItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState('resume');
+  const [currentTab, setCurrentTab] = useState('documents');
   const [university, setUniversity] = useState({});
   const theme = useTheme();
 
