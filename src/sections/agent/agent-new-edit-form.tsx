@@ -49,6 +49,7 @@ export const NewAgentSchema = zod.object({
   status: zod.enum(['active', 'inactive']).optional(),
   showUniversities: zod.boolean(),
   showIntakes: zod.boolean(),
+  isReferral: zod.boolean(),
 });
 
 // ----------------------------------------------------------------------
@@ -77,6 +78,7 @@ export function AgentNewEditForm(
     password: '',
     showUniversities: false,
     showIntakes: false,
+    isReferral: false,
   };
 
   const methods = useForm<NewAgentSchemaType>({
@@ -108,6 +110,7 @@ export function AgentNewEditForm(
       status: 'active',
       showUniversities: data.showUniversities,
       showIntakes: data.showIntakes,
+      isReferral: data.isReferral,
     };
 
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.agents.list, payload);
@@ -146,6 +149,7 @@ export function AgentNewEditForm(
               <Field.Text name="email" label="Email Address" />
               <Field.Text name="address" label="Address" />
               <Field.Text name="postCode" label="Post Code" />
+              
 
               <Grid size={{ xs: 24 }} spacing={4}>
                 <Card
@@ -196,6 +200,7 @@ export function AgentNewEditForm(
                 sx={{ gridColumn: 'span 2' }}
               />
               <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
+              <Field.Checkbox name="isReferral" label="Is Refferal"/>
             </Box>
             {/* Access Control */}
             <Card

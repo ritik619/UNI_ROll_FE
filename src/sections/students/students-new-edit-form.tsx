@@ -35,6 +35,7 @@ import dayjs from 'dayjs';
 import { CitySelect, CountrySelect } from 'src/components/select';
 import { IUniversity } from 'src/types/university';
 import { fetchUniversities } from 'src/services/universities/fetchUniversities';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +61,7 @@ export const NewStudentsSchema = zod.object({
   courseId: zod.string().optional(),
   intakeId: zod.string().optional(),
   insuranceNumber: zod.string().optional(),
+  notes: zod.string().optional(),
   highestQualification: zod
     .object({
       startDate: zod.string().optional(),
@@ -87,7 +89,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
   const [intakes, setIntakes] = useState<IIntake[]>([]);
   const [countryCode, setCountryCode] = useState('');
   const [cityId, setCityId] = useState('');
-
+  const { user } = useAuthContext();
+  const isRefferal = user?.isReferral ? user?.isReferral : false;
   const defaultValues: NewStudentsSchemaType = {
     leadNo: currentStudent?.leadNumber || '',
     fName: currentStudent?.firstName || '',
@@ -104,6 +107,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     coverPhoto: currentStudent?.coverPhoto,
     universityId: '',
     courseId: '',
+    notes:currentStudent?.notes||'',
     intakeId: '',
     insuranceNumber: '',
     highestQualification: {
@@ -217,19 +221,20 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       sex: data.sex.trim(),
       address: data.address?.trim(),
       postCode: data.postCode?.trim(),
+      notes: data.notes?.trim(),
       insuranceNumber: data.insuranceNumber?.trim(),
       ...(Object.keys(rawHQ).length > 0 && {
         highestQualification: rawHQ,
       }),
     };
-    
+
     const response = await authAxiosInstance.post<{ id: string }>(endpoints.students.list, payload);
     return response;
   };
   function isValidDate(date: any): boolean {
     return date instanceof Date && !isNaN(date.getTime());
   }
-  
+
 
   const enrollStudent = async (
     studentId: string,
@@ -251,7 +256,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       data['coverPhoto'] = data.coverPhoto as string;
     }
     const rawHQ = {
-      ...(isValidDate(data?.highestQualification?.startDate) &&  {
+      ...(isValidDate(data?.highestQualification?.startDate) && {
         startDate: formatDateToMMDDYYYY(new Date(data.highestQualification.startDate)),
       }),
       ...(isValidDate(data?.highestQualification?.endDate) && {
@@ -276,6 +281,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       email: data.email.trim().toLowerCase(),
       phonePrefix: '+91',
       phoneNumber: data.phoneNumber.trim(),
+      notes: data?.notes.trim(),
       ...(data.emergencyNumber && { emergencyNumber: data.emergencyNumber.trim() }),
       ...(data.emergencyName && { emergencyName: data.emergencyName.trim() }),
       nationality: data.nationality.trim(),
@@ -314,11 +320,19 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
         } else {
           toast.success('Student created successfully!');
         }
-        router.push(paths.dashboard.students.details(studentId));
+        if (isRefferal) {
+          router.push(paths.dashboard.students.list);
+        } else {
+          router.push(paths.dashboard.students.details(studentId));
+        }
       } else {
         await updateStudent(data);
         toast.success('Update success!');
-        router.push(paths.dashboard.students.details(currentStudent.id));
+        if (isRefferal) {
+          router.push(paths.dashboard.students.list);
+        } else {
+          router.push(paths.dashboard.students.details(studentId));
+        }
       }
     } catch (error: any) {
       console.error(error);
@@ -372,7 +386,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                 <Field.Text name="fName" label="First Name" />
                 <Field.Text name="lName" label="Last Name" />
                 <Field.DatePicker name="dob" label="Date of Birth" maxDate={dayjs()} />
-                <Field.Text name="leadNo" label="Lead Number" />
+                {!isRefferal &&
+                  <Field.Text name="leadNo" label="Lead Number" />}
                 <Field.Text name="phoneNumber" label="Phone Number" id="phoneNumber" />
                 <Field.Text name="email" label="Email Address" />
                 <Field.Select name="sex" label="Sex">
@@ -392,11 +407,17 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   getValue="name"
                   id="nationality"
                 />
-                <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
-                <Field.Text name="postCode" label="Post Code" />
-                <Field.Text name="insuranceNumber" label="National Insurance Number" />
+              <Field.Text name="notes" label="Notes" multiline/>
+
+                {!isRefferal &&
+                  <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />}
+                {!isRefferal &&
+                  <Field.Text name="postCode" label="Post Code" />}
+                {!isRefferal &&
+
+                  <Field.Text name="insuranceNumber" label="National Insurance Number" />}
               </Box>
-              <Box
+              {!isRefferal && <Box
                 sx={{
                   rowGap: 3,
                   columnGap: 2,
@@ -431,8 +452,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   getValue="name"
                   id="countryOfIssue"
                 />
-              </Box>
-              <Box
+              </Box>}
+              {!isRefferal && <Box
                 sx={{
                   rowGap: 3,
                   columnGap: 2,
@@ -453,9 +474,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   label="Emergency Number (Optional)"
                   id="emergencyNumber"
                 />
-              </Box>
+              </Box>}
               {/* Enrollment Fields */}
-              {!currentStudent && (
+              {!currentStudent && !isRefferal && (
                 <Box
                   sx={{
                     rowGap: 3,
