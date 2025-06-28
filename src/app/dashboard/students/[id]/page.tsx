@@ -229,7 +229,7 @@ export default function StudentDetailsPage({ params }: Props) {
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: 'row',
+                  flexDirection: { xs: 'column', sm: 'row' }, // ⬅ Responsive direction
                   alignItems: 'center',
                   color: 'text.secondary',
                   typography: 'body2',
