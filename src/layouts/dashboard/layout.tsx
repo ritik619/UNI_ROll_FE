@@ -62,9 +62,10 @@ function filterNavByUser(
     roles?: string[];
     items: NavItemDataProps[];
   }[],
-  user: { role?: string; showUniversities?: boolean; showIntakes?: boolean }
+  user: { role?: string; showUniversities?: boolean; showIntakes?: boolean; isReferral?: boolean }
 ) {
   const isAdmin = user?.role === 'admin';
+  const isReferral = user?.isReferral || false;
 
   return navData
     .filter((section) => {
@@ -84,6 +85,7 @@ function filterNavByUser(
           if (item.roles.includes('agent')) return true;
           if (item.roles.includes('showUniversities') && user?.showUniversities) return true;
           if (item.roles.includes('showIntakes') && user?.showIntakes) return true;
+          if (item.roles.includes('showEarningsOverview') && !isReferral) return true;
           return false;
         })
         .map((item) => {
@@ -94,6 +96,7 @@ function filterNavByUser(
             if (child.roles.includes('agent')) return true;
             if (child.roles.includes('showUniversities') && user?.showUniversities) return true;
             if (child.roles.includes('showIntakes') && user?.showIntakes) return true;
+            if (child.roles.includes('showEarningsOverview') && !isReferral) return true;
             return false;
           });
           item.roles = user?.role === 'admin' ? ['admin'] : ['agent'];
@@ -105,7 +108,7 @@ function filterNavByUser(
 
       return {
         ...section,
-        roles: user?.role === 'admin' ? ['admin'] : ['agent', 'showUniversities', 'showIntakes'],
+        roles: user?.role === 'admin' ? ['admin'] : ['agent', 'showUniversities', 'showIntakes', 'showEarningsOverview'],
         items: filteredItems,
       };
     })
@@ -129,7 +132,7 @@ export function DashboardLayout({
 
   const navData = filterNavByUser(
     slotProps?.nav?.data ?? dashboardNavData,
-    user as { role: 'admin' | 'agent'; showUniversities?: boolean; showIntakes?: boolean }
+    user as { role: 'admin' | 'agent'; showUniversities?: boolean; showIntakes?: boolean; showEarningsOverview?: boolean; isReferral?: boolean }
   );
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';

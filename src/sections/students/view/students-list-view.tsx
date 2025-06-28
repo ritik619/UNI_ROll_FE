@@ -72,18 +72,6 @@ const STATUS_OPTIONS = [
   // { value: 'Unaffiliated', label: 'Un-Affiliated' },
 ];
 
-const TABLE_HEAD: TableHeadCellProps[] = [
-  { id: 'name', label: 'Name' },
-  { id: 'leadNo', label: 'Lead No', width: 120 },
-  { id: 'country', label: 'Country', width: 180 },
-  { id: 'phoneNumber', label: 'Phone Number' },
-  { id: 'University', label: 'University', width: 220 },
-  { id: 'Course', label: 'Course', width: 120 },
-  { id: 'status', label: 'Status', width: 120 },
-  { id: 'payment', label: 'Payment Status', width: 200 },
-  { id: '', width: 88 },
-];
-
 // ----------------------------------------------------------------------
 
 export function StudentsListView() {
@@ -98,15 +86,33 @@ export function StudentsListView() {
   const menuActions = usePopover();
 
   const { user } = useAuthContext();
+  const isRefferal = user?.isReferral ? user?.isReferral : false;
   const userRole = user?.role;
   const isAdmin = userRole == 'admin';
   const isAgent = userRole == 'agent';
   const userId = user?.id;
 
+
+  const TABLE_HEAD: TableHeadCellProps[] = [
+    { id: 'name', label: 'Name' },
+    { id: 'leadNo', label: 'Lead No', width: 120 },
+    { id: 'country', label: 'Country', width: 180 },
+    { id: 'phoneNumber', label: 'Phone Number' },
+    ...(isRefferal
+      ? [{ id: 'Notes', label: 'Notes', width: 220 },]
+      : [
+        { id: 'University', label: 'University', width: 220 },
+        { id: 'Course', label: 'Course', width: 120 },
+      ]),
+    { id: 'status', label: 'Status', width: 120 },
+    { id: 'payment', label: 'Payment Status', width: 200 },
+    { id: '', width: 88 },
+  ];
+
   const filters = useSetState<IStudentsTableFilters>({
     name: '',
     role: [],
-    status: 'Enrolled',
+    status: isRefferal ? 'All' : 'Enrolled',
     countryCode: '',
     cityId: '',
     agentId: isAgent ? userId : '',
@@ -450,18 +456,18 @@ export function StudentsListView() {
                     iconPosition="end"
                     value={tab.value}
                     label={tab.label}
-                    // icon={
-                    //   <Label
-                    //     variant={
-                    //       tab.value === 'All' || tab.value === currentFilters.status
-                    //         ? 'filled'
-                    //         : 'soft'
-                    //     }
-                    //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
-                    //   >
-                    //     {/* {statusCount} */}
-                    //   </Label>
-                    // }
+                  // icon={
+                  //   <Label
+                  //     variant={
+                  //       tab.value === 'All' || tab.value === currentFilters.status
+                  //         ? 'filled'
+                  //         : 'soft'
+                  //     }
+                  //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
+                  //   >
+                  //     {/* {statusCount} */}
+                  //   </Label>
+                  // }
                   />
                 );
               })}
@@ -551,7 +557,7 @@ export function StudentsListView() {
               />
             )}
           </Box>
-          <StudentsTableToolbar filters={filters} onResetPage={() => {}} />
+          <StudentsTableToolbar filters={filters} onResetPage={() => { }} />
 
           {canReset && (
             <StudentsTableFiltersResult
@@ -591,12 +597,12 @@ export function StudentsListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(
-                  //     checked,
-                  //     dataFiltered.map((row) => row.id)
-                  //   )
-                  // }
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(
+                //     checked,
+                //     dataFiltered.map((row) => row.id)
+                //   )
+                // }
                 />
 
                 <TableBody>
@@ -640,9 +646,9 @@ export function StudentsListView() {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={loading ? () => {} : table.onChangePage}
-            onChangeDense={loading ? () => {} : table.onChangeDense}
-            onRowsPerPageChange={loading ? () => {} : table.onChangeRowsPerPage}
+            onPageChange={loading ? () => { } : table.onChangePage}
+            onChangeDense={loading ? () => { } : table.onChangeDense}
+            onRowsPerPageChange={loading ? () => { } : table.onChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>

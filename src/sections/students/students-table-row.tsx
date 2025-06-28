@@ -101,6 +101,7 @@ export function StudentsTableRow({
 
   const { user } = useAuthContext();
   const userRole = user?.role;
+  const isRefferal = user?.isReferral ? user?.isReferral : false;
   const isAdmin = userRole == 'admin';
   const isAgent = userRole == 'agent';
 
@@ -171,7 +172,7 @@ export function StudentsTableRow({
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
             <Link
               component={RouterLink}
-              href={paths.dashboard.students.details(row.id)}
+              href={isRefferal ? "" : paths.dashboard.students.details(row.id)}
               color="inherit"
               sx={{ cursor: 'pointer' }}
             >
@@ -187,8 +188,10 @@ export function StudentsTableRow({
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.leadNumber}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.nationality}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.universityName}</TableCell>
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.courseName}</TableCell>
+      {isRefferal ? <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.notes}</TableCell> : <>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.universityName}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.courseName}</TableCell></>
+      }
 
       <TableCell>
         <Label
@@ -487,7 +490,7 @@ export function StudentsTableRow({
           </MenuItem>
         </Link>
 
-        {row.status !== 'Enrolled' ? (
+        {row.status !== 'Enrolled' && !isRefferal ? (
           <MenuItem
             href={paths.dashboard.students.details(row.id)}
             onClick={quickEnrollForm.onTrue}
@@ -495,7 +498,7 @@ export function StudentsTableRow({
             <Iconify icon="solar:check-circle-bold" />
             Enroll
           </MenuItem>
-        ) : (
+        ) : (!isRefferal &&
           <MenuItem
             onClick={() => {
               unenrollDialog.onTrue();
@@ -555,7 +558,7 @@ export function StudentsTableRow({
     />
   );
 
-  const handleDeletePayment = () => {};
+  const handleDeletePayment = () => { };
 
   const renderConfirmPaymentDeleteDialog = () => (
     <ConfirmDialog
