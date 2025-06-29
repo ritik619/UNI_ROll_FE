@@ -19,7 +19,7 @@ import { toast } from 'src/components/snackbar';
 import type { IStudentsItem } from 'src/types/students';
 import { uploadFileAndGetURL } from 'src/auth/context';
 import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
-import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -46,14 +46,17 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
   const confirmDialog = useBoolean();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-
   const handleDeleteDocument = async () => {
+    const updatedDocs = (student.documents.otherDocuments = student.documents.otherDocuments.filter(
+      (doc) => doc !== selectedDocument
+    ));
+
     if (!selectedDocument) return;
 
     try {
       delete student.documents[selectedDocument];
       await authAxiosInstance.patch(endpoints.students.details(student.id), {
-        documents: { ...student.documents },
+        documents: { ...student.documents, otherDocuments: updatedDocs },
       });
       onRefresh();
       confirmDialog.onFalse();
@@ -239,11 +242,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
             {title}
           </Typography>
           <Stack direction="row" spacing={1}>
-            <Button
-              onClick={() => setPreviewUrl(url)}
-              aria-label="Preview"
-              color="info"
-            >
+            <Button onClick={() => setPreviewUrl(url)} aria-label="Preview" color="info">
               <Iconify icon="mdi:eye" />
             </Button>
 
@@ -273,6 +272,77 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
       </Card>
     );
   };
+
+  interface PreviewDialogProps {
+    open: boolean;
+    onClose: () => void;
+    title?: string;
+    url: string;
+  }
+
+  function PreviewDialog({ open, onClose, title = 'Preview', url }: PreviewDialogProps) {
+    const fileType = getFileType(url);
+
+    const renderContent = () => {
+      if (fileType === 'image') {
+        return (
+          <Box display="flex" justifyContent="center">
+            <img
+              src={url}
+              alt="Preview"
+              style={{ maxWidth: '100%', maxHeight: '75vh', objectFit: 'contain' }}
+            />
+          </Box>
+        );
+      }
+
+      if (fileType === 'pdf' || fileType === 'doc') {
+        const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+        return (
+          <Box sx={{ width: '100%', height: '75vh' }}>
+            <iframe
+              src={viewerUrl}
+              width="100%"
+              height="100%"
+              style={{ border: 'none' }}
+              allowFullScreen
+            />
+          </Box>
+        );
+      }
+
+      return <Typography>Preview not available for this file type.</Typography>;
+    };
+
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+        <DialogTitle
+          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+        >
+          {title}
+          <IconButton onClick={onClose}>
+            <Iconify icon="mdi:close" />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>{renderContent()}</DialogContent>
+      </Dialog>
+    );
+  }
+
+  function getFileType(url: string): 'image' | 'pdf' | 'doc' | 'unknown' {
+    try {
+      const cleanUrl = new URL(url).pathname;
+      const ext = cleanUrl.split('.').pop()?.toLowerCase();
+      if (!ext) return 'unknown';
+      if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'image';
+      if (['pdf'].includes(ext)) return 'pdf';
+      if (['doc', 'docx', 'ppt', 'pptx'].includes(ext)) return 'doc';
+      return 'unknown';
+    } catch (error) {
+      console.error('Invalid URL:', url);
+      return 'unknown';
+    }
+  }
 
   return (
     <>
@@ -314,7 +384,6 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               ['Personal Statement', 'personalStatement', student.documents?.personalStatement],
               ['CV', 'cv', student.documents?.cv],
               ['Consent Form', 'consentForm', student.documents?.consentForm],
-
             ].map(([label, key, url]) => (
               <Grid item xs={12} md={4} key={key as string}>
                 {renderDocumentItem(label as string, key as string, url as string | undefined)}
@@ -324,7 +393,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
         </Card>
 
         <Card sx={{ p: 3 }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" >
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Typography variant="h6">Other Documents</Typography>
             <Box component="label">
               <input
@@ -351,18 +420,14 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
 
           <Stack spacing={2}>
             {student.documents?.otherDocuments?.map((doc, index) => (
-              <Card key={index} sx={{ p: 2 , m:2  }}>
+              <Card key={index} sx={{ p: 2, m: 2 }}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                   <Iconify icon="mdi:file-pdf-box" width={24} />
                   <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
                     Other Document {index + 1}
                   </Typography>
                   <Stack direction="row" spacing={1}>
-                    <Button
-                      onClick={() => setPreviewUrl(doc)}
-                      aria-label="Preview"
-                      color="info"
-                    >
+                    <Button onClick={() => setPreviewUrl(doc)} aria-label="Preview" color="info">
                       <Iconify icon="mdi:eye" />
                     </Button>
                     <Button
@@ -394,20 +459,11 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
         </Card>
       </Stack>
 
-      <Dialog open={Boolean(previewUrl)} onClose={() => setPreviewUrl(null)} maxWidth="md" fullWidth>
-        <DialogTitle>Preview</DialogTitle>
-        <DialogContent dividers sx={{ height: '80vh' }}>
-          <iframe
-            src={previewUrl || ''}
-            title="PDF Preview"
-            width="100%"
-            height="100%"
-            loading="lazy"
-            sandbox=""
-            style={{ border: 'none' }}
-          />
-        </DialogContent>
-      </Dialog>
+      <PreviewDialog
+        open={!!previewUrl}
+        onClose={() => setPreviewUrl(null)}
+        url={previewUrl || ''}
+      />
 
       <ConfirmDialog
         open={confirmDialog.value}

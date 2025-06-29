@@ -32,7 +32,7 @@ import { Form, Field } from 'src/components/hook-form';
 export const NewCourseSchema = zod
   .object({
     name: zod.string().min(1, { message: 'Course name is required!' }),
-    code: zod.string().optional(),
+    // code: zod.string().optional(),
     // universityId: zod.string().min(1, { message: 'University is required!' }),
     description: zod.string().optional(),
     durationYears: zod.number().min(0).max(10).optional(),
@@ -105,7 +105,7 @@ export function CourseNewEditForm({
 
   const defaultValues: NewCourseSchemaType = {
     name: '',
-    code: '',
+    // code: '',
     // universityId: initialUniversityId || '',
     description: '',
     durationYears: 0,
@@ -140,7 +140,7 @@ export function CourseNewEditForm({
     values: currentCourse
       ? {
           name: currentCourse.name || '',
-          code: currentCourse?.code || '',
+          // code: currentCourse?.code || '',
           // universityId: currentCourse.universityId || '',
           description: currentCourse.description || '',
           durationYears: initialYears,
@@ -173,7 +173,7 @@ export function CourseNewEditForm({
     // Create a direct payload object instead of using formData
     const payload = {
       name: data.name.trim(),
-      code: data.code?.trim(),
+      // code: data.code?.trim(),
       // universityId: data.universityId.trim(),
       description: data.description?.trim(),
       // Only send durationMonths to backend
@@ -196,7 +196,7 @@ export function CourseNewEditForm({
 
     const payload = {
       name: data.name.trim(),
-      code: data.code?.trim(),
+      // code: data.code?.trim(),
       description: data.description?.trim(),
       // Only send durationMonths to backend
       durationMonths: totalMonths,
@@ -272,12 +272,21 @@ export function CourseNewEditForm({
                 helperText="Enter the full name of the course"
               />
 
-              <Field.Text
+              {/* <Field.Text
                 name="code"
                 label="Course Code"
                 placeholder="CS-BSC-01"
                 helperText="Enter a unique course code"
-              />
+              /> */}
+
+              <Field.Select
+                name="status"
+                label="Status"
+                helperText="Set the current status of this course"
+              >
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="inactive">Inactive</MenuItem>
+              </Field.Select>
 
               {/* {currentCourse ? (
                 <Field.Text
@@ -311,14 +320,6 @@ export function CourseNewEditForm({
               )} */}
 
               <Stack spacing={2}>
-                <Field.Select
-                  name="status"
-                  label="Status"
-                  helperText="Set the current status of this course"
-                >
-                  <MenuItem value="active">Active</MenuItem>
-                  <MenuItem value="inactive">Inactive</MenuItem>
-                </Field.Select>
                 <Typography variant="subtitle2">Course Duration</Typography>
                 <Box sx={{ display: 'flex', gap: 2 }}>
                   <Field.Select name="durationYears" label="Years" sx={{ flex: 1 }}>
@@ -341,7 +342,6 @@ export function CourseNewEditForm({
                   Course must have a duration of at least 1 month
                 </Typography>
               </Stack>
-
               {/* <Field.Text
                 type="number"
                 name="tuitionFee"
@@ -357,7 +357,6 @@ export function CourseNewEditForm({
                   },
                 }}
               /> */}
-
               {/* <Stack spacing={1.5} sx={{ gridColumn: 'span 2' }}>
                 <Typography variant="subtitle2">Course Start Dates</Typography>
 
@@ -444,7 +443,7 @@ export function CourseNewEditForm({
                 rows={4}
                 placeholder="Enter a detailed description of the course..."
                 helperText="Include important details like learning outcomes, modules, etc."
-                sx={{ gridColumn: 'span 2' }}
+                sx={{ gridColumn: { xs: 'span 1', sm: 'span 2' } }}
               />
             </Box>
 

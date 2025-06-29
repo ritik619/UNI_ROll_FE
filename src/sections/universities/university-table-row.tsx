@@ -427,9 +427,9 @@ export function UniversityTableRow({
                         >
                           {course.courseName}
                         </Link>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        {/* <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                           {course.courseCode}
-                        </Typography>
+                        </Typography> */}
                       </Box>
 
                       {/* Tuition Fee - 20% width */}
