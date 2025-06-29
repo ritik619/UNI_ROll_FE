@@ -432,7 +432,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                 <Field.Select name="highestQualification.gradeResult" label="Grade Result">
                   {gradeResultOptions.map((value) => (
                     <MenuItem key={value} value={value}>
-                      {value == "F" ? "Fail" : value}
+                      {value}
                     </MenuItem>
                   ))}
                 </Field.Select>

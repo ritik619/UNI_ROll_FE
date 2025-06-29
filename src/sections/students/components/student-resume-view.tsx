@@ -332,7 +332,7 @@ export function StudentResumeView({
           data.skills,
           data.languages
         );
-        toast.success('Resume saved! Click "Generate Resume" to preview.');
+        toast.success('CV saved! Click "Generate CV" to preview.');
       } catch (e) {
         console.error(e);
         toast.error((e as Error)?.message);
@@ -517,7 +517,7 @@ export function StudentResumeView({
                 onClick={() => generateResumeTextFromStudent(watch, setValue)}
                 fullWidth
               >
-                Update Resume via AI
+                Update CV via AI
               </Button>
               <Button
                 type="submit"
@@ -529,7 +529,7 @@ export function StudentResumeView({
                 Save Information & Preview
               </Button>
               <Button variant="outlined" color="success" onClick={handleDownloadDocx} fullWidth>
-                Download Resume (DOCX)
+                Download CV (DOCX)
               </Button>
             </Stack>
           )}
@@ -1106,16 +1106,16 @@ export function StudentResumeView({
     try {
       return (
         <Card
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            mx: 'auto',
-            my: 2,
-            borderRadius: 3,
-            p: { xs: 2, sm: 3 },
-          }}
+          // sx={{
+          //   display: 'flex',
+          //   flexDirection: 'column',
+          //   alignItems: 'center',
+          //   width: '100%',
+          //   mx: 'auto',
+          //   my: 2,s
+          //   borderRadius: 3,
+          //   p: { xs: 2, sm: 3 },
+          // }}
         >
           <Paper
             elevation={3}
@@ -1238,7 +1238,7 @@ export function StudentResumeView({
               </Box>
             )}
 
-            {/* Languages */}
+            {/* Languages
             {Array.isArray(resumeData?.professionalSummary?.languages) &&
               resumeData.professionalSummary.languages.length > 0 && (
                 <Box sx={{ mb: 2 }}>
@@ -1260,7 +1260,7 @@ export function StudentResumeView({
                     ))}
                   </Grid>
                 </Box>
-              )}
+              )} */}
 
             {/* Personal Details */}
             <Box sx={{ mb: 2 }}>
@@ -1300,9 +1300,8 @@ export function StudentResumeView({
         // maxWidth: 1000,
       }}
     >
-      <Typography variant="h4">Resume Builder</Typography>
+      <Typography variant="h4">CV Builder</Typography>
       {student?.highestQualification?.institutionName ? null : <Typography variant="caption">You've not added any highest qualification.Please add them by editing student**</Typography>}
-
       <ResumeBuilderForm defaultValues={defaultValues} />
       <Resume resumeData={student} />
     </Box>

@@ -302,7 +302,7 @@ export default function StudentDetailsPage({ params }: Props) {
           <Tab label="Booking" value="booking" />
           <Tab label="Progress" value="progress" />
           {/* <Tab label="Consent Form" value="consent" /> */}
-          <Tab label="Resume" value="resume" />
+          <Tab label="CV" value="resume" />
         </Tabs>
 
         {/* Tab Content */}

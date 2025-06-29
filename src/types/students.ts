@@ -21,13 +21,13 @@ export const studentStatusOptions = [
 export type IFinanceStatus = 'Applied' | 'Approved';
 // constants.ts
 export const gradeResultOptions = [
+  'Distinction',
+  'Merit',
   'First Class',
   'Second Class Upper',
   'Second Class Lower',
   'Third Class',
   'Pass',
-  'Distinction',
-  'Merit',
   // 'A+',
   // 'A',
   // 'B+',
@@ -35,7 +35,7 @@ export const gradeResultOptions = [
   // 'C+',
   // 'C',
   // 'D',
-  'F',
+  'FAIL',
   // 'Other',
 ] as const;
 
@@ -48,7 +48,7 @@ export interface IDocuments {
   diploma?: string;
   personalStatement?: string;
   cv?: string;
-  consentForm?:string;
+  consentForm?: string;
   otherDocuments?: string[];
 }
 export type IStudentsTableFilters = {

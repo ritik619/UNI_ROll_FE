@@ -19,6 +19,7 @@ import { toast } from 'src/components/snackbar';
 import type { IStudentsItem } from 'src/types/students';
 import { uploadFileAndGetURL } from 'src/auth/context';
 import { authAxiosInstance, endpoints } from 'src/lib/axios-unified';
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -43,13 +44,17 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const confirmDialog = useBoolean();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
 
   const handleDeleteDocument = async () => {
     if (!selectedDocument) return;
 
     try {
-      // TODO: Implement document deletion
-      // await deleteDocument(selectedDocument);
+      delete student.documents[selectedDocument];
+      await authAxiosInstance.patch(endpoints.students.details(student.id), {
+        documents: { ...student.documents },
+      });
       onRefresh();
       confirmDialog.onFalse();
       toast.success('Document deleted successfully');
@@ -235,6 +240,14 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
           </Typography>
           <Stack direction="row" spacing={1}>
             <Button
+              onClick={() => setPreviewUrl(url)}
+              aria-label="Preview"
+              color="info"
+            >
+              <Iconify icon="mdi:eye" />
+            </Button>
+
+            <Button
               component="a"
               href={url}
               target="_blank"
@@ -248,7 +261,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
             <Button
               color="error"
               onClick={() => {
-                setSelectedDocument(url);
+                setSelectedDocument(key);
                 confirmDialog.onTrue();
               }}
               aria-label="Delete"
@@ -299,8 +312,9 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               ['Proof of Address', 'proofOfAddress', student.documents?.proofOfAddress],
               ['Diploma', 'diploma', student.documents?.diploma],
               ['Personal Statement', 'personalStatement', student.documents?.personalStatement],
-              ['Consent Form', 'consentForm', student.documents?.consentForm],
               ['CV', 'cv', student.documents?.cv],
+              ['Consent Form', 'consentForm', student.documents?.consentForm],
+
             ].map(([label, key, url]) => (
               <Grid item xs={12} md={4} key={key as string}>
                 {renderDocumentItem(label as string, key as string, url as string | undefined)}
@@ -310,7 +324,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
         </Card>
 
         <Card sx={{ p: 3 }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" >
             <Typography variant="h6">Other Documents</Typography>
             <Box component="label">
               <input
@@ -337,13 +351,20 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
 
           <Stack spacing={2}>
             {student.documents?.otherDocuments?.map((doc, index) => (
-              <Card key={index} sx={{ p: 2 }}>
+              <Card key={index} sx={{ p: 2 , m:2  }}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                   <Iconify icon="mdi:file-pdf-box" width={24} />
                   <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
                     Other Document {index + 1}
                   </Typography>
                   <Stack direction="row" spacing={1}>
+                    <Button
+                      onClick={() => setPreviewUrl(doc)}
+                      aria-label="Preview"
+                      color="info"
+                    >
+                      <Iconify icon="mdi:eye" />
+                    </Button>
                     <Button
                       component="a"
                       href={doc}
@@ -372,6 +393,21 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
           </Stack>
         </Card>
       </Stack>
+
+      <Dialog open={Boolean(previewUrl)} onClose={() => setPreviewUrl(null)} maxWidth="md" fullWidth>
+        <DialogTitle>Preview</DialogTitle>
+        <DialogContent dividers sx={{ height: '80vh' }}>
+          <iframe
+            src={previewUrl || ''}
+            title="PDF Preview"
+            width="100%"
+            height="100%"
+            loading="lazy"
+            sandbox=""
+            style={{ border: 'none' }}
+          />
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDialog
         open={confirmDialog.value}
