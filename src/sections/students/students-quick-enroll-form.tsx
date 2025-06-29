@@ -23,6 +23,7 @@ import { fetchAssociations } from 'src/services/associations/fetchAssociations';
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 import { Tooltip } from '@mui/material';
+import { IStudentsItem } from 'src/types/students';
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +42,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   studentId: string;
+  student: IStudentsItem;
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
   onEnroll?: (
@@ -61,15 +63,16 @@ export function StudentQuickEnrollForm({
   open,
   onClose,
   studentId,
+  student,
   associations = [],
   intakes = [],
   onEnroll,
 }: Props) {
   const defaultValues: StudentQuickEnrollSchemaType = {
-    universityId: '',
-    courseId: '',
-    intakeId: '',
-    status: STATUS_OPTIONS[0].value,
+    universityId: student?.universityId || '',
+    courseId: student?.courseId || '',
+    intakeId: student?.intakeId || '',
+    status: student?.status || STATUS_OPTIONS[0].value,
   };
 
   const methods = useForm<StudentQuickEnrollSchemaType>({

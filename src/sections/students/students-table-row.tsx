@@ -473,6 +473,7 @@ export function StudentsTableRow({
       associations={associations}
       intakes={intakes}
       onEnroll={onEnroll}
+      student={row}
     />
   );
   const renderMenuActions = () => (
@@ -495,7 +496,7 @@ export function StudentsTableRow({
           </MenuItem>
         </Link>
 
-        {row.status !== 'Enrolled' && !isRefferal ? (
+        {!isRefferal && (
           <MenuItem
             href={paths.dashboard.students.details(row.id)}
             onClick={quickEnrollForm.onTrue}
@@ -503,19 +504,6 @@ export function StudentsTableRow({
             <Iconify icon="solar:check-circle-bold" />
             Enroll
           </MenuItem>
-        ) : (
-          !isRefferal && (
-            <MenuItem
-              onClick={() => {
-                unenrollDialog.onTrue();
-                menuActions.onClose();
-              }}
-              sx={{ color: 'error.main' }}
-            >
-              <Iconify icon="solar:close-circle-bold" />
-              Unenroll
-            </MenuItem>
-          )
         )}
 
         {/* <MenuItem
