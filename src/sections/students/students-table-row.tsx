@@ -50,6 +50,7 @@ import { useAuthContext } from 'src/auth/hooks';
 import { StudentsQuickEditForm } from './students-quick-edit-form';
 import { StudentQuickEnrollForm } from './students-quick-enroll-form';
 import { StudentQuickAddPaymentAssociationForm } from './student-quick-add-payment-association-form';
+import { createPaymentAssociation } from 'src/services/students/attachPayments';
 
 // ----------------------------------------------------------------------
 
@@ -172,7 +173,7 @@ export function StudentsTableRow({
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
             <Link
               component={RouterLink}
-              href={isRefferal ? "" : paths.dashboard.students.details(row.id)}
+              href={isRefferal ? '' : paths.dashboard.students.details(row.id)}
               color="inherit"
               sx={{ cursor: 'pointer' }}
             >
@@ -188,10 +189,14 @@ export function StudentsTableRow({
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.leadNumber}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.nationality}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
-      {isRefferal ? <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.notes}</TableCell> : <>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.universityName}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.courseName}</TableCell></>
-      }
+      {isRefferal ? (
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.notes}</TableCell>
+      ) : (
+        <>
+          <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.universityName}</TableCell>
+          <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.courseName}</TableCell>
+        </>
+      )}
 
       <TableCell>
         <Label
@@ -498,17 +503,19 @@ export function StudentsTableRow({
             <Iconify icon="solar:check-circle-bold" />
             Enroll
           </MenuItem>
-        ) : (!isRefferal &&
-          <MenuItem
-            onClick={() => {
-              unenrollDialog.onTrue();
-              menuActions.onClose();
-            }}
-            sx={{ color: 'error.main' }}
-          >
-            <Iconify icon="solar:close-circle-bold" />
-            Unenroll
-          </MenuItem>
+        ) : (
+          !isRefferal && (
+            <MenuItem
+              onClick={() => {
+                unenrollDialog.onTrue();
+                menuActions.onClose();
+              }}
+              sx={{ color: 'error.main' }}
+            >
+              <Iconify icon="solar:close-circle-bold" />
+              Unenroll
+            </MenuItem>
+          )
         )}
 
         {/* <MenuItem
@@ -558,7 +565,41 @@ export function StudentsTableRow({
     />
   );
 
-  const handleDeletePayment = () => { };
+  const handleDeletePayment = async () => {
+    if (!paymentToDelete || !earning?.id) {
+      toast.error('Missing payment or earning information');
+      return;
+    }
+
+    try {
+      const newPays = payments.filter((_, i) => i != paymentToDelete);
+      const { data } = await createPaymentAssociation({
+        studentId: row.id,
+        payments: newPays.map((i) => ({
+          amount: i.amount,
+          description: i.description,
+          status: i.status,
+          paymentDate: i.paymentDate,
+          paymentNumber: i.paymentNumber,
+        })),
+        universityId: row.universityId,
+        agentId: row.agentId,
+        intakeId: row.intakeId,
+        totalCommission: earning?.totalCommission,
+        commissionCurrency: earning?.commissionCurrency,
+      } as any);
+      setPayments(newPays);
+
+      toast.success('Payment deleted successfully');
+      setPaymentToDelete(null);
+      setEarning(data);
+      setPayments(data.payments);
+      paymentDeleteDialog.onFalse();
+    } catch (error) {
+      console.error('Error deleting payment:', error);
+      toast.error('Failed to delete payment');
+    }
+  };
 
   const renderConfirmPaymentDeleteDialog = () => (
     <ConfirmDialog
@@ -660,7 +701,7 @@ export function StudentsTableRow({
 
             <MenuItem
               onClick={() => {
-                setPaymentToDelete(payment.id);
+                setPaymentToDelete(index);
                 paymentDeleteDialog.onTrue();
                 handleMenuClose();
               }}
