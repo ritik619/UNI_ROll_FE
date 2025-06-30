@@ -232,7 +232,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     return response;
   };
   function isValidDate(date: any): boolean {
-    return date instanceof Date && !isNaN(date.getTime());
+    return new Date(date) instanceof Date &&!isNaN(new Date(date).getTime());
   }
 
 

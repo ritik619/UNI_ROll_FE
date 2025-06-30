@@ -104,8 +104,18 @@ export function StudentQuickEnrollForm({
   const { setValue } = methods;
 
   useEffect(() => {
-    setValue('courseId', '');
-  }, [watchUniversityId, setValue]);
+    const associatedCourses = associations.filter(
+      (i) => i.universityId === watchUniversityId
+    );
+  
+    const currentCourseId = methods.getValues('courseId');
+    const stillValid = associatedCourses.some((c) => c.courseId === currentCourseId);
+  
+    if (!stillValid) {
+      setValue('courseId', '');
+    }
+  }, [watchUniversityId, associations, methods, setValue]);
+  
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>

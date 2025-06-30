@@ -278,11 +278,7 @@ export function CoursesTableRow({
 
       <TableCell>
         <Box component="span" sx={{ width: '100%', color: 'text.disabled' }}>
-          {row.description
-            ? row.description.length > 50
-              ? `${row.description.substring(0, 50)}...`
-              : row.description
-            : 'No description'}
+        {row.description ?? 'No description'}
         </Box>
       </TableCell>
       <TableCell>

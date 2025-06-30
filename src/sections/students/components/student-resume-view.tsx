@@ -37,7 +37,6 @@ export function StudentResumeView({
 }) {
   const [resumeJSON, setResumeJSON] = useState<{
     briefSummary: string;
-    // personalStatement: string;
     skills: string[];
     workHistory: any[];
   }>();
@@ -60,7 +59,7 @@ export function StudentResumeView({
       )
       .optional(),
     briefSummary: zod.string().optional(),
-    // personalStatement: zod.string().optional(),
+    personalStatement: zod.string().optional(),
     skills: zod.array(zod.object({ value: zod.string().optional() })).optional(),
     languages: zod.array(zod.object({ value: zod.string().optional() })).optional(),
   });
@@ -105,7 +104,7 @@ export function StudentResumeView({
         },
       ],
     briefSummary: student?.professionalSummary?.briefSummary || '',
-    // personalStatement: student?.personalStatement || '',
+    personalStatement: student?.personalStatement || '',
     skills: student?.professionalSummary?.skills?.map((i) => ({ value: i })) || [],
     languages: student?.professionalSummary?.languages?.map((i) => ({ value: i })) || [],
   };
@@ -331,7 +330,7 @@ export function StudentResumeView({
       try {
         await handleSaveInformation(
           data.briefSummary,
-          // data.personalStatement,
+          data.personalStatement,
           data.workHistory,
           data.skills,
           data.languages,
@@ -344,140 +343,136 @@ export function StudentResumeView({
     });
     return (
       <Form methods={methods} onSubmit={handleSubmit(onSubmit)}>
+
+        {/* CV Resume Builder Form */}
         <Box sx={{ p: { xs: 2, sm: 3 } }}>
-          {/* Experiences Section */}
-          <Box
+          <Card
             sx={{
-              display: 'grid',
-              rowGap: 3,
-              columnGap: 2,
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
+              display: 'flex',
+              flexDirection: 'column',
+              // alignItems: 'center',
+              width: '100%',
+              mx: 'auto',
+              m: 1,
+              borderRadius: 2,
+              p: { xs: 2, sm: 3 },
             }}
           >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
-              Experiences
-            </Typography>
-            {experienceFields.map((item, index) => (
-              <ExperiencesItem
-                key={item.id}
-                control={control}
-                index={index}
-                remove={removeExperience}
-              />
-            ))}
-            <Button
-              variant="outlined"
-              onClick={() =>
-                appendExperience({
-                  jobTitle: '',
-                  companyName: '',
-                  companyAddress: '',
-                  startDate: '',
-                  endDate: '',
-                  jobResponsibilities: [],
-                  isPresentlyWorking: false,
-                })
-              }
+
+            {/* Summary */}
+            <Box
               sx={{
-                gridColumn: 'span 2',
-                width: { xs: '100%', sm: '150px' },
-                justifySelf: 'start',
+                m: 1,
+                display: 'grid',
+                rowGap: 3,
+                columnGap: 2,
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
               }}
             >
-              Add Experience
-            </Button>
-          </Box>
-
-          {/* Summary */}
-          <Box
-            sx={{
-              mt: 4,
-              display: 'grid',
-              rowGap: 3,
-              columnGap: 2,
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
-            }}
-          >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
-              Professional Summary
-            </Typography>
-            <Field.Text
-              name="briefSummary"
-              label="Brief Summary"
-              rows={4}
-              sx={{ gridColumn: 'span 2' }}
-            />
-          </Box>
-
-          {/* Personal Statement */}
-          {/* <Box
-            sx={{
-              mt: 4,
-              display: 'grid',
-              rowGap: 3,
-              columnGap: 2,
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
-            }}
-          >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
-              Personal Statement
-            </Typography>
-            <Field.Text
-              name="personalStatement"
-              label="Personal Statement"
-              rows={4}
-              sx={{ gridColumn: 'span 2' }}
-            />
-          </Box>  */}
-
-          {/* Skills */}
-          <Box
-            sx={{
-              mt: 4,
-              display: 'grid',
-              rowGap: 3,
-              columnGap: 2,
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
-            }}
-          >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
-              Skills
-            </Typography>
-            <Box sx={{ gridColumn: 'span 2' }}>
-              <TextField
-                fullWidth
-                label="Add Skill"
-                value={inputSkillValue}
-                onChange={(e) => setInputSkillValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddSkill();
-                  }
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton onClick={handleAddSkill}>
-                      <Iconify icon="mdi:plus" />
-                    </IconButton>
-                  ),
-                }}
+              <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
+                Professional Summary
+              </Typography>
+              <Field.Text
+                name="briefSummary"
+                label="Brief Summary"
+                rows={4}
+                sx={{ gridColumn: 'span 2' }}
               />
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2 }}>
-                {skillFields.map((item, index) => (
-                  <Chip
-                    key={item.id}
-                    label={item.value}
-                    onDelete={() => handleDeleteSkill(index)}
-                    color="primary"
-                  />
-                ))}
+            </Box>
+
+            {/* Experiences Section */}
+            <Box
+              sx={{
+                m: 1,
+
+                display: 'grid',
+                rowGap: 3,
+                columnGap: 2,
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
+              }}
+            >
+              <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
+                Experiences
+              </Typography>
+              {experienceFields.map((item, index) => (
+                <ExperiencesItem
+                  key={item.id}
+                  control={control}
+                  index={index}
+                  remove={removeExperience}
+                />
+              ))}
+              <Button
+                variant="outlined"
+                onClick={() =>
+                  appendExperience({
+                    jobTitle: '',
+                    companyName: '',
+                    companyAddress: '',
+                    startDate: '',
+                    endDate: '',
+                    jobResponsibilities: [],
+                    isPresentlyWorking: false,
+                  })
+                }
+                sx={{
+                  gridColumn: 'span 2',
+                  width: { xs: '100%', sm: '150px' },
+                  justifySelf: 'start',
+                }}
+              >
+                Add Experience
+              </Button>
+            </Box>
+
+            {/* Skills */}
+            <Box
+              sx={{
+                m: 1,
+                display: 'grid',
+                rowGap: 3,
+                columnGap: 2,
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
+              }}
+            >
+              <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
+                Skills
+              </Typography>
+              <Box sx={{ gridColumn: 'span 2' }}>
+                <TextField
+                  fullWidth
+                  label="Add Skill"
+                  value={inputSkillValue}
+                  onChange={(e) => setInputSkillValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddSkill();
+                    }
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton onClick={handleAddSkill}>
+                        <Iconify icon="mdi:plus" />
+                      </IconButton>
+                    ),
+                  }}
+                />
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2 }}>
+                  {skillFields.map((item, index) => (
+                    <Chip
+                      key={item.id}
+                      label={item.value}
+                      onDelete={() => handleDeleteSkill(index)}
+                      color="primary"
+                    />
+                  ))}
+                </Box>
               </Box>
             </Box>
-          </Box>
 
-          {/* Languages */}
-          <Box
+            {/* Languages */}
+            {/* <Box
             sx={{
               mt: 4,
               display: 'grid',
@@ -520,45 +515,102 @@ export function StudentResumeView({
                 ))}
               </Box>
             </Box>
-          </Box>
+          </Box> */}
+          </Card>
+
+        </Box>
+
+        {/* Personal Statement */}
+        <Box sx={{ p: { xs: 2, sm: 3 } }}>
+          <Card
+            sx={{
+              display: 'flex',
+              width: '100%',
+              mx: 'auto',
+              m: 1,
+              borderRadius: 2,
+              p: { xs: 2, sm: 3 },
+            }}
+          >
+            {/* Personal Statement */}
+            <Box
+              sx={{
+                m: 1,
+                width: '100%',
+                display: 'grid',
+                rowGap: 3,
+                columnGap: 2,
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
+              }}
+            >
+              <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
+                Personal Statement
+              </Typography>
+              <Field.Text
+                name="personalStatement"
+                label="Personal Statement"
+                multiline
+                sx={{
+                  gridColumn: 'span 2',
+                  whiteSpace: 'pre-wrap',
+                  fontSize: '0.95rem',
+                }}
+              />
+            </Box>
+          </Card>
         </Box>
 
         {/* Action Buttons */}
-        <Box sx={{ px: { xs: 2, sm: 3 }, mb: 4 }}>
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            <Stack
-              spacing={2}
-              direction={{ xs: 'column', sm: 'row' }}
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Button
-                // type="submit"
-                variant="outlined"
-                disabled={isSubmitting}
-                color="secondary"
-                onClick={() => generateResumeTextFromStudent(watch, setValue)}
-                fullWidth
+        <Box sx={{ p: { xs: 2, sm: 3 } }}>
+          <Card
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              // alignItems: 'center',
+              width: '100%',
+              // mx: 'auto',
+              m: 1,
+              borderRadius: 2,
+              p: { xs: 2, sm: 3 },
+            }}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              <Stack
+                spacing={2}
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="center"
+                alignItems="center"
               >
-                Update CV via AI
-              </Button>
-              <Button
-                type="submit"
-                variant="outlined"
-                disabled={isSubmitting}
-                color="info"
-                fullWidth
-              >
-                Save Information & Preview
-              </Button>
-              <Button variant="outlined" color="success" onClick={handleDownloadDocx} fullWidth>
-                Download CV (DOCX)
-              </Button>
-            </Stack>
-          )}
+                <Button
+                  // type="submit"
+                  variant="outlined"
+                  disabled={isSubmitting}
+                  color="secondary"
+                  onClick={() => generateResumeTextFromStudent(watch, setValue)}
+                  fullWidth
+                >
+                  Update CV via AI
+                </Button>
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  disabled={isSubmitting}
+                  color="info"
+                  fullWidth
+                >
+                  Save Information & Preview
+                </Button>
+                <Button variant="outlined" color="success" onClick={handleDownloadDocx} fullWidth>
+                  Download CV (DOCX)
+                </Button>
+              </Stack>
+            )}
+          </Card>
+
         </Box>
+           
       </Form>
     );
   }
@@ -595,29 +647,29 @@ export function StudentResumeView({
     try {
       const watcher = watch();
       const formatted = formateData(watcher);
-  
+
       const payload = {
         ...formatted,
         experiences: formatted.workHistory,
-        // personalStatement: formatted.personalStatement,
+        personalStatement: formatted.personalStatement,
       };
       delete payload.workHistory;
-  
+
       if (!payload?.highestQualification?.institutionName) {
         delete payload?.highestQualification;
       }
-  
+
       const { data } = await authAxiosInstance.post(
         endpoints.students.aiAssist(student?.id),
         payload
       );
-  
+
       toast.success('Updated Information with AI');
       const languages = data.professionalSummary?.languages?.map((i) => ({ value: i }));
       const workHistory = data?.workHistory?.map((i: any, idx: number) => {
         const original = formatted.workHistory?.[idx];
         const isPresentlyWorking = original?.isPresentlyWorking ?? false;
-  
+
         return {
           ...i,
           isPresentlyWorking,
@@ -632,7 +684,7 @@ export function StudentResumeView({
         languages,
       };
 
-      // setValue('personalStatement', data.personalStatement);
+      setValue('personalStatement', data.personalStatement);
       setValue('workHistory', workHistory);
       setValue('briefSummary', professionalSummary.briefSummary);
       setValue('skills', professionalSummary.skills);
@@ -645,7 +697,7 @@ export function StudentResumeView({
 
   const handleSaveInformation = async (
     briefSummary: string,
-    // personalStatement: string,
+    personalStatement: string,
     workHistory: any[],
     skills: any[],
     languages: any[]
@@ -954,6 +1006,81 @@ export function StudentResumeView({
       );
     }
 
+    // --- Personal Details ---
+    // if (resumeData) {
+    //   documentChildren.push(
+    //     new Paragraph({
+    //       children: [
+    //         new TextRun({
+    //           text: 'Personal Details',
+    //           bold: true,
+    //           size: 28,
+    //           font: 'Arial',
+    //         }),
+    //       ],
+    //       spacing: { before: 300, after: 150 },
+    //       indent: { left: 300 },
+    //     })
+    //   );
+    //   documentChildren.push(
+    //     new Paragraph({
+    //       border: {
+    //         bottom: {
+    //           color: 'auto',
+    //           space: 1,
+    //           style: 'single',
+    //           size: 6,
+    //         },
+    //       },
+    //       spacing: { after: 150 },
+    //     })
+    //   );
+    //   if (resumeData.dateOfBirth) {
+    //     documentChildren.push(
+    //       new Paragraph({
+    //         children: [
+    //           new TextRun({ text: 'Date of Birth:', bold: true, size: 24, font: 'Arial' }),
+    //           new TextRun({
+    //             text: ` ${resumeData.dateOfBirth}`,
+    //             size: 24,
+    //             font: 'Arial',
+    //           }),
+    //         ],
+    //         spacing: { after: 50 },
+    //         indent: { left: 300 },
+    //       })
+    //     );
+    //   }
+    //   if (resumeData.sex) {
+    //     documentChildren.push(
+    //       new Paragraph({
+    //         children: [
+    //           new TextRun({ text: 'Sex:', bold: true, size: 24, font: 'Arial' }),
+    //           new TextRun({ text: ` ${resumeData.sex}`, size: 24, font: 'Arial' }),
+    //         ],
+    //         spacing: { after: 50 },
+    //         indent: { left: 300 },
+    //       })
+    //     );
+    //   }
+    //   if (resumeData.nationality) {
+    //     documentChildren.push(
+    //       new Paragraph({
+    //         children: [
+    //           new TextRun({ text: 'Nationality:', bold: true, size: 24, font: 'Arial' }),
+    //           new TextRun({
+    //             text: ` ${resumeData.nationality}`,
+    //             size: 24,
+    //             font: 'Arial',
+    //           }),
+    //         ],
+    //         spacing: { after: 200 },
+    //         indent: { left: 300 },
+    //       })
+    //     );
+    //   }
+    // }
+
     // --- Education ---
     if (resumeData.highestQualification) {
       documentChildren.push(
@@ -1094,80 +1221,7 @@ export function StudentResumeView({
       documentChildren.push(new Paragraph({ spacing: { after: 200 } }));
     }
 
-    // --- Personal Details ---
-    if (resumeData) {
-      documentChildren.push(
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: 'Personal Details',
-              bold: true,
-              size: 28,
-              font: 'Arial',
-            }),
-          ],
-          spacing: { before: 300, after: 150 },
-          indent: { left: 300 },
-        })
-      );
-      documentChildren.push(
-        new Paragraph({
-          border: {
-            bottom: {
-              color: 'auto',
-              space: 1,
-              style: 'single',
-              size: 6,
-            },
-          },
-          spacing: { after: 150 },
-        })
-      );
-      if (resumeData.dateOfBirth) {
-        documentChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: 'Date of Birth:', bold: true, size: 24, font: 'Arial' }),
-              new TextRun({
-                text: ` ${resumeData.dateOfBirth}`,
-                size: 24,
-                font: 'Arial',
-              }),
-            ],
-            spacing: { after: 50 },
-            indent: { left: 300 },
-          })
-        );
-      }
-      if (resumeData.sex) {
-        documentChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: 'Sex:', bold: true, size: 24, font: 'Arial' }),
-              new TextRun({ text: ` ${resumeData.sex}`, size: 24, font: 'Arial' }),
-            ],
-            spacing: { after: 50 },
-            indent: { left: 300 },
-          })
-        );
-      }
-      if (resumeData.nationality) {
-        documentChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: 'Nationality:', bold: true, size: 24, font: 'Arial' }),
-              new TextRun({
-                text: ` ${resumeData.nationality}`,
-                size: 24,
-                font: 'Arial',
-              }),
-            ],
-            spacing: { after: 200 },
-            indent: { left: 300 },
-          })
-        );
-      }
-    }
+
 
     const doc = new Document({
       // Renamed from DocxDocument to Document based on common docx library usage
@@ -1351,7 +1405,7 @@ export function StudentResumeView({
               )} */}
 
             {/* Personal Details */}
-            <Box sx={{ mb: 2 }}>
+            {/* <Box sx={{ mb: 2 }}>
               <Typography variant="h6" sx={{ mb: 1 }}>
                 Personal Details
               </Typography>
@@ -1370,7 +1424,7 @@ export function StudentResumeView({
                   <strong>Nationality:</strong> {resumeData.nationality}
                 </Typography>
               )}
-            </Box>
+            </Box> */}
           </Paper>
         </Card>
       );
