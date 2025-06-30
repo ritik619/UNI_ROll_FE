@@ -240,7 +240,7 @@ export default function StudentDetailsPage({ params }: Props) {
                   borderRadius: 1,
                   px: 0.5,
                   py: 0.25,
-                  maxWidth: 'min-content',
+                  maxWidth: 'fit-content',
                   columnGap: 2,
                   alignItems: 'flex-start',
                 }}

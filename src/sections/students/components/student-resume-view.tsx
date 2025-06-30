@@ -37,6 +37,7 @@ export function StudentResumeView({
 }) {
   const [resumeJSON, setResumeJSON] = useState<{
     briefSummary: string;
+    // personalStatement: string;
     skills: string[];
     workHistory: any[];
   }>();
@@ -59,6 +60,7 @@ export function StudentResumeView({
       )
       .optional(),
     briefSummary: zod.string().optional(),
+    // personalStatement: zod.string().optional(),
     skills: zod.array(zod.object({ value: zod.string().optional() })).optional(),
     languages: zod.array(zod.object({ value: zod.string().optional() })).optional(),
   });
@@ -77,8 +79,8 @@ export function StudentResumeView({
     // universityName: student.universityName,
     // courseName: student.courseName,
     highestQualification: {
-      startDate: dayjs(toDMY(student?.highestQualification?.startDate)),
-      endDate: dayjs(toDMY(student?.highestQualification?.endDate)),
+      startDate: dayjs(toDMY(student?.highestQualification?.startDate)) || '',
+      endDate: dayjs(toDMY(student?.highestQualification?.endDate)) || '',
       gradeResult: student?.highestQualification?.gradeResult || '',
       institutionName: student?.highestQualification?.institutionName || '',
       countryOfIssue: student?.highestQualification?.countryOfIssue || '',
@@ -103,6 +105,7 @@ export function StudentResumeView({
         },
       ],
     briefSummary: student?.professionalSummary?.briefSummary || '',
+    // personalStatement: student?.personalStatement || '',
     skills: student?.professionalSummary?.skills?.map((i) => ({ value: i })) || [],
     languages: student?.professionalSummary?.languages?.map((i) => ({ value: i })) || [],
   };
@@ -328,9 +331,10 @@ export function StudentResumeView({
       try {
         await handleSaveInformation(
           data.briefSummary,
+          // data.personalStatement,
           data.workHistory,
           data.skills,
-          data.languages
+          data.languages,
         );
         toast.success('CV saved! Click "Generate CV" to preview.');
       } catch (e) {
@@ -404,6 +408,27 @@ export function StudentResumeView({
               sx={{ gridColumn: 'span 2' }}
             />
           </Box>
+
+          {/* Personal Statement */}
+          {/* <Box
+            sx={{
+              mt: 4,
+              display: 'grid',
+              rowGap: 3,
+              columnGap: 2,
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
+              Personal Statement
+            </Typography>
+            <Field.Text
+              name="personalStatement"
+              label="Personal Statement"
+              rows={4}
+              sx={{ gridColumn: 'span 2' }}
+            />
+          </Box>  */}
 
           {/* Skills */}
           <Box
@@ -570,37 +595,48 @@ export function StudentResumeView({
     try {
       const watcher = watch();
       const formatted = formateData(watcher);
-
-
-      console.log('Formatted:', formatted); // check here
-      const payload = { ...formatted, experiences: formatted.workHistory }
+  
+      const payload = {
+        ...formatted,
+        experiences: formatted.workHistory,
+        // personalStatement: formatted.personalStatement,
+      };
       delete payload.workHistory;
+  
       if (!payload?.highestQualification?.institutionName) {
         delete payload?.highestQualification;
       }
+  
       const { data } = await authAxiosInstance.post(
         endpoints.students.aiAssist(student?.id),
         payload
       );
-
+  
       toast.success('Updated Information with AI');
-      const languages = data.professionalSummary?.languages?.map((i) => ({ value: i }))
-      const workHistory = data?.workHistory?.map((i) => ({
-        ...i,
-        jobResponsibilities: i.jobResponsibilities.map((j) => ({ value: j })),
-        startDate: dayjs(toDMY(i.startDate)),
-        isPresentlyWorking: i?.isPresentlyWorking ? true : false,
-        ...(i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
-      }))
-      setValue('workHistory', workHistory)
-      const proffessionalSummary = {
+      const languages = data.professionalSummary?.languages?.map((i) => ({ value: i }));
+      const workHistory = data?.workHistory?.map((i: any, idx: number) => {
+        const original = formatted.workHistory?.[idx];
+        const isPresentlyWorking = original?.isPresentlyWorking ?? false;
+  
+        return {
+          ...i,
+          isPresentlyWorking,
+          jobResponsibilities: i.jobResponsibilities.map((j: any) => ({ value: j })),
+          startDate: dayjs(toDMY(i.startDate)),
+          ...(isPresentlyWorking ? {} : i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
+        };
+      });
+      const professionalSummary = {
         briefSummary: data.professionalSummary?.briefSummary,
-        skills: data.professionalSummary?.skills?.map((i) => ({ value: i }))
-        , languages
-      }
-      setValue('briefSummary', proffessionalSummary?.briefSummary)
-      setValue('skills', proffessionalSummary.skills)
-      setValue('languages',proffessionalSummary.languages)
+        skills: data.professionalSummary?.skills?.map((i) => ({ value: i })),
+        languages,
+      };
+
+      // setValue('personalStatement', data.personalStatement);
+      setValue('workHistory', workHistory);
+      setValue('briefSummary', professionalSummary.briefSummary);
+      setValue('skills', professionalSummary.skills);
+      setValue('languages', professionalSummary.languages);
     } catch (e) {
       console.error(e);
       toast.error((e instanceof Error && e.message) || 'Something went wrong');
@@ -609,6 +645,7 @@ export function StudentResumeView({
 
   const handleSaveInformation = async (
     briefSummary: string,
+    // personalStatement: string,
     workHistory: any[],
     skills: any[],
     languages: any[]
@@ -626,6 +663,7 @@ export function StudentResumeView({
           skills: skills?.map((l) => l?.value),
           languages: languages?.map((l) => l?.value),
         },
+        // personalStatement,
       };
       const response = await authAxiosInstance.patch(
         endpoints.students.information(student?.id),
@@ -636,6 +674,7 @@ export function StudentResumeView({
       console.error(error);
       toast.error('An error occurred while generating the resume.');
     } finally {
+      console.log(student);
       // setLoading(false);
     }
   };
@@ -692,6 +731,49 @@ export function StudentResumeView({
       );
     }
 
+    // --- Personal Statement ---
+    // if (resumeData?.professionalSummary?.briefSummary) {
+    //   documentChildren.push(
+    //     new Paragraph({
+    //       children: [
+    //         new TextRun({
+    //           text: 'Personal Statement',
+    //           bold: true, // Make section titles bold
+    //           size: 28, // Corresponds to 14pt
+    //           font: 'Arial',
+    //         }),
+    //       ],
+    //       spacing: { before: 300, after: 150 },
+    //       indent: { left: 300 }, // Indent for the title
+    //     })
+    //   );
+    //   documentChildren.push(
+    //     new Paragraph({
+    //       border: {
+    //         bottom: {
+    //           color: 'auto',
+    //           space: 1,
+    //           style: 'single',
+    //           size: 6,
+    //         },
+    //       },
+    //       spacing: { after: 150 },
+    //     })
+    //   );
+    //   documentChildren.push(
+    //     new Paragraph({
+    //       children: [
+    //         new TextRun({
+    //           text: resumeData.professionalSummary.briefSummary,
+    //           size: 24,
+    //           font: 'Arial',
+    //         }),
+    //       ],
+    //       spacing: { after: 200 },
+    //       indent: { left: 300 }, // Indent for content
+    //     })
+    //   );
+    // }
     // --- Professional Summary ---
     if (resumeData?.professionalSummary?.briefSummary) {
       documentChildren.push(
@@ -928,19 +1010,21 @@ export function StudentResumeView({
             indent: { left: 350 },
           })
         );
-        documentChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Duration: ${formatDateToDDMMYYYY(toDMY(hq.startDate))} – ${formatDateToDDMMYYYY(toDMY(hq.endDate))}`,
-                size: 24,
-                font: 'Arial',
-              }),
-            ],
-            spacing: { after: 50 },
-            indent: { left: 350 },
-          })
-        );
+        if (hq.startDate && hq.endDate) {
+          documentChildren.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Duration: ${formatDateToDDMMYYYY(toDMY(hq.startDate))} – ${formatDateToDDMMYYYY(toDMY(hq.endDate))}`,
+                  size: 24,
+                  font: 'Arial',
+                }),
+              ],
+              spacing: { after: 50 },
+              indent: { left: 350 },
+            })
+          );
+        }
         documentChildren.push(
           new Paragraph({
             children: [new TextRun({ text: `Grade: ${hq.gradeResult}`, size: 24, font: 'Arial' })],
@@ -1106,16 +1190,16 @@ export function StudentResumeView({
     try {
       return (
         <Card
-          // sx={{
-          //   display: 'flex',
-          //   flexDirection: 'column',
-          //   alignItems: 'center',
-          //   width: '100%',
-          //   mx: 'auto',
-          //   my: 2,s
-          //   borderRadius: 3,
-          //   p: { xs: 2, sm: 3 },
-          // }}
+        // sx={{
+        //   display: 'flex',
+        //   flexDirection: 'column',
+        //   alignItems: 'center',
+        //   width: '100%',
+        //   mx: 'auto',
+        //   my: 2,s
+        //   borderRadius: 3,
+        //   p: { xs: 2, sm: 3 },
+        // }}
         >
           <Paper
             elevation={3}
@@ -1227,10 +1311,14 @@ export function StudentResumeView({
                 <Typography variant="body2">
                   Institution: {resumeData.highestQualification.institutionName}
                   <br />
-                  Duration:{' '}
-                  {formatDateToDDMMYYYY(toDate(resumeData.highestQualification.startDate))} –{' '}
-                  {formatDateToDDMMYYYY(toDate(resumeData.highestQualification.endDate))}
-                  <br />
+                  {resumeData.highestQualification.startDate && resumeData.highestQualification.endDate && (
+                    <>
+                      Duration:{' '}
+                      {formatDateToDDMMYYYY(toDate(resumeData.highestQualification.startDate))} –{' '}
+                      {formatDateToDDMMYYYY(toDate(resumeData.highestQualification.endDate))}
+                      <br />
+                    </>
+                  )}
                   Grade: {resumeData.highestQualification.gradeResult}
                   <br />
                   Country: {resumeData.highestQualification.countryOfIssue}
