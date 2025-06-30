@@ -108,7 +108,10 @@ function filterNavByUser(
 
       return {
         ...section,
-        roles: user?.role === 'admin' ? ['admin'] : ['agent', 'showUniversities', 'showIntakes', 'showEarningsOverview'],
+        roles:
+          user?.role === 'admin'
+            ? ['admin']
+            : ['agent', 'showUniversities', 'showIntakes', 'showEarningsOverview'],
         items: filteredItems,
       };
     })
@@ -132,7 +135,13 @@ export function DashboardLayout({
 
   const navData = filterNavByUser(
     slotProps?.nav?.data ?? dashboardNavData,
-    user as { role: 'admin' | 'agent'; showUniversities?: boolean; showIntakes?: boolean; showEarningsOverview?: boolean; isReferral?: boolean }
+    user as {
+      role: 'admin' | 'agent';
+      showUniversities?: boolean;
+      showIntakes?: boolean;
+      showEarningsOverview?: boolean;
+      isReferral?: boolean;
+    }
   );
   const isNavMini = settings.state.navLayout === 'mini';
   const isNavHorizontal = settings.state.navLayout === 'horizontal';
@@ -185,6 +194,7 @@ export function DashboardLayout({
           {/** @slot Logo */}
           {isNavHorizontal && (
             <Logo
+              isSingle={false}
               sx={{
                 display: 'none',
                 [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },

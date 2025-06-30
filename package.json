@@ -1,8 +1,8 @@
 {
-  "name": "@minimal-kit/starter-next-ts",
-  "author": "Minimals",
-  "version": "6.3.0",
-  "description": "Next Starter & TypeScript",
+  "name": "@friendly-sphere/educational-consultancy",
+  "author": "<FIRST/>",
+  "version": "1.8.0",
+  "description": "Educational Consultancy",
   "private": true,
   "scripts": {
     "dev": "next dev -p 8083",

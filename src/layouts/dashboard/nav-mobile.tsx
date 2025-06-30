@@ -27,7 +27,16 @@ type NavMobileProps = NavSectionProps & {
   };
 };
 
-export function NavMobile({ data, open, onClose, slots, sx, className, currentRole, ...other }: NavMobileProps) {
+export function NavMobile({
+  data,
+  open,
+  onClose,
+  slots,
+  sx,
+  className,
+  currentRole,
+  ...other
+}: NavMobileProps) {
   const pathname = usePathname();
 
   useEffect(() => {
@@ -55,7 +64,7 @@ export function NavMobile({ data, open, onClose, slots, sx, className, currentRo
     >
       {slots?.topArea ?? (
         <Box sx={{ pl: 3.5, pt: 2.5, pb: 1 }}>
-          <Logo />
+          <Logo isSingle={false} />
         </Box>
       )}
 
