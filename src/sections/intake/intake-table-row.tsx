@@ -216,9 +216,7 @@ export function IntakeTableRow({
             </Link>
             <Box component="span" sx={{ color: 'text.disabled' }}>
               {row.description
-                ? row.description.length > 50
-                  ? `${row.description.substring(0, 50)}...`
-                  : row.description
+                ? row.description
                 : 'No description'}
             </Box>
           </Stack>

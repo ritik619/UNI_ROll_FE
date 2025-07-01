@@ -181,13 +181,13 @@ export function AgentNewEditForm(
                       sx={{ padding: '5px' }}
                       name="sortCode"
                       label="Sort Code"
-                      helperText="Format: XX-XX-XX (e.g., 12-34-56)"
+                      // helperText="Format: XX-XX-XX (e.g., 12-34-56)"
                     />
                     <Field.Text
                       sx={{ padding: '5px' }}
                       name="accountNumber"
                       label="Account Number"
-                      helperText="Must be 10 digits (e.g., 1234567890)"
+                      // helperText="Must be 10 digits (e.g., 1234567890)"
                     />
                   </Box>
                 </Card>
@@ -196,7 +196,7 @@ export function AgentNewEditForm(
               <Field.Text
                 name="utrNumber"
                 label="UTR Number"
-                helperText="Must be 10 digits (e.g., 1234567890)"
+                // helperText="Must be 10 digits (e.g., 1234567890)"
                 sx={{ gridColumn: 'span 2' }}
               />
               <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 2' }} />
