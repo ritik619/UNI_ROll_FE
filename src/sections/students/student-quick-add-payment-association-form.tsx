@@ -75,6 +75,7 @@ type PaymentAssociationFormType = zod.infer<typeof PaymentAssociationSchema>;
 type Props = {
   open: boolean;
   onClose: () => void;
+  onUpdate: (data:IEarning) => void;
   studentId: string;
   universityId: string;
   agentId: string;
@@ -146,6 +147,7 @@ export function StudentQuickAddPaymentAssociationForm({
   courseId,
   intakeId,
   earning,
+  onUpdate
 }: Props) {
   const router = useRouter();
 
@@ -185,6 +187,7 @@ export function StudentQuickAddPaymentAssociationForm({
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      
       const payload = {
         ...data,
         studentId,
@@ -193,9 +196,18 @@ export function StudentQuickAddPaymentAssociationForm({
         courseId,
         intakeId,
       };
-      await createPaymentAssociation(payload);
+      if (earning?.id) {
+        payload.payments = [...data.payments.map((item, idx) => {
+          let updated = { ...(earning.payments?.[idx] ? earning.payments?.[idx] : {}), ...item }
+          delete updated?.createdAt
+          delete updated?.updatedAt
+          return updated
+        }
+        )]
+      }
+      const response=await createPaymentAssociation(payload);
       toast.success('Payment completed successfully!');
-      router.refresh();
+      onUpdate(response.data.earning)
       onClose();
     } catch (error: any) {
       console.error(error);

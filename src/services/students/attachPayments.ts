@@ -19,7 +19,7 @@ export type PaymentAssociationPayload = z.infer<typeof paymentAssociationSchema>
 // Function to call the API for creating a payment association
 export async function createPaymentAssociation(payload: PaymentAssociationPayload) {
   try {
-    const response = await authAxiosInstance.post(endpoints.earnings.root, payload);
+    const response = await authAxiosInstance.post(endpoints.earnings.upsert, payload);
     return response;
   } catch (err) {
     console.error('Error:', err);

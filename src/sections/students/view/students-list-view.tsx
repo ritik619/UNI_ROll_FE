@@ -148,6 +148,12 @@ export function StudentsListView() {
     [dataInPage.length, table, tableData]
   );
 
+  const handleUpdateRow = (updatedRow:IStudentsItem) => {
+    setTableData((prev) =>
+      prev.map((row) => (row.id === updatedRow.id ? updatedRow : row))
+    );
+  };
+
   const handleToggleStatus = useCallback(
     (id: string, newStatus: IStudentStatus) => {
       // Cast newStatus to the union if you want to be safe

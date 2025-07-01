@@ -450,7 +450,12 @@ export function StudentsTableRow({
     <StudentQuickAddPaymentAssociationForm
       studentId={row.id}
       open={quickAddPayment.value}
-      onClose={quickAddPayment.onFalse}
+      onClose={quickAddPayment.onFalse
+      }
+      onUpdate={(newEarning)=>{
+        setEarning(newEarning)
+        setPayments(newEarning.payments)
+      }}
       universityId={row.universityId ?? ''}
       agentId={row.agentId ?? ''}
       courseId={row.courseId ?? ''}
