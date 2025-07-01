@@ -51,6 +51,7 @@ type Props = {
   onToggleStatus?: (id: string, status: string) => void;
   earning?: boolean;
   courses: ICourse[];
+  onUpdateRow: (updatedRow: IUniversity) => void;
 };
 
 export function UniversityTableRow({
@@ -62,9 +63,10 @@ export function UniversityTableRow({
   onToggleStatus,
   earning,
   courses,
+  onUpdateRow,
 }: Props) {
   const theme = useTheme();
-
+  
   const menuActions = usePopover(); // For university row actions
   const universityMenuActions = usePopover(); // For course row actions
   const confirmDialog = useBoolean();
@@ -141,7 +143,12 @@ export function UniversityTableRow({
     <UniversityQuickEditForm
       currentUniversity={row}
       open={quickEditForm.value}
-      onClose={quickEditForm.onFalse}
+      onClose={(updated) => {
+        if (updated) {
+          onUpdateRow(updated);
+        }
+        quickEditForm.onFalse();
+      }}
     />
   );
 

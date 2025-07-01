@@ -44,7 +44,7 @@ export const UniversityQuickEditSchema = zod.object({
 
 type Props = {
   open: boolean;
-  onClose: () => void;
+  onClose: (data?:IUniversity) => void;
   currentUniversity?: IUniversity;
 };
 
@@ -67,13 +67,13 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
     defaultValues,
     values: currentUniversity
       ? {
-          name: currentUniversity.name || '',
-          cityId: currentUniversity.cityId || '',
-          description: currentUniversity.description || '',
-          website: currentUniversity.website || '',
-          logoUrl: currentUniversity.logoUrl || null,
-          status: currentUniversity.status || 'active',
-        }
+        name: currentUniversity.name || '',
+        cityId: currentUniversity.cityId || '',
+        description: currentUniversity.description || '',
+        website: currentUniversity.website || '',
+        logoUrl: currentUniversity.logoUrl || null,
+        status: currentUniversity.status || 'active',
+      }
       : defaultValues,
   });
 
@@ -119,15 +119,17 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
       formData['logoUrl'] = data.logoUrl as string;
     }
 
-    await authAxiosInstance.patch(endpoints.universities.details(currentUniversity.id), formData);
+    return await authAxiosInstance.patch(endpoints.universities.details(currentUniversity.id), formData);
   };
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await updateUniversity(data);
+      const response = await updateUniversity(data);
       toast.success('University updated successfully!');
       router.push(paths.dashboard.universitiesAndCourses.listUniversities);
-      onClose();
+      if(response){
+        onClose(response.data);
+      }
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || 'Failed to update university');

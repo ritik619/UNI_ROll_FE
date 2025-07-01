@@ -235,6 +235,12 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
       setLoading(false);
     }
   }, []);
+  
+  const handleUpdateRow = (updatedRow:IUniversity) => {
+    setTableData((prev) =>
+      prev.map((row) => (row.id === updatedRow.id ? updatedRow : row))
+    );
+  };
 
   useEffect(() => {
     fetchPaginatedCourses();
@@ -407,6 +413,7 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
                             editHref={paths.dashboard.universitiesAndCourses.listUniversities}
                             earning={earning}
                             courses={courses}
+                            onUpdateRow={handleUpdateRow}
                           />
                         ))
                       ) : (

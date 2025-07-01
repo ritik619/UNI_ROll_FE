@@ -131,7 +131,7 @@ export function StudentsListView() {
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
 
   const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'All';
+    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status == 'All';
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
