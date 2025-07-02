@@ -63,9 +63,7 @@ type Props = {
   onToggleStatus?: (id: string, status: IStudentStatus) => void;
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
-  onEnroll?: (
-    data: IStudentsItem
-  ) => void;
+  onEnroll?: (data: IStudentsItem) => void;
   onUnenroll?: (studentId: string) => void;
 };
 
@@ -449,11 +447,10 @@ export function StudentsTableRow({
     <StudentQuickAddPaymentAssociationForm
       studentId={row.id}
       open={quickAddPayment.value}
-      onClose={quickAddPayment.onFalse
-      }
-      onUpdate={(newEarning)=>{
-        setEarning(newEarning)
-        setPayments(newEarning.payments)
+      onClose={quickAddPayment.onFalse}
+      onUpdate={(newEarning) => {
+        setEarning(newEarning);
+        setPayments(newEarning.payments);
       }}
       universityId={row.universityId ?? ''}
       agentId={row.agentId ?? ''}
@@ -558,7 +555,8 @@ export function StudentsTableRow({
   );
 
   const handleDeletePayment = async () => {
-    if (!paymentToDelete || !earning?.id) {
+    console.log(earning, paymentToDelete);
+    if (paymentToDelete === null) {
       toast.error('Missing payment or earning information');
       return;
     }
@@ -584,8 +582,8 @@ export function StudentsTableRow({
 
       toast.success('Payment deleted successfully');
       setPaymentToDelete(null);
-      setEarning(data);
-      setPayments(data.payments);
+      setEarning(data.earning);
+      setPayments(data.earning.payments);
       paymentDeleteDialog.onFalse();
     } catch (error) {
       console.error('Error deleting payment:', error);
