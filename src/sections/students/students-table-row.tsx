@@ -652,7 +652,7 @@ export function StudentsTableRow({
                     toast.error('Earning ID is missing');
                     return;
                   }
-                  await authAxiosInstance.patch(
+                  const response = await authAxiosInstance.patch(
                     `${endpoints.earnings.details(earning.id)}/payments/${payment.id}`,
                     {
                       amount: payment.amount,
@@ -665,7 +665,8 @@ export function StudentsTableRow({
                   const updatedPayments = payments.map((p) =>
                     p.id === payment.id ? { ...p, status: newStatus } : p
                   );
-                  setPayments(updatedPayments);
+                  setPayments(response.data.payments);
+                  setEarning(response.data);
 
                   toast.success(`Payment marked as ${newStatus}`);
                 } catch (error) {
