@@ -31,6 +31,7 @@ import { StudentProgressView } from 'src/sections/students/components/student-pr
 import { StudentResumeView } from 'src/sections/students/components/student-resume-view';
 import { Label } from 'src/components/label';
 import { useTheme } from '@mui/material';
+import { StudentPersonalStatementView } from 'src/sections/students/components/student-personal-statement-view';
 
 // ----------------------------------------------------------------------
 
@@ -206,7 +207,18 @@ export default function StudentDetailsPage({ params }: Props) {
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secondary', typography: 'body2' }}
             >
-              {student.sex && <InfoItem label={student.sex} />}
+              {student.sex && (
+                <InfoItem
+                  icon={
+                    student.sex.toLowerCase() === 'male'
+                      ? 'picon:male'
+                      : student.sex.toLowerCase() === 'female'
+                        ? 'picon:female'
+                        : "fa6-solid:transgender"
+                  }
+                  label={student.sex}
+                />
+              )}
               {student.dateOfBirth && (
                 <InfoItem icon="eva:calendar-fill" label={student.dateOfBirth} />
               )}
@@ -301,8 +313,10 @@ export default function StudentDetailsPage({ params }: Props) {
           <Tab label="Finance" value="finance" />
           <Tab label="Booking" value="booking" />
           <Tab label="Progress" value="progress" />
-          {/* <Tab label="Consent Form" value="consent" /> */}
           <Tab label="CV" value="resume" />
+          <Tab label="Personal Statement" value="personalStatement" />
+
+          {/* <Tab label="Consent Form" value="consent" /> */}
         </Tabs>
 
         {/* Tab Content */}
@@ -335,13 +349,19 @@ export default function StudentDetailsPage({ params }: Props) {
               onRefresh={fetchStudent}
             />
           )}
-
-          {/* {currentTab === 'consent' && (
-            <StudentConsentFormView student={student} onRefresh={fetchStudent} />
-          )} */}
           {currentTab === 'resume' && (
             <StudentResumeView student={student} onRefresh={fetchStudent} />
           )}
+          {currentTab === 'personalStatement' && (
+            <StudentPersonalStatementView
+              key={student.id}
+              student={student}
+              onRefresh={fetchStudent}
+            />
+          )}
+          {/* {currentTab === 'consent' && (
+            <StudentConsentFormView student={student} onRefresh={fetchStudent} />
+          )} */}
         </Box>
       </Card>
     </DashboardContent>

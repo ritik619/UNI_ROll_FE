@@ -148,11 +148,6 @@ export function StudentsListView() {
     [dataInPage.length, table, tableData]
   );
 
-  const handleUpdateRow = (updatedRow:IStudentsItem) => {
-    setTableData((prev) =>
-      prev.map((row) => (row.id === updatedRow.id ? updatedRow : row))
-    );
-  };
 
   const handleToggleStatus = useCallback(
     (id: string, newStatus: IStudentStatus) => {
@@ -340,44 +335,13 @@ export function StudentsListView() {
     </CustomPopover>
   );
 
-  const handleEnroll = async (
-    studentId: string,
-    data: { universityId: string; courseId: string; intakeId: string }
+  const handleUpdateRow = async (
+    data: IStudentsItem
   ) => {
     try {
-      // Find the selected university and course from associations
-      const selectedUniversity = (associations as ICourseAssociation[]).find(
-        (a) => a.universityId === data.universityId
+      setTableData((prev) =>
+        prev.map((row) => (row.id === data.id ? data : row))
       );
-      const selectedCourse = (associations as ICourseAssociation[]).find(
-        (a) => a.courseId === data.courseId
-      );
-      const selectedIntake = (intakes as IIntake[]).find((i) => i.id === data.intakeId);
-
-      if (!selectedUniversity || !selectedCourse || !selectedIntake) {
-        toast.error('Invalid selection');
-        return;
-      }
-
-      // Update the student data in the table
-      const updatedData = tableData.map((student) => {
-        if (student.id === studentId) {
-          const updatedStudent: IStudentsItem = {
-            ...student,
-            status: 'Enrolled',
-            universityId: data.universityId,
-            universityName: selectedUniversity.universityName,
-            courseId: data.courseId,
-            courseName: selectedCourse.courseName,
-            intakeId: data.intakeId,
-          };
-          return updatedStudent;
-        }
-        return student;
-      });
-
-      // Update the table data
-      setTableData(updatedData);
     } catch (error) {
       console.error('Error updating student data:', error);
       toast.error('Failed to update student data');
@@ -627,7 +591,7 @@ export function StudentsListView() {
                           editHref={paths.dashboard.students.edit(row.id)}
                           associations={associations}
                           intakes={intakes}
-                          onEnroll={handleEnroll}
+                          onEnroll={handleUpdateRow}
                           onUnenroll={handleUnenroll}
                         />
                       ))}

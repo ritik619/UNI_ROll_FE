@@ -59,9 +59,7 @@ export function StudentResumeView({
       )
       .optional(),
     briefSummary: zod.string().optional(),
-    personalStatement: zod.string().optional(),
     skills: zod.array(zod.object({ value: zod.string().optional() })).optional(),
-    languages: zod.array(zod.object({ value: zod.string().optional() })).optional(),
   });
 
   type ResumeFormValues = zod.infer<typeof ResumeSchema>;
@@ -93,6 +91,7 @@ export function StudentResumeView({
         ...(i?.isPresentlyWorking ? {} : i?.endDate && { endDate: dayjs(toDMY(i.endDate)) }),
       }))
       : [
+
         {
           jobTitle: '',
           companyName: '',
@@ -104,9 +103,7 @@ export function StudentResumeView({
         },
       ],
     briefSummary: student?.professionalSummary?.briefSummary || '',
-    personalStatement: student?.personalStatement || '',
     skills: student?.professionalSummary?.skills?.map((i) => ({ value: i })) || [],
-    languages: student?.professionalSummary?.languages?.map((i) => ({ value: i })) || [],
   };
   function ExperiencesItem({
     control,
@@ -303,37 +300,12 @@ export function StudentResumeView({
       removeSkill(index);
     };
 
-    const {
-      fields: languageFields,
-      append: appendLanguage,
-      remove: removeLanguage,
-    } = useFieldArray({
-      control,
-      name: 'languages',
-    });
-
-    const [inputLanguageValue, setInputLanguageValue] = useState('');
-
-    const handleAddLanguage = () => {
-      const trimmed = inputLanguageValue.trim();
-      if (trimmed && !languageFields.some((s) => s.value === trimmed)) {
-        appendLanguage({ value: trimmed });
-        setInputLanguageValue('');
-      }
-    };
-
-    const handleDeleteLanguage = (index: number) => {
-      removeLanguage(index);
-    };
-
     const onSubmit = handleSubmit(async (data: any) => {
       try {
         await handleSaveInformation(
           data.briefSummary,
-          data.personalStatement,
           data.workHistory,
           data.skills,
-          data.languages,
         );
         toast.success('CV saved! Click "Generate CV" to preview.');
       } catch (e) {
@@ -471,96 +443,7 @@ export function StudentResumeView({
               </Box>
             </Box>
 
-            {/* Languages */}
-            {/* <Box
-            sx={{
-              mt: 4,
-              display: 'grid',
-              rowGap: 3,
-              columnGap: 2,
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
-            }}
-          >
-            <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
-              Languages
-            </Typography>
-            <Box sx={{ gridColumn: 'span 2' }}>
-              <TextField
-                fullWidth
-                label="Add Language"
-                value={inputLanguageValue}
-                onChange={(e) => setInputLanguageValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddLanguage();
-                  }
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton onClick={handleAddLanguage}>
-                      <Iconify icon="mdi:plus" />
-                    </IconButton>
-                  ),
-                }}
-              />
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2 }}>
-                {languageFields.map((item, index) => (
-                  <Chip
-                    key={item.id}
-                    label={item.value}
-                    onDelete={() => handleDeleteLanguage(index)}
-                    color="primary"
-                  />
-                ))}
-              </Box>
-            </Box>
-          </Box> */}
-          </Card>
-
-        </Box>
-
-        {/* Personal Statement */}
-        <Box sx={{ p: { xs: 2, sm: 3 } }}>
-          <Card
-            sx={{
-              display: 'flex',
-              width: '100%',
-              mx: 'auto',
-              m: 1,
-              borderRadius: 2,
-              p: { xs: 2, sm: 3 },
-            }}
-          >
-            {/* Personal Statement */}
-            <Box
-              sx={{
-                m: 1,
-                width: '100%',
-                display: 'grid',
-                rowGap: 3,
-                columnGap: 2,
-                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
-              }}
-            >
-              <Typography variant="subtitle1" sx={{ gridColumn: 'span 2' }}>
-                Personal Statement
-              </Typography>
-              <Field.Text
-                name="personalStatement"
-                label="Personal Statement"
-                multiline
-                sx={{
-                  gridColumn: 'span 2',
-                  whiteSpace: 'pre-wrap',
-                  fontSize: '0.95rem',
-                }}
-              />
-            </Box>
-          </Card>
-        </Box>
-
-        {/* Action Buttons */}
+             {/* Action Buttons */}
         <Box sx={{ p: { xs: 2, sm: 3 } }}>
           <Card
             sx={{
@@ -584,33 +467,42 @@ export function StudentResumeView({
                 alignItems="center"
               >
                 <Button
-                  // type="submit"
                   variant="outlined"
                   disabled={isSubmitting}
                   color="secondary"
                   onClick={() => generateResumeTextFromStudent(watch, setValue)}
                   fullWidth
+                  startIcon={<Iconify icon="carbon:ai-generate"  width="25px"/>}
                 >
-                  Update CV via AI
+                  {isSubmitting ? 'Updating...' : 'Update'}
                 </Button>
+
                 <Button
                   type="submit"
                   variant="outlined"
                   disabled={isSubmitting}
                   color="info"
                   fullWidth
+                  startIcon={<Iconify icon="eva:save-outline" width="20px" />}
                 >
                   Save Information & Preview
                 </Button>
-                <Button variant="outlined" color="success" onClick={handleDownloadDocx} fullWidth>
+
+                <Button
+                  variant="outlined"
+                  color="success"
+                  onClick={handleDownloadDocx}
+                  fullWidth
+                  startIcon={<Iconify icon="mdi:download" width="20px"/>}
+                >
                   Download CV (DOCX)
                 </Button>
               </Stack>
             )}
           </Card>
-
         </Box>
-           
+          </Card>
+        </Box>
       </Form>
     );
   }
@@ -622,15 +514,7 @@ export function StudentResumeView({
       updated.skills = updated.skills.map((skill: any) => skill.value);
     }
 
-    // 2. Languages - capitalize first letter
-    if (Array.isArray(updated.languages)) {
-      updated.languages = updated.languages.map((lang: any) => {
-        const str = lang.value?.toString().trim();
-        return str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : '';
-      });
-    }
-
-    // 3. Job Responsibilities
+    // 2. Job Responsibilities
     if (Array.isArray(updated.workHistory)) {
       updated.workHistory = updated.workHistory.map((exp: any) => ({
         ...exp,
@@ -651,7 +535,6 @@ export function StudentResumeView({
       const payload = {
         ...formatted,
         experiences: formatted.workHistory,
-        personalStatement: formatted.personalStatement,
       };
       delete payload.workHistory;
 
@@ -664,8 +547,6 @@ export function StudentResumeView({
         payload
       );
 
-      toast.success('Updated Information with AI');
-      const languages = data.professionalSummary?.languages?.map((i) => ({ value: i }));
       const workHistory = data?.workHistory?.map((i: any, idx: number) => {
         const original = formatted.workHistory?.[idx];
         const isPresentlyWorking = original?.isPresentlyWorking ?? false;
@@ -681,14 +562,13 @@ export function StudentResumeView({
       const professionalSummary = {
         briefSummary: data.professionalSummary?.briefSummary,
         skills: data.professionalSummary?.skills?.map((i) => ({ value: i })),
-        languages,
       };
 
-      setValue('personalStatement', data.personalStatement);
       setValue('workHistory', workHistory);
       setValue('briefSummary', professionalSummary.briefSummary);
       setValue('skills', professionalSummary.skills);
-      setValue('languages', professionalSummary.languages);
+      
+      toast.success('Updated Information with AI');
     } catch (e) {
       console.error(e);
       toast.error((e instanceof Error && e.message) || 'Something went wrong');
@@ -697,13 +577,10 @@ export function StudentResumeView({
 
   const handleSaveInformation = async (
     briefSummary: string,
-    personalStatement: string,
     workHistory: any[],
     skills: any[],
-    languages: any[]
   ) => {
-    // setLoading(true);
-    console.log('hcansadmksm');
+    setLoading(true);
     try {
       const payload = {
         experiences: workHistory.map((i) => ({
@@ -713,9 +590,8 @@ export function StudentResumeView({
         professionalSummary: {
           briefSummary: briefSummary,
           skills: skills?.map((l) => l?.value),
-          languages: languages?.map((l) => l?.value),
+          languages: [],  
         },
-        // personalStatement,
       };
       const response = await authAxiosInstance.patch(
         endpoints.students.information(student?.id),
@@ -727,11 +603,9 @@ export function StudentResumeView({
       toast.error('An error occurred while generating the resume.');
     } finally {
       console.log(student);
-      // setLoading(false);
+      setLoading(false);
     }
   };
-
-
 
   const handleDownloadDocx = async () => {
     const documentChildren = [];
@@ -783,49 +657,6 @@ export function StudentResumeView({
       );
     }
 
-    // --- Personal Statement ---
-    // if (resumeData?.professionalSummary?.briefSummary) {
-    //   documentChildren.push(
-    //     new Paragraph({
-    //       children: [
-    //         new TextRun({
-    //           text: 'Personal Statement',
-    //           bold: true, // Make section titles bold
-    //           size: 28, // Corresponds to 14pt
-    //           font: 'Arial',
-    //         }),
-    //       ],
-    //       spacing: { before: 300, after: 150 },
-    //       indent: { left: 300 }, // Indent for the title
-    //     })
-    //   );
-    //   documentChildren.push(
-    //     new Paragraph({
-    //       border: {
-    //         bottom: {
-    //           color: 'auto',
-    //           space: 1,
-    //           style: 'single',
-    //           size: 6,
-    //         },
-    //       },
-    //       spacing: { after: 150 },
-    //     })
-    //   );
-    //   documentChildren.push(
-    //     new Paragraph({
-    //       children: [
-    //         new TextRun({
-    //           text: resumeData.professionalSummary.briefSummary,
-    //           size: 24,
-    //           font: 'Arial',
-    //         }),
-    //       ],
-    //       spacing: { after: 200 },
-    //       indent: { left: 300 }, // Indent for content
-    //     })
-    //   );
-    // }
     // --- Professional Summary ---
     if (resumeData?.professionalSummary?.briefSummary) {
       documentChildren.push(
@@ -1006,81 +837,6 @@ export function StudentResumeView({
       );
     }
 
-    // --- Personal Details ---
-    // if (resumeData) {
-    //   documentChildren.push(
-    //     new Paragraph({
-    //       children: [
-    //         new TextRun({
-    //           text: 'Personal Details',
-    //           bold: true,
-    //           size: 28,
-    //           font: 'Arial',
-    //         }),
-    //       ],
-    //       spacing: { before: 300, after: 150 },
-    //       indent: { left: 300 },
-    //     })
-    //   );
-    //   documentChildren.push(
-    //     new Paragraph({
-    //       border: {
-    //         bottom: {
-    //           color: 'auto',
-    //           space: 1,
-    //           style: 'single',
-    //           size: 6,
-    //         },
-    //       },
-    //       spacing: { after: 150 },
-    //     })
-    //   );
-    //   if (resumeData.dateOfBirth) {
-    //     documentChildren.push(
-    //       new Paragraph({
-    //         children: [
-    //           new TextRun({ text: 'Date of Birth:', bold: true, size: 24, font: 'Arial' }),
-    //           new TextRun({
-    //             text: ` ${resumeData.dateOfBirth}`,
-    //             size: 24,
-    //             font: 'Arial',
-    //           }),
-    //         ],
-    //         spacing: { after: 50 },
-    //         indent: { left: 300 },
-    //       })
-    //     );
-    //   }
-    //   if (resumeData.sex) {
-    //     documentChildren.push(
-    //       new Paragraph({
-    //         children: [
-    //           new TextRun({ text: 'Sex:', bold: true, size: 24, font: 'Arial' }),
-    //           new TextRun({ text: ` ${resumeData.sex}`, size: 24, font: 'Arial' }),
-    //         ],
-    //         spacing: { after: 50 },
-    //         indent: { left: 300 },
-    //       })
-    //     );
-    //   }
-    //   if (resumeData.nationality) {
-    //     documentChildren.push(
-    //       new Paragraph({
-    //         children: [
-    //           new TextRun({ text: 'Nationality:', bold: true, size: 24, font: 'Arial' }),
-    //           new TextRun({
-    //             text: ` ${resumeData.nationality}`,
-    //             size: 24,
-    //             font: 'Arial',
-    //           }),
-    //         ],
-    //         spacing: { after: 200 },
-    //         indent: { left: 300 },
-    //       })
-    //     );
-    //   }
-    // }
-
     // --- Education ---
     if (resumeData.highestQualification) {
       documentChildren.push(
@@ -1171,58 +927,6 @@ export function StudentResumeView({
       }
     }
 
-    // --- Languages ---
-    if (
-      Array.isArray(resumeData.professionalSummary?.languages) &&
-      resumeData.professionalSummary.languages.length > 0
-    ) {
-      documentChildren.push(
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: 'Languages',
-              bold: true,
-              size: 28,
-              font: 'Arial',
-            }),
-          ],
-          spacing: { before: 300, after: 150 },
-          indent: { left: 300 },
-        })
-      );
-      documentChildren.push(
-        new Paragraph({
-          border: {
-            bottom: {
-              color: 'auto',
-              space: 1,
-              style: 'single',
-              size: 6,
-            },
-          },
-          spacing: { after: 150 },
-        })
-      );
-      resumeData.professionalSummary.languages.forEach((lang: any) => {
-        documentChildren.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `• ${lang}`, // Add bullet point
-                size: 24,
-                font: 'Arial',
-              }),
-            ],
-            spacing: { after: 50 },
-            indent: { left: 450, hanging: 150 }, // Hanging indent for bullet points
-          })
-        );
-      });
-      documentChildren.push(new Paragraph({ spacing: { after: 200 } }));
-    }
-
-
-
     const doc = new Document({
       // Renamed from DocxDocument to Document based on common docx library usage
       sections: [
@@ -1248,7 +952,7 @@ export function StudentResumeView({
         //   display: 'flex',
         //   flexDirection: 'column',
         //   alignItems: 'center',
-        //   width: '100%',
+        //   width: '100%',ß
         //   mx: 'auto',
         //   my: 2,s
         //   borderRadius: 3,
@@ -1379,52 +1083,6 @@ export function StudentResumeView({
                 </Typography>
               </Box>
             )}
-
-            {/* Languages
-            {Array.isArray(resumeData?.professionalSummary?.languages) &&
-              resumeData.professionalSummary.languages.length > 0 && (
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="h6" sx={{ mb: 1 }}>
-                    Languages
-                  </Typography>
-                  <Grid container spacing={2}>
-                    {resumeData.professionalSummary.languages.map((lang: any, index: number) => (
-                      <Grid item xs={6} sm={4} key={index}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <GridCheckCircleIcon
-                            sx={{ fontSize: 16, color: 'success.main', mr: 1 }}
-                          />
-                          <Typography variant="body2">
-                            {typeof lang === 'string' ? lang : lang?.value}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Box>
-              )} */}
-
-            {/* Personal Details */}
-            {/* <Box sx={{ mb: 2 }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>
-                Personal Details
-              </Typography>
-              {resumeData?.dateOfBirth && (
-                <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>Date of Birth:</strong> {resumeData.dateOfBirth}
-                </Typography>
-              )}
-              {resumeData?.sex && (
-                <Typography variant="body2" sx={{ mb: 0.5 }}>
-                  <strong>Sex:</strong> {resumeData.sex}
-                </Typography>
-              )}
-              {resumeData?.nationality && (
-                <Typography variant="body2">
-                  <strong>Nationality:</strong> {resumeData.nationality}
-                </Typography>
-              )}
-            </Box> */}
           </Paper>
         </Card>
       );

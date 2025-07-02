@@ -178,7 +178,7 @@ const UserDetailsCard = () => {
                     color="text.primary"
                     sx={{ fontWeight: 500 }}
                   >
-                    {formatDate(user?.dateOfBirth?.seconds)}
+                    {user?.dateOfBirth}
                   </Typography>
                 </Typography>
               </DetailItem>

@@ -113,31 +113,31 @@ export function UniversityTableRow({
     }
   }, [collapseRow.value, row.id, earning]);
 
-  const handleDeleteAssociation = async () => {
-    if (!associationToDelete) return;
+  // const handleDeleteAssociation = async () => {
+  //   if (!associationToDelete) return;
 
-    try {
-      // Make API call to delete the association
-      await authAxiosInstance.delete(
-        `${endpoints.associations.byAssociation(associationToDelete as string)}`
-      );
+  //   try {
+  //     // Make API call to delete the association
+  //     await authAxiosInstance.delete(
+  //       `${endpoints.associations.byAssociation(associationToDelete as string)}`
+  //     );
 
-      // Remove the deleted association from local state
-      setCoursesAssociations((prevCourses) =>
-        prevCourses.filter((course) => course.id !== associationToDelete)
-      );
+  //     // Remove the deleted association from local state
+  //     setCoursesAssociations((prevCourses) =>
+  //       prevCourses.filter((course) => course.id !== associationToDelete)
+  //     );
 
-      // Show success message
-      toast.success('Association deleted successfully');
+  //     // Show success message
+  //     toast.success('Association deleted successfully');
 
-      // Reset selected ID and close dialog
-      setAssociationToDelete(null);
-      universityDeleteDialog.onFalse();
-    } catch (error) {
-      console.error('Failed to delete association:', error);
-      toast.error('Failed to delete association');
-    }
-  };
+  //     // Reset selected ID and close dialog
+  //     setAssociationToDelete(null);
+  //     universityDeleteDialog.onFalse();
+  //   } catch (error) {
+  //     console.error('Failed to delete association:', error);
+  //     toast.error('Failed to delete association');
+  //   }
+  // };
 
   const renderQuickEditForm = () => (
     <UniversityQuickEditForm
@@ -603,7 +603,7 @@ export function UniversityTableRow({
                                 : 'Activate Association'}
                             </MenuItem>
                             {/* Delete Option */}
-                            {isAdmin && (
+                            {/* {isAdmin && (
                               <MenuItem
                                 onClick={() => {
                                   // Set course for deletion and show confirmation dialog
@@ -621,7 +621,7 @@ export function UniversityTableRow({
                                 />
                                 Delete Association
                               </MenuItem>
-                            )}
+                            )} */}
                           </MenuList>
                         </CustomPopover>
                       </Box>
@@ -634,8 +634,7 @@ export function UniversityTableRow({
                 <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
                   No associate courses found for this university
                 </Typography>
-
-                {isAdmin && (
+                {/* {isAdmin && (
                   <Button
                     href={editHref}
                     onClick={quickAssociateCourse.onTrue}
@@ -645,7 +644,7 @@ export function UniversityTableRow({
                   >
                     Associate First Course
                   </Button>
-                )}
+                )} */}
               </Box>
             )}
           </Paper>
@@ -654,28 +653,28 @@ export function UniversityTableRow({
     </TableRow>
   );
 
-  const renderAssociationDeleteDialog = () => (
-    <ConfirmDialog
-      open={universityDeleteDialog.value}
-      onClose={() => {
-        universityDeleteDialog.onFalse();
-        setAssociationToDelete(null);
-      }}
-      title="Delete Association"
-      content={
-        <>
-          Are you sure you want to remove this Association?
-          <br />
-          This action cannot be undone.
-        </>
-      }
-      action={
-        <Button variant="contained" color="error" onClick={handleDeleteAssociation}>
-          Delete
-        </Button>
-      }
-    />
-  );
+  // const renderAssociationDeleteDialog = () => (
+  //   <ConfirmDialog
+  //     open={universityDeleteDialog.value}
+  //     onClose={() => {
+  //       universityDeleteDialog.onFalse();
+  //       setAssociationToDelete(null);
+  //     }}
+  //     title="Delete Association"
+  //     content={
+  //       <>
+  //         Are you sure you want to remove this Association?
+  //         <br />
+  //         This action cannot be undone.
+  //       </>
+  //     }
+  //     action={
+  //       <Button variant="contained" color="error" onClick={handleDeleteAssociation}>
+  //         Delete
+  //       </Button>
+  //     }
+  //   />
+  // );
 
   return (
     <>
@@ -685,7 +684,7 @@ export function UniversityTableRow({
       {renderQuickAssociateCourseForm()}
       {renderMenuActions()}
       {renderConfirmDialog()}
-      {renderAssociationDeleteDialog()}
+      {/* {renderAssociationDeleteDialog()} */}
     </>
   );
 }

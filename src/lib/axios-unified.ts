@@ -127,7 +127,8 @@ export const endpoints = {
     status: (id: string) => `students/${id}/status`,
     removeIntakeLink: (id: string) => `students/${id}/remove-intake-link`,
     information:(id:string)=>`students/${id}/work-history`,
-    aiAssist:(id:string)=>`students/${id}/ai-assist`
+    aiAssist:(id:string)=>`students/${id}/ai-assist`,
+    aiAssistStatement:(id:string)=>`students/${id}/ai-assist-statement`,
   },
   universities: {
     list: 'universities',

@@ -39,7 +39,9 @@ const UniversityAssociationSchema = zod.object({
   // languageOfInstruction: zod.string(),
   // maxStudents: zod.number().int().nonnegative(),
   // availableSeats: zod.number().int().nonnegative(),
-  status: zod.enum(['active', 'inactive', 'upcoming', 'completed']),
+  status: zod.enum(['active', 'inactive', 
+    // 'upcoming', 'completed'
+  ]),
 });
 
 type UniversityAssociationFormType = zod.infer<typeof UniversityAssociationSchema>;
@@ -136,8 +138,8 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId, co
               <Field.Select name="status" label="Status">
                 <MenuItem value="active">Active</MenuItem>
                 <MenuItem value="inactive">Inactive</MenuItem>
-                <MenuItem value="upcoming">Upcoming</MenuItem>
-                <MenuItem value="completed">Completed</MenuItem>
+                {/* <MenuItem value="upcoming">Upcoming</MenuItem>
+                <MenuItem value="completed">Completed</MenuItem> */}
               </Field.Select>
             </Box>
           </DialogContent>

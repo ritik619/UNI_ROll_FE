@@ -64,8 +64,7 @@ type Props = {
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
   onEnroll?: (
-    studentId: string,
-    data: { universityId: string; courseId: string; intakeId: string }
+    data: IStudentsItem
   ) => void;
   onUnenroll?: (studentId: string) => void;
 };
