@@ -44,11 +44,11 @@ type Props = {
 export default function StudentDetailsPage({ params }: Props) {
   const { id } = params;
   const router = useRouter();
+  const theme = useTheme();
   const [student, setStudent] = useState<IStudentsItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState('documents');
   const [university, setUniversity] = useState({});
-  const theme = useTheme();
 
   const fetchStudent = useCallback(async () => {
     setLoading(true);
@@ -100,13 +100,20 @@ export default function StudentDetailsPage({ params }: Props) {
     return <></>;
   }
 
+  const avatarSize = {
+    width: { xs: theme.spacing(7.5), sm: theme.spacing(10) },
+    height: { xs: theme.spacing(7.5), sm: theme.spacing(10) },
+  };
+
   function InfoItem({ icon, label }: { icon?: string; label?: string | number | null }) {
     if (!label) return null;
 
     return (
-      <Stack direction="row" spacing={2} alignItems="center">
+      <Stack direction="row" spacing={2} alignItems="center" sx={{ flexWrap: 'wrap' }}>
         {icon && <Iconify icon={icon} width={16} />}
-        <span>{label}</span>
+        <Typography variant="body2" sx={{ wordBreak: 'break-word' }}>
+          {label}
+        </Typography>
       </Stack>
     );
   }
@@ -135,41 +142,37 @@ export default function StudentDetailsPage({ params }: Props) {
 
       {/* Student Info Card */}
       <Card sx={{ p: 3, mb: 4 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems={{ sm: 'center' }}>
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={3}
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+        >
           {student.coverPhoto ? (
-            // If src exists, render the image
             <Box
               component="img"
               src={student.coverPhoto}
               sx={{
-                width: 80,
-                height: 80,
+                ...avatarSize,
                 borderRadius: 1.5,
                 bgcolor: 'background.neutral',
                 border: (theme) => `solid 1px ${theme.palette.divider}`,
-                objectFit: 'cover', // Ensures the image covers the area without distortion
+                objectFit: 'cover',
               }}
             />
           ) : (
-            // If src is missing, render a Box with the initial centered and larger
             <Box
               sx={{
-                width: 80,
-                height: 80,
+                ...avatarSize,
                 borderRadius: 1.5,
                 bgcolor: 'background.neutral',
                 border: (theme) => `solid 1px ${theme.palette.divider}`,
-                display: 'flex', // Enable flexbox
-                justifyContent: 'center', // Center horizontally
-                alignItems: 'center', // Center vertically
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              <Typography
-                variant="h3" // Makes the text larger. You can adjust this variant.
-                color="text.secondary" // Adjust color as needed, e.g., 'primary.main'
-              >
-                {student.firstName.substring(0, 1).toUpperCase()}{' '}
-                {/* Convert to uppercase for consistency */}
+              <Typography sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }} color="text.secondary">
+                {student.firstName.substring(0, 1).toUpperCase()}
               </Typography>
             </Box>
           )}
@@ -214,7 +217,7 @@ export default function StudentDetailsPage({ params }: Props) {
                       ? 'picon:male'
                       : student.sex.toLowerCase() === 'female'
                         ? 'picon:female'
-                        : "fa6-solid:transgender"
+                        : 'fa6-solid:transgender'
                   }
                   label={student.sex}
                 />
@@ -239,12 +242,12 @@ export default function StudentDetailsPage({ params }: Props) {
               )}
               {student.nationality && <InfoItem icon="eva:map-fill" label={student.nationality} />}
             </Stack>
+
             {student.emergencyName && (
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' }, // ⬅ Responsive direction
-                  // alignItems: 'center',
+                  flexDirection: { xs: 'column', sm: 'row' },
                   color: 'text.secondary',
                   typography: 'body2',
                   border: '1px solid',
@@ -258,7 +261,6 @@ export default function StudentDetailsPage({ params }: Props) {
                 }}
               >
                 <Label sx={{ background: '#FF5630' }}>
-                  {' '}
                   <Box display="flex" alignItems="center" gap={1}>
                     <Iconify
                       icon="eva:heart-fill"
@@ -275,7 +277,7 @@ export default function StudentDetailsPage({ params }: Props) {
                     >
                       Emergency
                     </span>
-                  </Box>{' '}
+                  </Box>
                 </Label>
 
                 {student.emergencyName && (
@@ -297,11 +299,12 @@ export default function StudentDetailsPage({ params }: Props) {
         </Stack>
       </Card>
 
-      {/* Tabs Section */}
       <Card sx={{ p: 3 }}>
         <Tabs
           value={currentTab}
           onChange={handleChangeTab}
+          variant="scrollable"
+          scrollButtons="auto"
           sx={{
             px: 2,
             bgcolor: 'background.neutral',
@@ -315,7 +318,6 @@ export default function StudentDetailsPage({ params }: Props) {
           <Tab label="Progress" value="progress" />
           <Tab label="CV" value="resume" />
           <Tab label="Personal Statement" value="personalStatement" />
-
           {/* <Tab label="Consent Form" value="consent" /> */}
         </Tabs>
 
@@ -324,15 +326,13 @@ export default function StudentDetailsPage({ params }: Props) {
           {currentTab === 'documents' && (
             <StudentDocumentsView student={student} onRefresh={fetchStudent} />
           )}
-
           {currentTab === 'finance' && (
             <StudentFinanceView
               student={student}
-              finance={student.finance?.status} // Default to 'Applied' if undefined
+              finance={student.finance?.status}
               onRefresh={fetchStudent}
             />
           )}
-
           {currentTab === 'booking' && (
             <StudentExamBookView
               student={student}
@@ -340,12 +340,11 @@ export default function StudentDetailsPage({ params }: Props) {
               onRefresh={fetchStudent}
             />
           )}
-
           {currentTab === 'progress' && (
             <StudentProgressView
               key={student.id}
               student={student}
-              status={student.status as 'Enrolled' | 'Withdrawn' | 'Deferred'} // Pass the current status
+              status={student.status as 'Enrolled' | 'Withdrawn' | 'Deferred'}
               onRefresh={fetchStudent}
             />
           )}
@@ -367,4 +366,3 @@ export default function StudentDetailsPage({ params }: Props) {
     </DashboardContent>
   );
 }
-
