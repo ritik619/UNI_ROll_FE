@@ -137,6 +137,7 @@ export interface IStudentsItem {
     isPresentlyWorking?: boolean;
   }[];
   personalStatement?: string;
+  notes?: string;
 }
 export interface ProfessionalSummaryDto {
   briefSummary: string;

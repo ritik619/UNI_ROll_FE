@@ -96,7 +96,9 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     fName: currentStudent?.firstName || '',
     lName: currentStudent?.lastName || '',
     email: currentStudent?.email || '',
-    dob: currentStudent?.highestQualification?.startDate ? toDMY(currentStudent?.dateOfBirth).toDateString() : '',
+    dob: currentStudent?.highestQualification?.startDate
+      ? toDMY(currentStudent?.dateOfBirth).toDateString()
+      : '',
     phoneNumber: currentStudent?.phoneNumber || '',
     emergencyNumber: currentStudent?.emergencyNumber || '',
     emergencyName: currentStudent?.emergencyName || '',
@@ -105,21 +107,25 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     address: currentStudent?.address || '',
     postCode: currentStudent?.postCode || '',
     coverPhoto: currentStudent?.coverPhoto,
-    universityId: '',
-    courseId: '',
+    universityId: currentStudent?.universityId || '',
+    courseId: currentStudent?.courseId || '',
+    intakeId: currentStudent?.intakeId || '',
     notes: currentStudent?.notes || '',
-    intakeId: '',
-    insuranceNumber: '',
+    insuranceNumber: currentStudent?.insuranceNumber || '',
     highestQualification: {
-      startDate: currentStudent?.highestQualification?.startDate ? toDMY(currentStudent?.highestQualification?.startDate).toDateString() : '',
-      endDate: currentStudent?.highestQualification?.endDate ? toDMY(currentStudent?.highestQualification?.endDate).toDateString() : '',
+      startDate: currentStudent?.highestQualification?.startDate
+        ? toDMY(currentStudent?.highestQualification?.startDate).toDateString()
+        : '',
+      endDate: currentStudent?.highestQualification?.endDate
+        ? toDMY(currentStudent?.highestQualification?.endDate).toDateString()
+        : '',
       gradeResult: currentStudent?.highestQualification?.gradeResult || '',
       institutionName: currentStudent?.highestQualification?.institutionName || '',
       countryOfIssue: currentStudent?.highestQualification?.countryOfIssue || '',
     },
     // status: currentStudent?.status || '',
   };
-  console.log(defaultValues)
+  console.log(defaultValues);
   const methods = useForm<NewStudentsSchemaType>({
     mode: 'onSubmit',
     resolver: zodResolver(NewStudentsSchema),
@@ -191,19 +197,19 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     }
     const rawHQ = {
       ...(isValidDate(data?.highestQualification?.startDate) && {
-        startDate: formatDateToMMDDYYYY(new Date(data.highestQualification.startDate)),
+        startDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.startDate)),
       }),
       ...(isValidDate(data?.highestQualification?.endDate) && {
-        endDate: formatDateToMMDDYYYY(new Date(data.highestQualification.endDate)),
+        endDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.endDate)),
       }),
       ...(data?.highestQualification?.gradeResult && {
-        gradeResult: data.highestQualification.gradeResult,
+        gradeResult: data?.highestQualification?.gradeResult,
       }),
       ...(data?.highestQualification?.institutionName?.trim() && {
-        institutionName: data.highestQualification.institutionName.trim(),
+        institutionName: data?.highestQualification?.institutionName.trim(),
       }),
       ...(data?.highestQualification?.countryOfIssue?.trim() && {
-        countryOfIssue: data.highestQualification.countryOfIssue.trim(),
+        countryOfIssue: data?.highestQualification?.countryOfIssue.trim(),
       }),
     };
     const payload = {
@@ -232,14 +238,15 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     return response;
   };
   function isValidDate(date: any): boolean {
-    return new Date(date) instanceof Date &&!isNaN(new Date(date).getTime());
+    return new Date(date) instanceof Date && !isNaN(new Date(date).getTime());
   }
-
 
   const enrollStudent = async (
     studentId: string,
     data: {
-      universityId: string; courseId: string; intakeId: string;
+      universityId: string;
+      courseId: string;
+      intakeId: string;
       //  status: string
     }
   ) => {
@@ -257,10 +264,10 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     }
     const rawHQ = {
       ...(isValidDate(data?.highestQualification?.startDate) && {
-        startDate: formatDateToMMDDYYYY(new Date(data.highestQualification.startDate)),
+        startDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.startDate)),
       }),
       ...(isValidDate(data?.highestQualification?.endDate) && {
-        endDate: formatDateToMMDDYYYY(new Date(data.highestQualification.endDate)),
+        endDate: formatDateToMMDDYYYY(new Date(data?.highestQualification?.endDate)),
       }),
       ...(data?.highestQualification?.gradeResult && {
         gradeResult: data.highestQualification.gradeResult,
@@ -281,7 +288,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       email: data.email.trim().toLowerCase(),
       phonePrefix: '+91',
       phoneNumber: data.phoneNumber.trim(),
-      notes: data?.notes.trim(),
+      notes: data?.notes?.trim(),
       ...(data.emergencyNumber && { emergencyNumber: data.emergencyNumber.trim() }),
       ...(data.emergencyName && { emergencyName: data.emergencyName.trim() }),
       nationality: data.nationality.trim(),
@@ -386,8 +393,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                 <Field.Text name="fName" label="First Name" />
                 <Field.Text name="lName" label="Last Name" />
                 <Field.DatePicker name="dob" label="Date of Birth" maxDate={dayjs()} />
-                {!isRefferal &&
-                  <Field.Text name="leadNo" label="Lead Number" />}
+                {!isRefferal && <Field.Text name="leadNo" label="Lead Number" />}
                 <Field.Text name="phoneNumber" label="Phone Number" id="phoneNumber" />
                 <Field.Text name="email" label="Email Address" />
                 <Field.Select name="sex" label="Sex">
@@ -409,72 +415,79 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                 />
                 {isRefferal && <Field.Text name="notes" label="Notes" multiline />}
 
-                {!isRefferal &&
-                  <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />}
-                {!isRefferal &&
-                  <Field.Text name="postCode" label="Post Code" />}
-                {!isRefferal &&
-
-                  <Field.Text name="insuranceNumber" label="National Insurance Number" />}
+                {!isRefferal && (
+                  <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
+                )}
+                {!isRefferal && <Field.Text name="postCode" label="Post Code" />}
+                {!isRefferal && (
+                  <Field.Text name="insuranceNumber" label="National Insurance Number" />
+                )}
               </Box>
-              {!isRefferal && <Box
-                sx={{
-                  rowGap: 3,
-                  columnGap: 2,
-                  display: 'grid',
-                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
-                }}
-              >
-                <Typography variant="subtitle2" sx={{ gridColumn: 'span 2', mt: 2 }}>
-                  Highest Qualification
-                </Typography>
-                <Field.Text name="highestQualification.institutionName" label="Institution Name" />
-                <Field.Select name="highestQualification.gradeResult" label="Grade Result">
-                  {gradeResultOptions.map((value) => (
-                    <MenuItem key={value} value={value}>
-                      {value}
-                    </MenuItem>
-                  ))}
-                </Field.Select>
-                <Field.DatePicker
-                  name="highestQualification.startDate"
-                  label="Start Date"
-                  maxDate={dayjs()}
-                />
-                <Field.DatePicker
-                  name="highestQualification.endDate"
-                  label="End Date"
-                  maxDate={dayjs()}
-                />
-                <Field.CountrySelect
-                  name="highestQualification.countryOfIssue"
-                  label="Country Of Issue"
-                  getValue="name"
-                  id="countryOfIssue"
-                />
-              </Box>}
-              {!isRefferal && <Box
-                sx={{
-                  rowGap: 3,
-                  columnGap: 2,
-                  display: 'grid',
-                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
-                }}
-              >
-                <Typography variant="subtitle2" sx={{ gridColumn: 'span 2', mt: 2 }}>
-                  Emergency Contact
-                </Typography>
-                <Field.Text
-                  name="emergencyName"
-                  label="Emergency Name (Optional)"
-                  id="emergencyName"
-                />
-                <Field.Text
-                  name="emergencyNumber"
-                  label="Emergency Number (Optional)"
-                  id="emergencyNumber"
-                />
-              </Box>}
+              {!isRefferal && (
+                <Box
+                  sx={{
+                    rowGap: 3,
+                    columnGap: 2,
+                    display: 'grid',
+                    gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ gridColumn: 'span 2', mt: 2 }}>
+                    Highest Qualification
+                  </Typography>
+                  <Field.Text
+                    name="highestQualification.institutionName"
+                    label="Institution Name"
+                  />
+                  <Field.Select name="highestQualification.gradeResult" label="Grade Result">
+                    {gradeResultOptions.map((value) => (
+                      <MenuItem key={value} value={value}>
+                        {value}
+                      </MenuItem>
+                    ))}
+                  </Field.Select>
+                  <Field.DatePicker
+                    name="highestQualification.startDate"
+                    label="Start Date"
+                    maxDate={dayjs()}
+                  />
+                  <Field.DatePicker
+                    name="highestQualification.endDate"
+                    label="End Date"
+                    maxDate={dayjs()}
+                  />
+                  <Field.CountrySelect
+                    name="highestQualification.countryOfIssue"
+                    label="Country Of Issue"
+                    getValue="name"
+                    id="countryOfIssue"
+                  />
+                </Box>
+              )}
+              {!isRefferal && (
+                <Box
+                  sx={{
+                    rowGap: 3,
+                    columnGap: 2,
+                    display: 'grid',
+                    gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ gridColumn: 'span 2', mt: 2 }}>
+                    Emergency Contact
+                  </Typography>
+                  <Field.Text
+                    name="emergencyName"
+                    label="Emergency Name (Optional)"
+                    id="emergencyName"
+                  />
+                  <Field.Text
+                    name="emergencyNumber"
+                    label="Emergency Number (Optional)"
+                    id="emergencyNumber"
+                  />
+                </Box>
+              )}
               {/* Enrollment Fields */}
               {!currentStudent && !isRefferal && (
                 <Box
