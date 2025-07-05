@@ -1,7 +1,7 @@
 {
   "name": "@friendly-sphere/educational-consultancy",
   "author": "<FIRST/>",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Educational Consultancy",
   "private": true,
   "scripts": {

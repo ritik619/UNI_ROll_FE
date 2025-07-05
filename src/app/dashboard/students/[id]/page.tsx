@@ -188,6 +188,9 @@ export default function StudentDetailsPage({ params }: Props) {
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secondary', typography: 'body1' }}
             >
+              {student.leadNumber && (
+                <InfoItem icon="healthicons:insurance-card" label={student.leadNumber} />
+              )}
               {student.courseName && (
                 <InfoItem icon="eva:book-open-fill" label={student.courseName} />
               )}
@@ -203,6 +206,7 @@ export default function StudentDetailsPage({ params }: Props) {
                   label={[university?.cityName, university?.countryName].filter(Boolean).join(', ')}
                 />
               )}
+              
             </Stack>
             {/* Basic Details */}
             <Stack
@@ -229,9 +233,7 @@ export default function StudentDetailsPage({ params }: Props) {
                 <InfoItem icon="eva:phone-fill" label={student.phoneNumber} />
               )}
               {student.email && <InfoItem icon="eva:email-fill" label={student.email} />}
-              {student.insuranceNumber && (
-                <InfoItem icon="healthicons:insurance-card" label={student.insuranceNumber} />
-              )}
+            
               {student.address && (
                 <InfoItem
                   icon="eva:pin-fill"
@@ -242,7 +244,14 @@ export default function StudentDetailsPage({ params }: Props) {
               )}
               {student.nationality && <InfoItem icon="eva:map-fill" label={student.nationality} />}
             </Stack>
-
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 3 }}
+              sx={{ color: 'text.secondary', typography: 'body2' }}
+            >
+              {student.insuranceNumber && (
+                <InfoItem icon="healthicons:insurance-card" label={student.insuranceNumber} />
+              )}
             {student.emergencyName && (
               <Box
                 sx={{
@@ -294,7 +303,7 @@ export default function StudentDetailsPage({ params }: Props) {
                   </Box>
                 )}
               </Box>
-            )}
+            )}</Stack>
           </Stack>
         </Stack>
       </Card>
