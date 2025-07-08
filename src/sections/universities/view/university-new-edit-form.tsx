@@ -49,6 +49,7 @@ export const NewUniversitySchema = zod.object({
     .optional(),
   logoUrl: zod.any().optional(),
   status: zod.enum(['active', 'inactive']).default('active'),
+  countryCode:zod.string().optional(),
 });
 
 export type NewUniversitySchemaType = zod.infer<typeof NewUniversitySchema>;
@@ -72,6 +73,7 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
     website: '',
     logoUrl: null,
     status: 'active',
+    countryCode:"",
   };
 
   const methods = useForm<NewUniversitySchemaType>({
@@ -86,7 +88,7 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
           website: currentUniversity.website || '',
           logoUrl: currentUniversity.logoUrl || null,
           status: currentUniversity.status || 'active',
-          countryCode: currentUniversity.cityId.split('-')[0] || '',
+          countryCode: currentUniversity.countryCode || '',
         }
       : defaultValues,
   });
@@ -97,6 +99,7 @@ export function UniversityNewEditForm({ currentUniversity }: Props) {
     watch,
     formState: { isSubmitting, errors },
   } = methods;
+  
   // Watch the Country field value in real-time
   const selectedCountry = watch('countryCode');
 

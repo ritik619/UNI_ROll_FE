@@ -207,7 +207,7 @@ export function CoursesListView() {
   const fetchPaginatedUniversities = useCallback(async () => {
     try {
       setLoading(true);
-      const { universities: c, total } = await fetchUniversities('active');
+      const { universities: c, total } = await fetchUniversities('active',0,10000);
       setUniversities(c);
     } catch (err) {
       console.error(err);

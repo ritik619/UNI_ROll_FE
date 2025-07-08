@@ -38,6 +38,7 @@ export const UniversityQuickEditSchema = zod.object({
   description: zod.string().max(500).optional(),
   website: zod.string().url({ message: 'Website must be a valid URL!' }).optional(),
   status: zod.enum(['active', 'inactive']).default('active'),
+  countryCode:zod.string().optional(),
 });
 
 // ----------------------------------------------------------------------
@@ -73,6 +74,7 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
         website: currentUniversity.website || '',
         logoUrl: currentUniversity.logoUrl || null,
         status: currentUniversity.status || 'active',
+        countryCode: currentUniversity.countryCode|| "",
       }
       : defaultValues,
   });
@@ -80,8 +82,12 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
   const {
     setValue,
     handleSubmit,
+    watch,
     formState: { isSubmitting },
   } = methods;
+
+  // Watch the Country field value in real-time
+  const selectedCountry = watch('countryCode');
 
   const handleDropAvatar = useCallback(
     (acceptedFiles: File[]) => {
@@ -93,6 +99,7 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
     },
     [setValue]
   );
+
 
   const updateUniversity = async (data: IUpdateUniversity) => {
     if (!currentUniversity?.id) return;
@@ -179,8 +186,19 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
             }}
           >
             <Field.Text name="name" label="University Name" />
-            <Field.Text name="cityId" label="City ID" />
-
+            <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
+              <MenuItem value="active">Active</MenuItem>
+              <MenuItem value="inactive">Inactive</MenuItem>
+            </Field.Select>
+            <Field.CountrySelect name="countryCode" label="Country" getValue="code" />
+              {selectedCountry && (
+                <Field.CitySelect
+                  name="cityId"
+                  label="City"
+                  countryCode={selectedCountry}
+                  getValue="cityId"
+                />
+              )}
             <Field.Text
               name="description"
               label="Description"
@@ -191,10 +209,7 @@ export function UniversityQuickEditForm({ currentUniversity, open, onClose }: Pr
 
             <Field.Text name="website" label="Website" />
 
-            <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 1' }}>
-              <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="inactive">Inactive</MenuItem>
-            </Field.Select>
+           
           </Box>
         </DialogContent>
 
