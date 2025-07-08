@@ -227,7 +227,7 @@ export function UniversityListView({ earning }: { earning?: boolean }) {
   const fetchPaginatedCourses = useCallback(async () => {
     try {
       setLoading(true);
-      const { courses: c, total } = await fetchCourses('active');
+      const { courses: c, total } = await fetchCourses('active',0,10000);
       setCourses(c);
     } catch (err) {
       console.error(err);
