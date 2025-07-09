@@ -66,7 +66,7 @@ export function UniversityTableRow({
   onUpdateRow,
 }: Props) {
   const theme = useTheme();
-  
+
   const menuActions = usePopover(); // For university row actions
   const universityMenuActions = usePopover(); // For course row actions
   const confirmDialog = useBoolean();
@@ -80,6 +80,8 @@ export function UniversityTableRow({
   // State to track course being deleted
   const [universityToDelete, setUniversityToDelete] = useState<string | null>(null);
   const [associationToDelete, setAssociationToDelete] = useState<string | number | null>(null);
+  const [selectedAssociation, setSelectedAssociation] = useState<ICourseAssociation | null>(null);
+  const [selectedAssociationIndex, setSelectedAssociationIndex] = useState<number>(-1);
   const universityDeleteDialog = useBoolean();
 
   const { user } = useAuthContext();
@@ -112,6 +114,11 @@ export function UniversityTableRow({
       fetchCoursesById();
     }
   }, [collapseRow.value, row.id, earning]);
+
+  const handleUpdateAssociation = (updated) => {
+    courseAssociations[selectedAssociationIndex] = updated
+    setCoursesAssociations(courseAssociations)
+  }
 
   // const handleDeleteAssociation = async () => {
   //   if (!associationToDelete) return;
@@ -156,8 +163,14 @@ export function UniversityTableRow({
     <UniversityQuickAssociationForm
       universityId={row.id}
       open={quickAssociateCourse.value}
-      onClose={quickAssociateCourse.onFalse}
+      onClose={() => {
+        setSelectedAssociation(null); // Clear on close
+        setSelectedAssociationIndex(-1)
+        quickAssociateCourse.onFalse();
+      }}
       courses={courses}
+      selectedAssociation={selectedAssociation} // Pass the selected course
+      handleUpdateAssociation={handleUpdateAssociation}
     />
   );
 
@@ -266,7 +279,7 @@ export function UniversityTableRow({
               {row.name}
             </Link>
             <Box component="span" sx={{ color: 'text.disabled' }}>
-            {row.description ?? 'No description'}
+              {row.description ?? 'No description'}
             </Box>
           </Stack>
         </Box>
@@ -375,27 +388,27 @@ export function UniversityTableRow({
                     bgcolor: 'background.neutral',
                   }}
                 >
-                  <Box sx={{ width: '30%' }}>
+                  <Box sx={{ width: '40%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       Course
                     </Typography>
                   </Box>
 
-                  <Box sx={{ width: '20%' }}>
+                  <Box sx={{ width: '10%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       Tuition Fee
                     </Typography>
                   </Box>
-                  <Box sx={{ width: '20%' }}>
+                  <Box sx={{ width: '40%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      Start Date
+                      Requirements
                     </Typography>
                   </Box>
-                  <Box sx={{ width: '20%' }}>
+                  {/* <Box sx={{ width: '20%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       Deadline Date
                     </Typography>
-                  </Box>
+                  </Box> */}
 
                   <Box sx={{ width: '10%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
@@ -417,7 +430,7 @@ export function UniversityTableRow({
                       })}
                     >
                       {/* Course Name and Code - 30% width */}
-                      <Box sx={{ width: '30%' }}>
+                      <Box sx={{ width: '40%' }}>
                         <Link
                           // component={RouterLink}
                           // href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
@@ -436,7 +449,7 @@ export function UniversityTableRow({
                       </Box>
 
                       {/* Tuition Fee - 20% width */}
-                      <Box sx={{ width: '20%' }}>
+                      <Box sx={{ width: '10%' }}>
                         <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                           {course.price ? fCurrency(course.price) : '—'}
                         </Typography>
@@ -445,34 +458,21 @@ export function UniversityTableRow({
                       {/* Start Date - 20% width */}
                       <Box
                         sx={{
-                          width: '20%',
+                          width: '40%',
                           display: 'flex',
                           flexWrap: 'wrap',
                           gap: 0.75,
                           alignItems: 'center',
                         }}
                       >
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: 'text.primary',
-                            bgcolor: 'action.selected',
-                            px: 1,
-                            py: 0.5,
-                            borderRadius: 1,
-                            fontWeight: 500,
-                          }}
-                        >
-                          {new Date(course.startDate).toLocaleDateString('en-GB', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                        <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+
+                          {course.requirementsDescription}
                         </Typography>
                       </Box>
 
                       {/* Deadline Date - 20% width */}
-                      <Box
+                      {/* <Box
                         sx={{
                           width: '20%',
                           display: 'flex',
@@ -498,7 +498,7 @@ export function UniversityTableRow({
                             day: 'numeric',
                           })}
                         </Typography>
-                      </Box>
+                      </Box> */}
 
                       {/* Status and Actions - remainder width */}
                       <Box
@@ -543,6 +543,7 @@ export function UniversityTableRow({
                           slotProps={{ arrow: { placement: 'right-top' } }}
                           id={universityMenuActions.id}
                         >
+                          {/* Edit Course Option */}
                           <MenuList>
                             {/* {isAdmin && (
                               <MenuItem
@@ -554,12 +555,28 @@ export function UniversityTableRow({
                                 Edit Course
                               </MenuItem>
                             )} */}
+                            {/* Edit Association Option */}
+                            {isAdmin && (
+                              <MenuItem
+                                onClick={async () => {
+                                  setSelectedAssociation(course);
+                                  setSelectedAssociationIndex(index)
+                                  console.log(course,index)
+                                  quickAssociateCourse.onTrue();
+                                  universityMenuActions.onClose(); // Close the popover
+                                }}
+                                sx={{ color: 'text.primary' }}
+                              >
+                                <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
+                                Edit Association
+                              </MenuItem>
+                            )}
                             <MenuItem
                               onClick={async () => {
                                 try {
                                   const newStatus =
-                                    courseAssociations[associationToDelete as number].status ===
-                                    'active'
+                                    courseAssociations[associationToDelete as number]
+                                      .status === 'active'
                                       ? 'inactive'
                                       : 'active';
                                   courseAssociations[associationToDelete as number].status =

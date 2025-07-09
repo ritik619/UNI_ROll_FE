@@ -15,20 +15,36 @@ export const CourseAssociationSchema = z.object({
   languageOfInstruction: z.string(),
   maxStudents: z.number().int().nonnegative(),
   availableSeats: z.number().int().nonnegative(),
-  status: z.enum(['upcoming', 'ongoing', 'completed', 'cancelled']), // Update as needed
+  status: z.enum(['active', 'inactive']), // ✅ was: ['upcoming', 'ongoing', 'completed', 'cancelled']
 });
 
 // TypeScript type inferred from Zod schema
 export type CourseAssociationPayload = z.infer<typeof CourseAssociationSchema>;
 
 // Function to call the API
+
+// Create a university-course association
+
 export async function createCourseAssociation(payload: CourseAssociationPayload) {
   try {
     const response = await authAxiosInstance.post(endpoints.associations.root, payload);
     return response;
-  } catch (err) {
+  } catch (err:any) {
     console.error('Error:', err);
-    toast.error('Error associating!');
+    toast.error(err?.response?.data?.message || 'Failed to create university association.');
+    throw err;
+  }
+}
+
+// Edit an existing university-course association
+
+export async function editCourseAssociation(id: string, payload: CourseAssociationPayload) {
+  try {
+    const response = await authAxiosInstance.patch(endpoints.associations.byAssociation(id), payload);
+    return response;
+  } catch (err: any) {
+    console.error('Error:', err);
+    toast.error(err?.response?.data?.message || 'Failed to update university association.');
     throw err;
   }
 }

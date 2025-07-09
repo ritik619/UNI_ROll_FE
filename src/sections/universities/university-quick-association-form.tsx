@@ -17,29 +17,32 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
-import { createUniversityAssociation } from 'src/services/universities/attachUniversities';
+import { createUniversityAssociation, editUniversityAssociation } from 'src/services/universities/attachUniversities';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchCourses } from 'src/services/courses/fetchCourses';
 import { ICourse } from 'src/types/course';
+import { ICourseAssociation } from 'src/types/courseAssociation';
+import { select } from 'src/theme/core/components/select';
 
 // ----------------------------------------------------------------------
 
 const UniversityAssociationSchema = zod.object({
   courseId: zod.string().min(1, 'Course ID is required'),
-  startDate: zod.string(),
+  // startDate: zod.string(),
   // endDate: zod.string(),
-  applicationDeadline: zod.string(),
+  // applicationDeadline: zod.string(),
   price: zod
-  .union([zod.string(), zod.number()])
-  .transform((val) => Number(val))
-  .refine((val) => !isNaN(val) && val >= 0, {
-    message:'Price is required'}),
+    .union([zod.string(), zod.number()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val >= 0, {
+      message: 'Price is required'
+    }),
   currency: zod.string().min(1),
   requirementsDescription: zod.string(),
   // languageOfInstruction: zod.string(),
   // maxStudents: zod.number().int().nonnegative(),
   // availableSeats: zod.number().int().nonnegative(),
-  status: zod.enum(['active', 'inactive', 
+  status: zod.enum(['active', 'inactive',
     // 'upcoming', 'completed'
   ]),
 });
@@ -51,9 +54,11 @@ type Props = {
   onClose: () => void;
   universityId: string;
   courses: ICourse[];
+  selectedAssociation?: ICourseAssociation | null;
+  handleUpdateAssociation: (association: ICourseAssociation) => void
 };
 
-export function UniversityQuickAssociationForm({ open, onClose, universityId, courses }: Props) {
+export function UniversityQuickAssociationForm({ open, onClose, universityId, courses, selectedAssociation, handleUpdateAssociation }: Props) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -61,9 +66,9 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId, co
 
   const defaultValues: UniversityAssociationFormType = {
     courseId: '',
-    startDate: '',
-    // endDate: '',
-    applicationDeadline: '',
+    // startDate: '',
+    // // endDate: '',
+    // applicationDeadline: '',
     price: 0,
     currency: 'GBP',
     requirementsDescription: '',
@@ -81,29 +86,66 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId, co
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      const payload = {
-        ...data,
-        universityId,
-      };
-      await createUniversityAssociation(payload);
-      toast.success('Course association created successfully!');
-      router.refresh(); // or `router.push()` if needed
-      onClose();
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error.message || 'Failed to create course association');
+  useEffect(() => {
+    if (selectedAssociation) {
+      methods.reset({
+        courseId: selectedAssociation.courseId,
+        // startDate: selectedAssociation.startDate?.toString() || '',
+        // applicationDeadline: selectedAssociation.applicationDeadline?.toString() || '',
+        price: Number(selectedAssociation.price ?? 0),
+        currency: selectedAssociation.currency ?? 'GBP',
+        requirementsDescription: selectedAssociation.requirementsDescription ?? '',
+        status:
+          selectedAssociation.status === 'active' || selectedAssociation.status === 'inactive'
+            ? selectedAssociation.status
+            : 'inactive',
+      });
+    } else {
+      methods.reset(defaultValues);
     }
+  }, [selectedAssociation, methods.reset]);
+
+
+  const onSubmit = handleSubmit(async (data) => {
+    const payload = {
+      ...data,
+    };
+    if (selectedAssociation) {
+      // EDIT mode
+      try {
+        delete payload.courseId;
+        const { data } = await editUniversityAssociation(selectedAssociation.id, payload);
+        toast.success('Course Association updated successfully!');
+        handleUpdateAssociation({ ...data, id: selectedAssociation.id })
+      } catch (error: any) {
+        console.error(error);
+        toast.error(error.message || 'Failed to update course association');
+      }
+    } else {
+      // CREATE mode
+      try {
+        payload.universityId = universityId;
+        await createUniversityAssociation(payload);
+        toast.success('Course association created successfully!');
+        router.refresh(); // or `router.push()` if needed
+
+      } catch (error: any) {
+        console.error(error);
+        toast.error(error.message || 'Failed to create course association');
+      }
+    }
+    router.refresh();
+    onClose();
   });
 
   return (
     <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>
-      <DialogTitle>Associate a Course with University</DialogTitle>
-
+      <DialogTitle>
+        {selectedAssociation ? 'Edit Course Association' : 'Associate a Course with University'}
+      </DialogTitle>
       {!loading && (
         <Form methods={methods} onSubmit={onSubmit}>
           <DialogContent>
@@ -118,6 +160,7 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId, co
               <Field.Select
                 name="courseId"
                 label="Courses"
+                disabled={!!selectedAssociation}
                 helperText="Select the courses offering"
               >
                 {courses.map((course) => (
@@ -128,9 +171,9 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId, co
               </Field.Select>
               <Field.Text name="price" label="Price (e.g. 9500)" type="number" />
               {/* <Field.Text name="currency" label="Currency (e.g. USD)" /> */}
-              <Field.DatePicker name="startDate" label="Start Date" />
+              {/* <Field.DatePicker name="startDate" label="Start Date" /> */}
               {/* <Field.DatePicker name="endDate" label="End Date" /> */}
-              <Field.DatePicker name="applicationDeadline" label="Application Deadline" />
+              {/* <Field.DatePicker name="applicationDeadline" label="Application Deadline" /> */}
               {/* <Field.Text name="languageOfInstruction" label="Language" /> */}
               <Field.Text name="requirementsDescription" label="Requirements" multiline rows={2} />
               {/* <Field.Text name="maxStudents" label="Max Students" type="number" /> */}
@@ -150,7 +193,7 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId, co
             </Button>
 
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              Create
+              {selectedAssociation ? 'Update' : 'Create'}
             </LoadingButton>
           </DialogActions>
         </Form>

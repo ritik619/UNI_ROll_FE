@@ -78,6 +78,8 @@ export function CoursesTableRow({
   // State to track course being deleted
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
   const [associationToDelete, setAssociationToDelete] = useState<string | number | null>(null);
+  const [selectedAssociation, setSelectedAssociation] = useState<ICourseAssociation | null>(null);
+  const [selectedAssociationIndex, setSelectedAssociationIndex] = useState<number>(-1);
   const courseDeleteDialog = useBoolean();
 
   const { user } = useAuthContext();
@@ -126,11 +128,15 @@ export function CoursesTableRow({
 
       // Reset the course to delete
       setCourseToDelete(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to delete course:', error);
       toast.error('Failed to delete course:' + error?.message);
     }
   };
+  const handleUpdateAssociation=(updated)=>{
+    universitiesAssociations[selectedAssociationIndex]=updated
+    setUniversitiesAssociations(universitiesAssociations)
+  }
   // const handleDeleteAssociation = async () => {
   //   if (!associationToDelete) return;
 
@@ -169,8 +175,14 @@ export function CoursesTableRow({
     <CourseQuickAssociationForm
       courseId={row.id}
       open={quickAssociateUniversity.value}
-      onClose={quickAssociateUniversity.onFalse}
+      onClose={() => {
+        setSelectedAssociation(null); // Clear on close
+        setSelectedAssociationIndex(-1)
+        quickAssociateUniversity.onFalse();
+      }}
       universities={universities}
+      selectedAssociation={selectedAssociation} // Pass the selected course
+      handleUpdateAssociation={handleUpdateAssociation}
     />
   );
 
@@ -278,7 +290,7 @@ export function CoursesTableRow({
 
       <TableCell>
         <Box component="span" sx={{ width: '100%', color: 'text.disabled' }}>
-        {row.description ?? 'No description'}
+          {row.description ?? 'No description'}
         </Box>
       </TableCell>
       <TableCell>
@@ -408,27 +420,27 @@ export function CoursesTableRow({
                     bgcolor: 'background.neutral',
                   }}
                 >
-                  <Box sx={{ width: '30%' }}>
+                  <Box sx={{ width: '40%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       University
                     </Typography>
                   </Box>
 
-                  <Box sx={{ width: '20%' }}>
+                  <Box sx={{ width: '10%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       Tuition Fee
                     </Typography>
                   </Box>
-                  <Box sx={{ width: '20%' }}>
+                  <Box sx={{ width: '40%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      Start Date
+                      Requirements
                     </Typography>
                   </Box>
-                  <Box sx={{ width: '20%' }}>
+                  {/* <Box sx={{ width: '20%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       Deadline Date
                     </Typography>
-                  </Box>
+                  </Box> */}
 
                   <Box sx={{ width: '10%' }}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
@@ -450,7 +462,7 @@ export function CoursesTableRow({
                       })}
                     >
                       {/* universityName Name and Code - 30% width */}
-                      <Box sx={{ width: '30%', pr: 2 }}>
+                      <Box sx={{ width: '40%', pr: 2 }}>
                         <Link
                           // component={RouterLink}
                           // href={paths.dashboard.universitiesAndCourses.editCourse(course.id)}
@@ -465,7 +477,7 @@ export function CoursesTableRow({
                         </Link>
                       </Box>
                       {/* Tuition Fee - 20% width */}
-                      <Box sx={{ width: '20%', display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{ width: '10%', display: 'flex', alignItems: 'center' }}>
                         <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                           {university.price ? fCurrency(university.price) : '—'}
                         </Typography>
@@ -473,35 +485,21 @@ export function CoursesTableRow({
                       {/* Start Date - 20% width */}
                       <Box
                         sx={{
-                          width: '20%',
+                          width: '40%',
                           display: 'flex',
                           flexWrap: 'wrap',
                           gap: 0.75,
                           alignItems: 'center',
                         }}
                       >
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: 'text.primary',
-                            bgcolor: 'action.selected',
-                            px: 1,
-                            py: 0.5,
-                            borderRadius: 1,
-                            fontWeight: 500,
-                          }}
-                        >
-                          {new Date(university.startDate).toLocaleDateString('en-GB', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                        <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                          {university.requirementsDescription}
                         </Typography>
                       </Box>
                       {/* Start applicationDeadline - 20% width */}
-                      <Box
+                      {/* <Box
                         sx={{
-                          width: '20%',
+                          width: '10%',
                           display: 'flex',
                           flexWrap: 'wrap',
                           gap: 0.75,
@@ -525,7 +523,7 @@ export function CoursesTableRow({
                             day: 'numeric',
                           })}
                         </Typography>
-                      </Box>
+                      </Box> */}
 
                       {/* Status and Actions - remainder width */}
                       <Box
@@ -571,6 +569,7 @@ export function CoursesTableRow({
                           slotProps={{ arrow: { placement: 'right-top' } }}
                           id={courseMenuActions.id}
                         >
+                          {/* Edit Course Option */}
                           <MenuList>
                             {/* {isAdmin && (
                               <MenuItem
@@ -582,6 +581,22 @@ export function CoursesTableRow({
                                 Edit Course
                               </MenuItem>
                             )} */}
+                            {/* Edit Association Option */}
+                            {isAdmin && (
+                              <MenuItem
+                                onClick={async () => {
+                                  setSelectedAssociation(university);
+                                  setSelectedAssociationIndex(index)
+                                  quickAssociateUniversity.onTrue();
+                                  courseMenuActions.onClose(); // Close the popover
+                                }}
+                                sx={{ color: 'text.primary' }}
+                              >
+                                <Iconify icon="solar:pen-bold" width={16} sx={{ mr: 1 }} />
+                                Edit Association
+                              </MenuItem>
+
+                            )}
                             {/* //Activate/Deactivate Option */}
                             <MenuItem
                               onClick={async () => {
