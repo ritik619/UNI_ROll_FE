@@ -478,12 +478,12 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   </Typography>
                   <Field.Text
                     name="emergencyName"
-                    label="Emergency Name (Optional)"
+                    label="Emergency Name"
                     id="emergencyName"
                   />
                   <Field.Text
                     name="emergencyNumber"
-                    label="Emergency Number (Optional)"
+                    label="Emergency Number"
                     id="emergencyNumber"
                   />
                 </Box>
@@ -514,7 +514,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   />
                   <CitySelect
                     id="city-id"
-                    label="City (Optional)"
+                    label="City"
                     getValue="cityId"
                     placeholder="Choose a City"
                     onChange={(event, newValue) => {
