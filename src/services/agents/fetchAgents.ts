@@ -11,7 +11,7 @@ interface AgentsResponse {
 export const fetchAgents = async (
   status: 'active' | 'inactive' | 'all',
   page: number = 0,
-  limit: number = 5
+  limit: number = 1000
 ): Promise<AgentsResponse> => {
   try {
     const params: Record<string, any> = {

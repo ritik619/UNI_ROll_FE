@@ -161,27 +161,6 @@ const UserDetailsCard = () => {
                   </Typography>
                 </Typography>
               </DetailItem>
-              <DetailItem
-                sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
-              >
-                {/* Iconify: Calendar icon */}
-                <Icon
-                  icon="mdi:calendar-today"
-                  color={theme.palette.action.active}
-                  style={{ fontSize: 'small' }}
-                />
-                <Typography variant="body2" color="text.secondary">
-                  {'Date of Birth : '}
-                  <Typography
-                    component="span"
-                    variant="body1"
-                    color="text.primary"
-                    sx={{ fontWeight: 500 }}
-                  >
-                    {user?.dateOfBirth}
-                  </Typography>
-                </Typography>
-              </DetailItem>
               {user?.phoneNumber != null && (
                 <DetailItem
                   sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
