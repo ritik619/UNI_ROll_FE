@@ -111,8 +111,10 @@ export function CourseQuickAssociationForm({ open, onClose, courseId, universiti
   }, [selectedAssociation, methods.reset]);
 
   const onSubmit = handleSubmit(async (data) => {
+    const selectedUniversity = universities.find((uni) => uni.id === data.universityId);
     const payload = {
       ...data,
+      cityName: selectedUniversity?.cityName ?? '',
     };
     console.log(payload)
     if (selectedAssociation) {

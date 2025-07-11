@@ -21,6 +21,7 @@ export interface ICourseAssociation {
   status: CourseAssociationStatus;
   createdAt: Date;
   updatedAt: Date;
+  cityName?:string;
 }
 
 export interface ICreateCourseAssociation {

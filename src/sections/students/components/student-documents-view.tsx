@@ -47,16 +47,24 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleDeleteDocument = async () => {
-    const updatedDocs = (student.documents.otherDocuments = student.documents.otherDocuments.filter(
-      (doc) => doc !== selectedDocument
-    ));
-
-    if (!selectedDocument) return;
+    if (!selectedDocument || !student.documents) return;
 
     try {
-      delete student.documents[selectedDocument];
+      let updatedDocuments = { ...student.documents };
+
+      // Handle deletion from 'otherDocuments' (array of URLs)
+      if (selectedDocument.startsWith('http')) {
+        const otherDocs = student.documents.otherDocuments || [];
+        updatedDocuments.otherDocuments = otherDocs.filter((doc) => doc !== selectedDocument);
+      } else {
+        // Handle deletion of a single document field
+        if (selectedDocument in updatedDocuments) {
+          updatedDocuments[selectedDocument as keyof typeof updatedDocuments] = undefined;
+        }
+      }
+
       await authAxiosInstance.patch(endpoints.students.details(student.id), {
-        documents: { ...student.documents, otherDocuments: updatedDocs },
+        documents: updatedDocuments,
       });
       onRefresh();
       confirmDialog.onFalse();

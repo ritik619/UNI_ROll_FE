@@ -162,6 +162,7 @@ export function UniversityTableRow({
   const renderQuickAssociateCourseForm = () => (
     <UniversityQuickAssociationForm
       universityId={row.id}
+      universityCity={row.cityName}
       open={quickAssociateCourse.value}
       onClose={() => {
         setSelectedAssociation(null); // Clear on close

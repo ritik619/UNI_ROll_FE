@@ -54,11 +54,12 @@ type Props = {
   onClose: () => void;
   universityId: string;
   courses: ICourse[];
+  universityCity:string;
   selectedAssociation?: ICourseAssociation | null;
   handleUpdateAssociation: (association: ICourseAssociation) => void
 };
 
-export function UniversityQuickAssociationForm({ open, onClose, universityId, courses, selectedAssociation, handleUpdateAssociation }: Props) {
+export function UniversityQuickAssociationForm({ open, onClose, universityId, courses, selectedAssociation, handleUpdateAssociation,universityCity }: Props) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -108,10 +109,10 @@ export function UniversityQuickAssociationForm({ open, onClose, universityId, co
     }
   }, [selectedAssociation, methods.reset]);
 
-
   const onSubmit = handleSubmit(async (data) => {
     const payload = {
       ...data,
+      cityName: universityCity,
     };
     if (selectedAssociation) {
       // EDIT mode

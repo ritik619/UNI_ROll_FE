@@ -109,13 +109,16 @@ export function StudentQuickEnrollForm({
   
     const currentCourseId = methods.getValues('courseId');
     const stillValid = associatedCourses.some((c) => c.courseId === currentCourseId);
-  
     if (!stillValid) {
       setValue('courseId', '');
     }
   }, [watchUniversityId, associations, methods, setValue]);
-  
 
+  useEffect(()=>{
+    if(student?.universityId && student?.courseId){
+      setValue('courseId',student?.courseId ?? '')
+    }
+  },[studentId])
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
       <DialogTitle>Enroll Student</DialogTitle>
@@ -139,7 +142,7 @@ export function StudentQuickEnrollForm({
                 new Map(associations.map((item) => [item.universityId, item])).values()
               ).map((opt) => (
                 <MenuItem key={opt.universityId} value={opt.universityId}>
-                  {opt.universityName}
+                  {opt.universityName} ({opt?.cityName ?? ''})
                 </MenuItem>
               ))}
             </Field.Select>
