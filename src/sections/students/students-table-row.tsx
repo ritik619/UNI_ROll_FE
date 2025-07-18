@@ -165,7 +165,7 @@ export function StudentsTableRow({
     <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
       <TableCell>
         <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={row.firstName} src={row?.coverPhoto} />
+          {/* <Avatar alt={row.firstName} src={row?.coverPhoto} /> */}
 
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
             <Link
@@ -184,6 +184,7 @@ export function StudentsTableRow({
       </TableCell>
 
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.leadNumber}</TableCell>
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.agentName}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.nationality}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phoneNumber}</TableCell>
       {isRefferal ? (

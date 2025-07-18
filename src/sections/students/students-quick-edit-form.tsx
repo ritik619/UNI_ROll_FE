@@ -55,6 +55,10 @@ export const StudentsQuickEditSchema = zod.object({
   //   message: 'Sort code must be exactly 6 digits!',
   // }),
   courses: zod.string().min(1, { message: 'Courses is required!' }),
+  emergencyName: zod.string().optional(),
+  emergencyNumber: zod.string().optional(),
+  emergencyAddress: zod.string().optional(),
+  emergencyEmail: zod.string().email('Invalid email').optional(),
   // password: zod.string().min(8, { message: 'Password must be at least 8 characters long!' }),
   status: zod.string(),
 });
@@ -75,12 +79,13 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
     lastName: '',
     email: '',
     dateOfBirth: new Date().toString(),
-    // accountNumber: '',
     address: '',
-    postCode: '',
-    // sortCode: '',
-    utrNumber: '',
-    // password: '',
+    university: '',
+    courses: '',
+    emergencyName: '',
+    emergencyNumber: '',
+    emergencyAddress: '',
+    emergencyEmail: '',
   };
 
   const methods = useForm<StudentsQuickEditSchemaType>({
@@ -88,8 +93,7 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
     resolver: zodResolver(StudentsQuickEditSchema),
     defaultValues,
     values: {
-      // accountNumber: currentStudents?.bankDetails?.accountNumber,
-      // sortCode: currentStudents?.bankDetails.sortCode,
+      ...defaultValues,
       ...currentStudents,
     },
   });
@@ -109,6 +113,10 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
       email: data.email.trim().toLowerCase(),
       address: data.address.trim(),
       university: data.university.trim(),
+      emergencyName: data.emergencyName?.trim(),
+      emergencyNumber: data.emergencyNumber?.trim(),
+      emergencyAddress: data.emergencyAddress?.trim(),
+      emergencyEmail: data.emergencyEmail?.trim(),
       // bankDetails: {
       //   accountNumber: data.accountNumber.trim(),
       //   sortCode: data.sortCode.trim(),
@@ -159,12 +167,12 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
 
       <Form methods={methods} onSubmit={onSubmit}>
         <DialogContent>
-          {currentStudents?.status === 'unenrolled' && (
+          {currentStudents?.status === 'UnEnrolled' && (
             <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
               Account is waiting for confirmation
             </Alert>
           )}
-          <Box sx={{ mb: 5 }}>
+          {/* <Box sx={{ mb: 5 }}>
             <Field.UploadAvatar
               name="avatarUrl"
               maxSize={3145728}
@@ -184,7 +192,7 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
                 </Typography>
               }
             />
-          </Box>
+          </Box> */}
           <Box
             sx={{
               rowGap: 3,
@@ -208,6 +216,10 @@ export function StudentsQuickEditForm({ currentStudents, open, onClose }: Props)
             <Field.Text name="university" label="University" />
             <Field.Text name="courses" label="Courses" />
             <Field.Text name="address" label="Address" sx={{ gridColumn: 'span 2' }} />
+            <Field.Text name="emergencyName" label="Emergency Name" />
+            <Field.Text name="emergencyNumber" label="Emergency Number" />
+            <Field.Text name="emergencyAddress" label="Emergency Address" />
+            <Field.Text name="emergencyEmail" label="Emergency Email" />
             {/*
             <Grid2 size={{ xs: 12 }} spacing={2} sx={{ gridColumn: 'span 2' }}>
               <Card sx={{ p: 2 }}>

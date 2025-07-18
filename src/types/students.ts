@@ -104,11 +104,13 @@ export interface IStudentsItem {
   address?: string;
   postCode?: string;
   agentId: string;
+  agentName?: string;
   universityId?: string;
   universityName?: string;
   courseName?: string;
   courseId?: string;
   intakeId?: string;
+  intakeName?: string;
   status: IStudentStatus;
   documents?: IDocuments;
   finance?: IFinance;
@@ -118,6 +120,8 @@ export interface IStudentsItem {
   updatedAt: string;
   emergencyName?: string;
   emergencyNumber?: string;
+  emergencyAddress?: string;
+  emergencyEmail?: string;
   insuranceNumber?: string;
   highestQualification?: {
     startDate?: string;
@@ -159,6 +163,10 @@ export interface ICreateStudent {
   address: string;
   postCode?: string;
   agentId: string;
+  emergencyName?: string;
+  emergencyNumber?: string;
+  emergencyAddress?: string;
+  emergencyEmail?: string;
 }
 
 export interface IUpdateStudent {
@@ -175,6 +183,10 @@ export interface IUpdateStudent {
   postCode?: string;
   agentId?: string;
   status?: IStudentStatus;
+  emergencyName?: string;
+  emergencyNumber?: string;
+  emergencyAddress?: string;
+  emergencyEmail?: string;
 }
 
 export interface IUpdateStudentStatus {

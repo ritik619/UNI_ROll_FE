@@ -147,7 +147,7 @@ export default function StudentDetailsPage({ params }: Props) {
           spacing={3}
           alignItems={{ xs: 'flex-start', sm: 'center' }}
         >
-          {student.coverPhoto ? (
+          {/* {student.coverPhoto ? (
             <Box
               component="img"
               src={student.coverPhoto}
@@ -175,7 +175,7 @@ export default function StudentDetailsPage({ params }: Props) {
                 {student.firstName.substring(0, 1).toUpperCase()}
               </Typography>
             </Box>
-          )}
+          )} */}
 
           <Stack spacing={1.5} flexGrow={1}>
             {/* Heading */}
@@ -197,16 +197,16 @@ export default function StudentDetailsPage({ params }: Props) {
               {student.universityName && (
                 <InfoItem icon="eva:book-fill" label={student.universityName} />
               )}
-              {student.intakeName && (
-                <InfoItem icon="eva:bookmark-fill" label={student.intakeName} />
+              {student?.intakeName && (
+                <InfoItem icon="eva:bookmark-fill" label={student?.intakeName ?? ''} />
               )}
-              {university.cityName && university?.countryName && (
+              {university?.cityName && university?.countryName && (
                 <InfoItem
                   icon="eva:globe-outline"
-                  label={[university?.cityName, university?.countryName].filter(Boolean).join(', ')}
+                  label={[(university?.cityName ?? ''), (university?.countryName ?? '')].filter(Boolean).join(', ')}
                 />
               )}
-              
+
             </Stack>
             {/* Basic Details */}
             <Stack
@@ -233,7 +233,7 @@ export default function StudentDetailsPage({ params }: Props) {
                 <InfoItem icon="eva:phone-fill" label={student.phoneNumber} />
               )}
               {student.email && <InfoItem icon="eva:email-fill" label={student.email} />}
-            
+
               {student.address && (
                 <InfoItem
                   icon="eva:pin-fill"
@@ -252,58 +252,79 @@ export default function StudentDetailsPage({ params }: Props) {
               {student.insuranceNumber && (
                 <InfoItem icon="healthicons:insurance-card" label={student.insuranceNumber} />
               )}
-            {student.emergencyName && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  color: 'text.secondary',
-                  typography: 'body2',
-                  border: '1px solid',
-                  borderColor: '#FF5630',
-                  borderRadius: 1,
-                  px: 0.5,
-                  py: 0.25,
-                  maxWidth: 'fit-content',
-                  columnGap: 2,
-                  alignItems: 'flex-start',
-                }}
-              >
-                <Label sx={{ background: '#FF5630' }}>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Iconify
-                      icon="eva:heart-fill"
-                      color={theme.palette.background.default}
-                      width={18}
-                    />
-                    <span
-                      style={{
-                        color: theme.palette.background.paper,
-                        fontWeight: 'bold',
-                        fontSize: '16px',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      Emergency
-                    </span>
-                  </Box>
-                </Label>
+              {student.emergencyName && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    color: 'text.secondary',
+                    typography: 'body2',
+                    border: '1px solid',
+                    borderColor: '#FF5630',
+                    borderRadius: 1,
+                    px: 0.5,
+                    py: 0.25,
+                    maxWidth: 'fit-content',
+                    columnGap: 2,
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <Label sx={{ background: '#FF5630' }}>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Iconify
+                        icon="eva:heart-fill"
+                        color={theme.palette.background.default}
+                        width={18}
+                      />
+                      <span
+                        style={{
+                          color: theme.palette.background.paper,
+                          fontWeight: 'bold',
+                          fontSize: '16px',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        Emergency
+                      </span>
+                    </Box>
+                  </Label>
 
-                {student.emergencyName && (
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Iconify icon="eva:person-fill" color="#FF5630" width={16} />
-                    <span>{student.emergencyName}</span>
-                  </Box>
-                )}
+                  {student.emergencyName && (
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Iconify icon="eva:person-fill" color="#FF5630" width={16} />
+                      <span>{student.emergencyName}</span>
+                    </Box>
+                  )}
 
-                {student.emergencyNumber && (
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Iconify icon="eva:phone-fill" color="#FF5630" width={16} />
-                    <span>{student.emergencyNumber}</span>
-                  </Box>
-                )}
-              </Box>
-            )}</Stack>
+                  {student.emergencyNumber && (
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Iconify icon="eva:phone-fill" color="#FF5630" width={16} />
+                      <span>{student.emergencyNumber}</span>
+                    </Box>
+                  )}
+                  {student.emergencyAddress && (
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Iconify icon="eva:pin-fill" color="#FF5630" width={16} />
+                      <span>{student.emergencyAddress}</span>
+                    </Box>
+                  )}
+                  {student.emergencyEmail && (
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Iconify icon="eva:email-fill" color="#FF5630" width={16} />
+                      <span>{student.emergencyEmail}</span>
+                    </Box>
+                  )}
+                </Box>
+              )}</Stack>
+            {student?.agentName && (
+              <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 3 }}
+              sx={{ color: 'text.secondary', typography: 'body2' }}
+            >
+              AgentName:
+              <InfoItem icon="healthicons:insurance-card" label={student?.agentName || 'NA'} />
+            </Stack>)}
           </Stack>
         </Stack>
       </Card>
@@ -338,14 +359,14 @@ export default function StudentDetailsPage({ params }: Props) {
           {currentTab === 'finance' && (
             <StudentFinanceView
               student={student}
-              finance={student.finance?.status}
+              finance={student.finance?.status ?? 'Applied'}
               onRefresh={fetchStudent}
             />
           )}
           {currentTab === 'booking' && (
             <StudentExamBookView
               student={student}
-              booking={student.booking}
+              booking={student.booking ?? {}}
               onRefresh={fetchStudent}
             />
           )}

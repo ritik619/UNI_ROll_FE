@@ -96,6 +96,7 @@ export function StudentsListView() {
   const TABLE_HEAD: TableHeadCellProps[] = [
     { id: 'name', label: 'Name' },
     { id: 'leadNo', label: 'Lead No', width: 120 },
+    { id: 'agentName', label: 'Agent Name', width: 120 },
     { id: 'country', label: 'Country', width: 180 },
     { id: 'phoneNumber', label: 'Phone Number' },
     ...(isRefferal

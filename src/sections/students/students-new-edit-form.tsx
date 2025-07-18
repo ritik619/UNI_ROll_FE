@@ -51,6 +51,8 @@ export const NewStudentsSchema = zod.object({
   phoneNumber: zod.string().min(5, { message: 'Phone Number is required!' }),
   emergencyNumber: zod.string().optional(),
   emergencyName: zod.string().optional(),
+  emergencyAddress: zod.string().optional(),
+  emergencyEmail: zod.string().email('Invalid email').optional(),
   nationality: zod.string().min(1, { message: 'Nationality is required!' }),
   sex: zod.string().min(1, { message: 'Sex is required!' }),
   address: zod.string().optional(),
@@ -102,6 +104,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
     phoneNumber: currentStudent?.phoneNumber || '',
     emergencyNumber: currentStudent?.emergencyNumber || '',
     emergencyName: currentStudent?.emergencyName || '',
+    emergencyAddress: currentStudent?.emergencyAddress || '',
+    emergencyEmail: currentStudent?.emergencyEmail || '',
     nationality: currentStudent?.nationality || '',
     sex: currentStudent?.sex || '',
     address: currentStudent?.address || '',
@@ -223,6 +227,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       phoneNumber: data.phoneNumber.trim(),
       ...(data.emergencyNumber && { emergencyNumber: data.emergencyNumber.trim() }),
       ...(data.emergencyName && { emergencyName: data.emergencyName.trim() }),
+      ...(data.emergencyAddress && { emergencyAddress: data.emergencyAddress.trim() }),
+      ...(data.emergencyEmail && { emergencyEmail: data.emergencyEmail.trim() }),
       nationality: data.nationality.trim(),
       sex: data.sex.trim(),
       address: data.address?.trim(),
@@ -291,6 +297,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
       notes: data?.notes?.trim(),
       ...(data.emergencyNumber && { emergencyNumber: data.emergencyNumber.trim() }),
       ...(data.emergencyName && { emergencyName: data.emergencyName.trim() }),
+      ...(data.emergencyAddress && { emergencyAddress: data.emergencyAddress.trim() }),
+      ...(data.emergencyEmail && { emergencyEmail: data.emergencyEmail.trim() }),
       nationality: data.nationality.trim(),
       sex: data.sex.trim(),
       address: data.address?.trim(),
@@ -353,7 +361,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
   return (
     <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 3 }}>
+        {/* <Grid size={{ xs: 12, md: 3 }}>
           <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>
             <Field.UploadAvatar
               name="coverPhoto"
@@ -375,8 +383,8 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
               }
             />
           </Card>
-        </Grid>
-        <Grid size={{ xs: 12, md: 8 }}>
+        </Grid> */}
+        <Grid size={{ xs: 12, md: 12 }}>
           <Card sx={{ p: 3 }}>
             <Box>
               <Box
@@ -485,6 +493,16 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                     name="emergencyNumber"
                     label="Emergency Number"
                     id="emergencyNumber"
+                  />
+                  <Field.Text
+                    name="emergencyAddress"
+                    label="Emergency Address"
+                    id="emergencyAddress"
+                  />
+                  <Field.Text
+                    name="emergencyEmail"
+                    label="Emergency Email"
+                    id="emergencyEmail"
                   />
                 </Box>
               )}
