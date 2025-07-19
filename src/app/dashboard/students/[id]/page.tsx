@@ -182,6 +182,9 @@ export default function StudentDetailsPage({ params }: Props) {
             <Typography variant="h3">
               {student.firstName} {student.lastName}
             </Typography>
+            <Typography variant="h5">
+              Agent: {student.agentName}
+            </Typography>
             {/* University & Course Details */}
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
