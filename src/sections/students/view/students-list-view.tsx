@@ -97,7 +97,7 @@ export function StudentsListView() {
     { id: 'name', label: 'Name' },
     { id: 'leadNo', label: 'Lead No', width: 120 },
     { id: 'agentName', label: 'Agent Name', width: 120 },
-    { id: 'country', label: 'Country', width: 180 },
+    { id: 'country', label: 'Nationality', width: 180 },
     { id: 'phoneNumber', label: 'Phone Number' },
     ...(isRefferal
       ? [{ id: 'Notes', label: 'Notes', width: 220 },]
