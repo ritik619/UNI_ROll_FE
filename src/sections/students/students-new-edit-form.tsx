@@ -52,7 +52,7 @@ export const NewStudentsSchema = zod.object({
   emergencyNumber: zod.string().optional(),
   emergencyName: zod.string().optional(),
   emergencyAddress: zod.string().optional(),
-  emergencyEmail: zod.string().email('Invalid email').optional(),
+  emergencyEmail: zod.string().optional(),
   nationality: zod.string().min(1, { message: 'Nationality is required!' }),
   sex: zod.string().min(1, { message: 'Sex is required!' }),
   address: zod.string().optional(),
