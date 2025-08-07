@@ -37,6 +37,10 @@ export const NewAgentSchema = zod.object({
     .string()
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
+  phoneNumber: zod
+    .string()
+    .min(5, { message: 'Phone Number must be at least 5 characters long!' })
+    .optional(),
   address: zod.string().min(1, { message: 'Address is required!' }),
   postCode: zod.string().min(1, { message: 'Post code is required!' }),
   accountNumber: zod.string().min(1, { message: 'Account number is required' }),
@@ -66,6 +70,7 @@ export function AgentNewEditForm(
     firstName: '',
     lastName: '',
     email: '',
+    phoneNumber: '',
     dateOfBirth: new Date().toISOString().substring(0, 10), // "YYYY-MM-DD"
     accountNumber: '',
     address: '',
@@ -96,6 +101,7 @@ export function AgentNewEditForm(
       lastName: data.lastName.trim(),
       dateOfBirth: new Date(data.dateOfBirth),
       email: data.email.trim().toLowerCase(),
+      phoneNumber: data.phoneNumber?.trim(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
       bankDetails: {
@@ -144,6 +150,7 @@ export function AgentNewEditForm(
               <Field.Text name="lastName" label="Last Name" />
               <Field.DatePicker name="dateOfBirth" label="Date of Birth" />
               <Field.Text name="email" label="Email Address" />
+              <Field.Text name="phoneNumber" label="Phone Number" id="phoneNumber" />
               <Field.Text name="address" label="Address" />
               <Field.Text name="postCode" label="Post Code" />
               <Field.Text name="password" label="Password" sx={{ gridColumn: 'span 1' }} />
@@ -155,7 +162,7 @@ export function AgentNewEditForm(
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexDirection: 'row',
-                  borderRadius: "8px"
+                  borderRadius: '8px',
                 }}
               >
                 <Typography variant="subtitle2" sx={{ color: '#919eab' }}>
@@ -191,14 +198,23 @@ export function AgentNewEditForm(
                 <Typography variant="subtitle2" sx={{ color: '#919eab', m: 1 }}>
                   Bank Details
                 </Typography>
-                <Grid container spacing={4} sx={{
-                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
-                  gridColumn: 'span 2',
-                  rowGap: 3,
-                  columnGap: 2,
-                  width: "100%"
-                }}>
-                  <Field.Text name="accountNumber" label="Account Number" fullWidth sx={{ gridColumn: 'span 2' }} />
+                <Grid
+                  container
+                  spacing={4}
+                  sx={{
+                    gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+                    gridColumn: 'span 2',
+                    rowGap: 3,
+                    columnGap: 2,
+                    width: '100%',
+                  }}
+                >
+                  <Field.Text
+                    name="accountNumber"
+                    label="Account Number"
+                    fullWidth
+                    sx={{ gridColumn: 'span 2' }}
+                  />
                   <Field.Text name="sortCode" label="Sort Code" sx={{ gridColumn: 'span 1' }} />
                   <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 1' }} />
                 </Grid>
@@ -233,7 +249,7 @@ export function AgentNewEditForm(
                     justifyContent: 'space-between',
                     flexDirection: 'row',
                     width: '50%',
-                    borderRadius: "8px",
+                    borderRadius: '8px',
                     padding: '10px',
                     margin: '5px',
                   }}
@@ -263,7 +279,7 @@ export function AgentNewEditForm(
                     width: '50%',
                     padding: '10px',
                     margin: '5px',
-                    borderRadius: "8px",
+                    borderRadius: '8px',
                   }}
                 >
                   <Typography variant="subtitle2" sx={{ color: '#919eab' }}>
@@ -300,4 +316,4 @@ export function AgentNewEditForm(
       </Grid>
     </Form>
   );
-};
+}

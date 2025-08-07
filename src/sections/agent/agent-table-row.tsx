@@ -146,6 +146,9 @@ export function AgentTableRow({
               <Box component="span" sx={{ color: 'text.disabled' }}>
                 {row.email}
               </Box>
+              <Box component="span" sx={{ color: 'text.disabled' }}>
+                {row.phoneNumber}
+              </Box>
             </Stack>
           </Box>
         </TableCell>

@@ -42,6 +42,10 @@ export const AgentQuickEditSchema = zod.object({
     .transform((str) => str.trim()),
   dateOfBirth: zod.string().min(1, { message: 'Date of Birth is required!' }),
   email: zod.string().email({ message: 'Email must be a valid email address!' }),
+  phoneNumber: zod
+    .string()
+    .min(5, { message: 'Phone Number must be at least 5 characters long!' })
+    .optional(),
   address: zod.string().min(1, { message: 'Address is required!' }),
   postCode: zod.string().min(1, { message: 'Post code is required!' }),
   accountNumber: zod.string().min(1, { message: 'Account number is required' }),
@@ -68,6 +72,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
     lastName: currentAgent?.lastName ?? '',
     dateOfBirth: toDMY(currentAgent?.dateOfBirth).toDateString(),
     email: currentAgent?.email ?? '',
+    phoneNumber: currentAgent?.phoneNumber || '',
     address: currentAgent?.address ?? '',
     postCode: currentAgent?.postCode ?? '',
     accountNumber: currentAgent?.bankDetails?.accountNumber ?? '',
@@ -108,6 +113,7 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
       lastName: data.lastName.trim(),
       dateOfBirth: data.dateOfBirth,
       email: data.email.trim().toLowerCase(),
+      phoneNumber: data.phoneNumber?.trim(),
       address: data.address.trim(),
       postCode: data.postCode.trim(),
       bankDetails: {
@@ -189,7 +195,6 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
             }}
           >
             <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
-
             <Field.Select name="status" label="Status" sx={{ gridColumn: 'span 2' }}>
               {USER_STATUS_OPTIONS.map(({ value, label }) => (
                 <MenuItem key={value} value={value}>
@@ -197,14 +202,13 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
                 </MenuItem>
               ))}
             </Field.Select>
-
             <Field.Text name="firstName" label="First Name" />
             <Field.Text name="lastName" label="Last Name" />
             <Field.DatePicker name="dateOfBirth" label="Date of Birth" />
             <Field.Text name="email" label="Email Address" />
+            <Field.Text name="phoneNumber" label="Phone Number" id="phoneNumber" />
             <Field.Text name="address" label="Address" />
             <Field.Text name="postCode" label="Post Code" />
-
             <Grid xs={12} sx={{ gridColumn: 'span 2' }}>
               <Card sx={{ p: 2 }}>
                 <Typography variant="subtitle2" sx={{ mb: 2, color: 'text.secondary' }}>
@@ -223,7 +227,6 @@ export function AgentQuickEditForm({ currentAgent, open, onClose, onCloseandUpda
                 </Box>
               </Card>
             </Grid>
-
             <Field.Text name="utrNumber" label="UTR Number" sx={{ gridColumn: 'span 2' }} />
           </Box>
 
