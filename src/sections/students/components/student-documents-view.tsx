@@ -392,6 +392,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               ['Personal Statement', 'personalStatement', student.documents?.personalStatement],
               ['CV', 'cv', student.documents?.cv],
               ['Consent Form', 'consentForm', student.documents?.consentForm],
+              ['SFE Approval Letter', 'financeLetter', student.documents?.financeLetter],
             ].map(([label, key, url]) => (
               <Grid item xs={12} md={4} key={key as string}>
                 {renderDocumentItem(label as string, key as string, url as string | undefined)}

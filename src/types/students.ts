@@ -50,6 +50,7 @@ export interface IDocuments {
   cv?: string;
   consentForm?: string;
   otherDocuments?: string[];
+  financeLetter?: string;
 }
 export type IStudentsTableFilters = {
   name: string;
