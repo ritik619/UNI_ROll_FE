@@ -58,13 +58,13 @@ export function FirebaseSignInView() {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [sessionExpiredMessage, setSessionExpiredMessage] = useState<string | null>(null);
-  
+
   // Check for session expired notification in localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const sessionExpired = window.localStorage.getItem('sessionExpired');
       const unauthorizedRedirect = window.localStorage.getItem('unauthorizedRedirect');
-      
+
       if (sessionExpired === 'true') {
         setSessionExpiredMessage('Your session has expired. Please sign in again.');
         window.localStorage.removeItem('sessionExpired');
@@ -132,7 +132,7 @@ export function FirebaseSignInView() {
       <Field.Text name="email" label="Email address" slotProps={{ inputLabel: { shrink: true } }} />
 
       <Box sx={{ gap: 1.5, display: 'flex', flexDirection: 'column' }}>
-        {/* <Link
+        <Link
           component={RouterLink}
           href={paths.auth.firebase.resetPassword}
           variant="body2"
@@ -140,7 +140,7 @@ export function FirebaseSignInView() {
           sx={{ alignSelf: 'flex-end' }}
         >
           Forgot password?
-        </Link> */}
+        </Link>
 
         <Field.Text
           name="password"
@@ -180,7 +180,7 @@ export function FirebaseSignInView() {
 
   return (
     <>
-    {/* TODO */}
+      {/* TODO */}
       {/* <FormHead
         title="Sign in to your account"
         description={
@@ -199,7 +199,7 @@ export function FirebaseSignInView() {
           {sessionExpiredMessage}
         </Alert>
       )}
-      
+
       {!!errorMessage && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {errorMessage}
