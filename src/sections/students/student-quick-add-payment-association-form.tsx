@@ -32,7 +32,7 @@ import { fCurrency } from 'src/utils/format-number';
 const defaultPayment = {
   amount: 0,
   paymentNumber: 1,
-  status: 'Pending' as const,
+  status: 'Paid' as const,
   description: '',
   paymentDate: new Date().toISOString(),
 };
@@ -48,7 +48,7 @@ const PaymentSchema = zod.object({
     .union([zod.string(), zod.number()])
     .transform((val) => Number(val))
     .refine((val) => !isNaN(val) && val >= 0, {
-      message: 'Payment number is required'
+      message: 'Payment number is required',
     }),
   status: zod.enum(['Paid', 'Pending', 'Failed']),
   description: zod.string(),
@@ -75,7 +75,7 @@ type PaymentAssociationFormType = zod.infer<typeof PaymentAssociationSchema>;
 type Props = {
   open: boolean;
   onClose: () => void;
-  onUpdate: (data:IEarning) => void;
+  onUpdate: (data: IEarning) => void;
   studentId: string;
   universityId: string;
   agentId: string;
@@ -147,7 +147,7 @@ export function StudentQuickAddPaymentAssociationForm({
   courseId,
   intakeId,
   earning,
-  onUpdate
+  onUpdate,
 }: Props) {
   const router = useRouter();
 
@@ -187,7 +187,6 @@ export function StudentQuickAddPaymentAssociationForm({
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      
       const payload = {
         ...data,
         studentId,
@@ -197,17 +196,18 @@ export function StudentQuickAddPaymentAssociationForm({
         intakeId,
       };
       if (earning?.id) {
-        payload.payments = [...data.payments.map((item, idx) => {
-          let updated = { ...(earning.payments?.[idx] ? earning.payments?.[idx] : {}), ...item }
-          delete updated?.createdAt
-          delete updated?.updatedAt
-          return updated
-        }
-        )]
+        payload.payments = [
+          ...data.payments.map((item, idx) => {
+            let updated = { ...(earning.payments?.[idx] ? earning.payments?.[idx] : {}), ...item };
+            delete updated?.createdAt;
+            delete updated?.updatedAt;
+            return updated;
+          }),
+        ];
       }
-      const response=await createPaymentAssociation(payload);
+      const response = await createPaymentAssociation(payload);
       toast.success('Payment completed successfully!');
-      onUpdate(response.data.earning)
+      onUpdate(response.data.earning);
       onClose();
     } catch (error: any) {
       console.error(error);
