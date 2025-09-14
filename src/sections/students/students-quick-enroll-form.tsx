@@ -45,9 +45,7 @@ type Props = {
   student: IStudentsItem;
   associations?: ICourseAssociation[];
   intakes?: IIntake[];
-  onEnroll?: (
-    data:IStudentsItem
-  ) => void;
+  onEnroll?: (data: IStudentsItem) => void;
 };
 
 const STATUS_OPTIONS = [
@@ -55,7 +53,7 @@ const STATUS_OPTIONS = [
   { value: 'Enrolled', label: 'Enrolled' },
   { value: 'Withdrawn', label: 'Withdrawn' },
   { value: 'Deferred', label: 'Deferred' },
-  { value: 'UnEnrolled', label: 'Un-Enrolled' },
+  { value: 'UnEnrolled', label: 'Fail' },
   // { value: 'Unaffiliated', label: 'Un-Affiliated' },
 ];
 export function StudentQuickEnrollForm({
@@ -89,9 +87,9 @@ export function StudentQuickEnrollForm({
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const response=await authAxiosInstance.patch(endpoints.students.enroll(studentId), data);
+      const response = await authAxiosInstance.patch(endpoints.students.enroll(studentId), data);
       if (onEnroll) {
-        onEnroll( response.data);
+        onEnroll(response.data);
       }
       toast.success('Student enrolled successfully!');
       onClose();
@@ -103,10 +101,8 @@ export function StudentQuickEnrollForm({
   const { setValue } = methods;
 
   useEffect(() => {
-    const associatedCourses = associations.filter(
-      (i) => i.universityId === watchUniversityId
-    );
-  
+    const associatedCourses = associations.filter((i) => i.universityId === watchUniversityId);
+
     const currentCourseId = methods.getValues('courseId');
     const stillValid = associatedCourses.some((c) => c.courseId === currentCourseId);
     if (!stillValid) {
@@ -114,11 +110,11 @@ export function StudentQuickEnrollForm({
     }
   }, [watchUniversityId, associations, methods, setValue]);
 
-  useEffect(()=>{
-    if(student?.universityId && student?.courseId){
-      setValue('courseId',student?.courseId ?? '')
+  useEffect(() => {
+    if (student?.universityId && student?.courseId) {
+      setValue('courseId', student?.courseId ?? '');
     }
-  },[studentId])
+  }, [studentId]);
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
       <DialogTitle>Enroll Student</DialogTitle>
@@ -198,4 +194,3 @@ export function StudentQuickEnrollForm({
     </Dialog>
   );
 }
-

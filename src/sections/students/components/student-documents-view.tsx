@@ -158,35 +158,40 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
     }
   };
 
-  const handleDownloadAll = async () => {
+  async function downloadAsZip(urls: string[]) {
     try {
       const zip = new JSZip();
-      const documents = student.documents || {};
 
-      // Add each document to the zip
-      for (const [docType, url] of Object.entries(documents)) {
-        if (url) {
-          try {
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const fileName = url.split('/').pop() || `${docType}.pdf`;
-            zip.file(fileName, blob);
-          } catch (error) {
-            console.error(`Error downloading ${docType}:`, error);
-          }
-        }
-      }
+      // Fetch all files in parallel
+      const files = await Promise.all(
+        urls.map(async (url, index) => {
+          const response = await fetch(url);
+          const blob = await response.blob();
 
-      // Generate and download the zip file
+          // Get extension (e.g., "png", "pdf")
+          const ext = blob.type.split('/')[1] || 'dat';
+
+          // Generate random name
+          const filename = `file-${Date.now()}-${index}.${ext}`;
+
+          return { blob, filename };
+        })
+      );
+
+      // Add files to ZIP
+      files.forEach(({ blob, filename }) => {
+        zip.file(filename, blob);
+      });
+
+      // Generate ZIP blob
       const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, `${student.firstName}_${student.lastName}_documents.zip`);
 
-      toast.success('Documents downloaded successfully!');
-    } catch (error) {
-      console.error('Error creating zip:', error);
-      toast.error('Failed to download documents');
+      // Save ZIP file
+      saveAs(content, `${student.firstName}_${student.lastName}_documents.zip`);
+    } catch (err) {
+      console.error('Failed to create zip:', err);
     }
-  };
+  }
 
   const handleDeleteAll = async () => {
     try {
@@ -204,6 +209,31 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
     }
   };
 
+  const handleDownload = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      // Try to get file extension from MIME type
+      const ext = blob.type.split('/')[1] || 'dat';
+
+      // Generate random filename
+      const randomName = `file-${Date.now()}-${Math.floor(Math.random() * 1000)}.${ext}`;
+
+      // Create temporary link
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = randomName;
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(link.href);
+    } catch (err) {
+      console.error('Download failed:', err);
+    }
+  };
   const renderDocumentItem = (title: string, key: string, url?: string) => {
     if (!url) {
       return (
@@ -254,14 +284,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
               <Iconify icon="mdi:eye" />
             </Button>
 
-            <Button
-              component="a"
-              href={url}
-              target="_blank"
-              rel="noopener"
-              aria-label="Download"
-              color="success"
-            >
+            <Button onClick={() => handleDownload(url)} aria-label="Download" color="success">
               <Iconify icon="mdi:download" />
             </Button>
 
@@ -363,7 +386,7 @@ export function StudentDocumentsView({ student, onRefresh }: Props) {
                 variant="outlined"
                 color="success"
                 startIcon={<Iconify icon="mdi:download" />}
-                onClick={handleDownloadAll}
+                onClick={() => downloadAsZip(Object.values(student.documents) ?? [])}
                 disabled={!student.documents || Object.keys(student.documents).length === 0}
               >
                 Download All

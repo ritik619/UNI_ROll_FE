@@ -28,7 +28,14 @@ type Props = CardProps & {
   currencyCode: string;
 };
 
-export function AppTopUniversityEarnings({ title, subheader, list, currencyCode, sx, ...other }: Props) {
+export function AppTopUniversityEarnings({
+  title,
+  subheader,
+  list,
+  currencyCode,
+  sx,
+  ...other
+}: Props) {
   return (
     <Card sx={sx} {...other}>
       <CardHeader title={title} subheader={subheader} />
@@ -41,9 +48,11 @@ export function AppTopUniversityEarnings({ title, subheader, list, currencyCode,
           flexDirection: 'column',
         }}
       >
-        {orderBy(list, ['totalAmount'], ['desc']).map((item, index) => (
-          <Item key={item.universityId} item={item} index={index} currencyCode={currencyCode} />
-        ))}
+        {orderBy(list, ['totalAmount'], ['desc'])
+          .filter((u) => u.totalAmount > 0)
+          .map((item, index) => (
+            <Item key={item.universityId} item={item} index={index} currencyCode={currencyCode} />
+          ))}
       </Box>
     </Card>
   );

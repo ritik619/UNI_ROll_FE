@@ -68,7 +68,7 @@ const STATUS_OPTIONS = [
   { value: 'Enrolled', label: 'Enrolled' },
   // { value: 'Withdrawn', label: 'Withdrawn' },
   // { value: 'Deferred', label: 'Deferred' },
-  // { value: 'UnEnrolled', label: 'Un-Enrolled' },
+  // { value: 'UnEnrolled', label: 'Fail' },
   // { value: 'Unaffiliated', label: 'Un-Affiliated' },
 ];
 
@@ -92,7 +92,6 @@ export function StudentsListView() {
   const isAgent = userRole == 'agent';
   const userId = user?.id;
 
-
   const TABLE_HEAD: TableHeadCellProps[] = [
     { id: 'name', label: 'Name' },
     { id: 'leadNo', label: 'Lead No', width: 120 },
@@ -100,11 +99,11 @@ export function StudentsListView() {
     { id: 'country', label: 'Nationality', width: 180 },
     { id: 'phoneNumber', label: 'Phone Number' },
     ...(isRefferal
-      ? [{ id: 'Notes', label: 'Notes', width: 220 },]
+      ? [{ id: 'Notes', label: 'Notes', width: 220 }]
       : [
-        { id: 'University', label: 'University', width: 220 },
-        { id: 'Course', label: 'Course', width: 120 },
-      ]),
+          { id: 'University', label: 'University', width: 220 },
+          { id: 'Course', label: 'Course', width: 120 },
+        ]),
     { id: 'status', label: 'Status', width: 120 },
     { id: 'payment', label: 'Payment Status', width: 200 },
     { id: '', width: 88 },
@@ -148,7 +147,6 @@ export function StudentsListView() {
     },
     [dataInPage.length, table, tableData]
   );
-
 
   const handleToggleStatus = useCallback(
     (id: string, newStatus: IStudentStatus) => {
@@ -336,13 +334,9 @@ export function StudentsListView() {
     </CustomPopover>
   );
 
-  const handleUpdateRow = async (
-    data: IStudentsItem
-  ) => {
+  const handleUpdateRow = async (data: IStudentsItem) => {
     try {
-      setTableData((prev) =>
-        prev.map((row) => (row.id === data.id ? data : row))
-      );
+      setTableData((prev) => prev.map((row) => (row.id === data.id ? data : row)));
     } catch (error) {
       console.error('Error updating student data:', error);
       toast.error('Failed to update student data');
@@ -427,18 +421,18 @@ export function StudentsListView() {
                     iconPosition="end"
                     value={tab.value}
                     label={tab.label}
-                  // icon={
-                  //   <Label
-                  //     variant={
-                  //       tab.value === 'All' || tab.value === currentFilters.status
-                  //         ? 'filled'
-                  //         : 'soft'
-                  //     }
-                  //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
-                  //   >
-                  //     {/* {statusCount} */}
-                  //   </Label>
-                  // }
+                    // icon={
+                    //   <Label
+                    //     variant={
+                    //       tab.value === 'All' || tab.value === currentFilters.status
+                    //         ? 'filled'
+                    //         : 'soft'
+                    //     }
+                    //     color={tab.value === 'Enrolled' ? 'success' : 'default'}
+                    //   >
+                    //     {/* {statusCount} */}
+                    //   </Label>
+                    // }
                   />
                 );
               })}
@@ -528,7 +522,7 @@ export function StudentsListView() {
               />
             )}
           </Box>
-          <StudentsTableToolbar filters={filters} onResetPage={() => { }} />
+          <StudentsTableToolbar filters={filters} onResetPage={() => {}} />
 
           {canReset && (
             <StudentsTableFiltersResult
@@ -568,12 +562,12 @@ export function StudentsListView() {
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                // onSelectAllRows={(checked) =>
-                //   table.onSelectAllRows(
-                //     checked,
-                //     dataFiltered.map((row) => row.id)
-                //   )
-                // }
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>
@@ -617,9 +611,9 @@ export function StudentsListView() {
             dense={table.dense}
             count={totalCount}
             rowsPerPage={table.rowsPerPage}
-            onPageChange={loading ? () => { } : table.onChangePage}
-            onChangeDense={loading ? () => { } : table.onChangeDense}
-            onRowsPerPageChange={loading ? () => { } : table.onChangeRowsPerPage}
+            onPageChange={loading ? () => {} : table.onChangePage}
+            onChangeDense={loading ? () => {} : table.onChangeDense}
+            onRowsPerPageChange={loading ? () => {} : table.onChangeRowsPerPage}
             sx={{ opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto' }}
           />
         </Card>
