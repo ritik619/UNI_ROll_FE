@@ -1,4 +1,5 @@
 export const formatDateToDDMMYYYY = (date: string | Date) => {
+  console.log(date);
   const d = new Date(date);
   const day = String(d.getDate()).padStart(2, '0');
   const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -8,9 +9,9 @@ export const formatDateToDDMMYYYY = (date: string | Date) => {
 
 export const formatDateToMMDDYYYY = (date: string | Date) => {
   const d = new Date(date);
-  const day = String(d.getUTCDate()).padStart(2, '0');
-  const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-  const year = d.getUTCFullYear();
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
   return `${month}/${day}/${year}`;
 };
 export function toUTCISOString(date: string | Date | undefined) {
@@ -22,6 +23,10 @@ export function toUTCISOString(date: string | Date | undefined) {
   return `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
 }
 
+export function formatDateofbirth(dateStr) {
+  const [mm, dd, yyyy] = dateStr.split('/');
+  return `${dd}/${mm}/${yyyy}`;
+}
 /**
  * Turn just about anything into a Date instance.
  *  • JS timestamps (ms or s) or numeric strings

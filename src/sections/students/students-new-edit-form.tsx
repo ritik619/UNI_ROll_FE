@@ -21,7 +21,12 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
-import { formatDateToMMDDYYYY, toDMY } from 'src/utils/format-date';
+import {
+  formatDateofbirth,
+  formatDateToDDMMYYYY,
+  formatDateToMMDDYYYY,
+  toDMY,
+} from 'src/utils/format-date';
 
 import { endpoints, authAxiosInstance } from 'src/lib/axios-unified';
 import { fetchIntakes } from 'src/services/Intakes/fetchIntakes';
@@ -93,14 +98,17 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
   const [cityId, setCityId] = useState('');
   const { user } = useAuthContext();
   const isRefferal = user?.isReferral ? user?.isReferral : false;
+  function parseDate(str) {
+    const [month, day, year] = str.split('/').map(Number);
+    return new Date(year, month - 1, day).toDateString();
+  }
+
   const defaultValues: NewStudentsSchemaType = {
     leadNo: currentStudent?.leadNumber || '',
     fName: currentStudent?.firstName || '',
     lName: currentStudent?.lastName || '',
     email: currentStudent?.email || '',
-    dob: currentStudent?.highestQualification?.startDate
-      ? toDMY(currentStudent?.dateOfBirth).toDateString()
-      : '',
+    dob: currentStudent?.dateOfBirth ? parseDate(currentStudent?.dateOfBirth) : '',
     phoneNumber: currentStudent?.phoneNumber || '',
     emergencyNumber: currentStudent?.emergencyNumber || '',
     emergencyName: currentStudent?.emergencyName || '',
@@ -484,11 +492,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                   <Typography variant="subtitle2" sx={{ gridColumn: 'span 2', mt: 2 }}>
                     Emergency Contact
                   </Typography>
-                  <Field.Text
-                    name="emergencyName"
-                    label="Emergency Name"
-                    id="emergencyName"
-                  />
+                  <Field.Text name="emergencyName" label="Emergency Name" id="emergencyName" />
                   <Field.Text
                     name="emergencyNumber"
                     label="Emergency Number"
@@ -499,11 +503,7 @@ export function StudentsNewEditForm({ currentStudent }: Props) {
                     label="Emergency Address"
                     id="emergencyAddress"
                   />
-                  <Field.Text
-                    name="emergencyEmail"
-                    label="Emergency Email"
-                    id="emergencyEmail"
-                  />
+                  <Field.Text name="emergencyEmail" label="Emergency Email" id="emergencyEmail" />
                 </Box>
               )}
               {/* Enrollment Fields */}

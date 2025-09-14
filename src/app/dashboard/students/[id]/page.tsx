@@ -32,6 +32,7 @@ import { StudentResumeView } from 'src/sections/students/components/student-resu
 import { Label } from 'src/components/label';
 import { useTheme } from '@mui/material';
 import { StudentPersonalStatementView } from 'src/sections/students/components/student-personal-statement-view';
+import { toDMY } from 'src/utils/format-date';
 
 // ----------------------------------------------------------------------
 
@@ -117,6 +118,10 @@ export default function StudentDetailsPage({ params }: Props) {
       </Stack>
     );
   }
+  function parseDate(str) {
+    const [month, day, year] = str.split('/').map(Number);
+    return `${day}/${month}/${year}`;
+  }
 
   return (
     <DashboardContent>
@@ -182,9 +187,7 @@ export default function StudentDetailsPage({ params }: Props) {
             <Typography variant="h3">
               {student.firstName} {student.lastName}
             </Typography>
-            <Typography variant="h5">
-              Agent: {student.agentName}
-            </Typography>
+            <Typography variant="h5">Agent: {student.agentName}</Typography>
             {/* University & Course Details */}
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
@@ -206,10 +209,11 @@ export default function StudentDetailsPage({ params }: Props) {
               {university?.cityName && university?.countryName && (
                 <InfoItem
                   icon="eva:globe-outline"
-                  label={[(university?.cityName ?? ''), (university?.countryName ?? '')].filter(Boolean).join(', ')}
+                  label={[university?.cityName ?? '', university?.countryName ?? '']
+                    .filter(Boolean)
+                    .join(', ')}
                 />
               )}
-
             </Stack>
             {/* Basic Details */}
             <Stack
@@ -230,7 +234,7 @@ export default function StudentDetailsPage({ params }: Props) {
                 />
               )}
               {student.dateOfBirth && (
-                <InfoItem icon="eva:calendar-fill" label={student.dateOfBirth} />
+                <InfoItem icon="eva:calendar-fill" label={parseDate(student.dateOfBirth)} />
               )}
               {student.phoneNumber && (
                 <InfoItem icon="eva:phone-fill" label={student.phoneNumber} />
@@ -318,16 +322,18 @@ export default function StudentDetailsPage({ params }: Props) {
                     </Box>
                   )}
                 </Box>
-              )}</Stack>
+              )}
+            </Stack>
             {student?.agentName && (
               <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={{ xs: 1, sm: 3 }}
-              sx={{ color: 'text.secondary', typography: 'body2' }}
-            >
-              AgentName:
-              <InfoItem icon="healthicons:insurance-card" label={student?.agentName || 'NA'} />
-            </Stack>)}
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={{ xs: 1, sm: 3 }}
+                sx={{ color: 'text.secondary', typography: 'body2' }}
+              >
+                AgentName:
+                <InfoItem icon="healthicons:insurance-card" label={student?.agentName || 'NA'} />
+              </Stack>
+            )}
           </Stack>
         </Stack>
       </Card>
